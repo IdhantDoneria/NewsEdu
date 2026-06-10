@@ -44,9 +44,10 @@ async function finnhubArticles() {
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const edition = searchParams.get('edition') === 'finance' ? 'finance' : 'geopolitics';
+  const force = searchParams.get('refresh') === '1';
 
   const cached = cache.get(edition);
-  if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
+  if (!force && cached && Date.now() - cached.at < CACHE_TTL_MS) {
     return NextResponse.json(cached.payload);
   }
 
