@@ -27,8 +27,6 @@ function todayLine() {
   });
 }
 
-/* 3D tilt that follows the cursor — depth as a navigation cue, not a toy.
-   Capped at a few degrees and disabled for reduced-motion users. */
 function useTilt(maxDeg = 4) {
   const reduced = useRef(false);
   useEffect(() => {
@@ -101,15 +99,17 @@ export default function Dashboard() {
   const [edition, setEdition] = useState('geopolitics');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [flipping, setFlipping] = useState(false);
   const [error, setError] = useState(null);
   const tilt = useTilt(4);
   const leadTilt = useTilt(2.5);
 
-  const load = useCallback(async (ed) => {
+  const load = useCallback(async (ed, force = false) => {
     setError(null);
     try {
-      const res = await fetch(`/api/news?edition=${ed}`);
+      const url = `/api/news?edition=${ed}${force ? '&refresh=1' : ''}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`API ${res.status}`);
       const json = await res.json();
       setData(json);
@@ -117,8 +117,15 @@ export default function Dashboard() {
       setError(err.message);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
+
+  const forceRefresh = useCallback(() => {
+    if (refreshing || loading) return;
+    setRefreshing(true);
+    load(edition, true);
+  }, [refreshing, loading, load, edition]);
 
   useEffect(() => {
     setLoading(true);
@@ -129,7 +136,6 @@ export default function Dashboard() {
 
   const switchEdition = (ed) => {
     if (ed === edition || flipping) return;
-    // 3D page-turn: fold the stage away, swap content, fold back in
     setFlipping(true);
     setTimeout(() => {
       setEdition(ed);
@@ -197,13 +203,41 @@ export default function Dashboard() {
 
         <div className="section-head">
           <h2>{EDITION_LABELS[edition]} Edition</h2>
-          <span className="meta">
-            {loading
-              ? 'Consulting the wire…'
-              : `${articles.length} briefs · ${liveFeeds} live sources · refreshed ${
-                  data ? timeAgo(data.generatedAt) : '—'
-                }`}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <span className="meta">
+              {loading
+                ? 'Consulting the wire…'
+                : `${articles.length} briefs · ${liveFeeds} live sources · refreshed ${
+                    data ? timeAgo(data.generatedAt) : '—'
+                  }`}
+            </span>
+            <button
+              className="refresh-btn"
+              onClick={forceRefresh}
+              disabled={refreshing || loading}
+              aria-label="Force refresh news"
+              title="Pull the latest from all sources now"
+            >
+              <svg
+                className={`refresh-icon${refreshing ? ' spinning' : ''}`}
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21 2v6h-6" />
+                <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+                <path d="M3 22v-6h6" />
+                <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+              </svg>
+              {refreshing ? 'Pulling wire…' : 'Refresh now'}
+            </button>
+          </div>
         </div>
 
         <div className="stage">
@@ -349,8 +383,8 @@ export default function Dashboard() {
         </div>
 
         <footer className="footer">
-          <span>The Meridian Brief — an open-source news intelligence experiment</span>
-          <span>Sources: free public RSS wires · No tracking</span>
+          <span>The Meridian Brief — news intelligence, ranked and scored</span>
+          <span>Free public RSS wires · No tracking · No paywalls</span>
         </footer>
       </div>
     </div>
