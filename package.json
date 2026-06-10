@@ -1,0 +1,18 @@
+{
+  "name": "meridian-brief",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Meridian Brief — a ranked geopolitics & finance news dashboard with a transparent point-based scoring algorithm",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.5.0",
+    "next": "^14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
