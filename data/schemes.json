@@ -1,0 +1,195 @@
+[
+  {
+    "id": "pmegp",
+    "shortName": "PMEGP",
+    "name": "Prime Minister's Employment Generation Programme",
+    "level": "central",
+    "authority": "Ministry of MSME · implemented by KVIC, KVIBs & DICs",
+    "category": "credit_subsidy",
+    "tags": ["capital", "subsidy"],
+    "benefit": {
+      "headline": "15–35% margin-money subsidy on bank loan for setting up a new unit",
+      "maxValue": 1750000,
+      "maxValueNote": "35% (special category, rural) on the ₹50 lakh manufacturing project ceiling",
+      "details": [
+        "Project cost ceiling: ₹50 lakh for manufacturing, ₹20 lakh for services",
+        "Subsidy: general category 15% (urban) / 25% (rural); SC/ST/OBC/minority/women/ex-serviceman/divyang/NER 25% (urban) / 35% (rural)",
+        "Own contribution: 10% (general) or 5% (special category); balance financed as bank loan",
+        "Second loan up to ₹1 crore available for upgradation of successful existing PMEGP/MUDRA units (15% subsidy, 20% in NER/hill states)"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "isNewUnit",
+          "op": "isTrue",
+          "label": "Brand-new unit — PMEGP funds only new projects, not existing businesses"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["unregistered", "proprietorship", "shg_coop_trust"],
+          "label": "Eligible applicant type: individual / SHG / co-operative society / institution / charitable trust (companies & partnership firms are not eligible)"
+        },
+        {
+          "fact": "sector",
+          "op": "neq",
+          "value": "trading",
+          "label": "Manufacturing or service activity — pure trading/retail is not eligible"
+        }
+      ]
+    },
+    "softChecks": [
+      "Applicant must be at least 18 years old",
+      "Minimum 8th-pass education for manufacturing projects above ₹10 lakh and service projects above ₹5 lakh",
+      "Unit must not have availed subsidy under any other central/state self-employment scheme",
+      "Activity must not be on the PMEGP negative list (e.g. certain meat/intoxicant items, crop farming)"
+    ],
+    "documents": [
+      "Aadhaar card and PAN card of applicant",
+      "Passport-size photograph",
+      "Project report / DPR (the portal has a project-report generator)",
+      "Caste certificate (if claiming special-category subsidy)",
+      "Education certificate (8th pass, where applicable)",
+      "Rural-area certificate from competent authority (for rural rate)",
+      "Quotations for machinery and equipment"
+    ],
+    "applyUrl": "https://www.kviconline.gov.in/pmegpeportal/jsp/pmegponline.jsp",
+    "applySteps": [
+      "Register and fill the online application on the PMEGP e-portal (kviconline.gov.in)",
+      "Upload documents and submit; note your application ID",
+      "Appear for district-level scrutiny/interview when called",
+      "On approval, the application is forwarded to your chosen financing bank",
+      "Complete EDP training (10 days for projects above ₹5 lakh) before margin money release"
+    ],
+    "sources": [
+      { "url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp", "official": true },
+      { "url": "https://msme.gov.in/1-prime-ministers-employment-generation-programme-pmegp", "official": true }
+    ],
+    "lastVerified": "2026-06-10",
+    "confidence": "high"
+  },
+  {
+    "id": "cgtmse",
+    "shortName": "CGTMSE",
+    "name": "Credit Guarantee Scheme for Micro & Small Enterprises (CGTMSE)",
+    "level": "central",
+    "authority": "CGTMSE Trust · Ministry of MSME + SIDBI",
+    "category": "guarantee",
+    "tags": ["capital"],
+    "benefit": {
+      "headline": "Collateral-free bank loans — the Trust guarantees your lender up to 85%",
+      "maxValue": 100000000,
+      "maxValueNote": "guarantee cover on credit facilities up to ₹10 crore (enhanced from ₹5 crore in Budget 2025-26)",
+      "details": [
+        "No collateral or third-party guarantee demanded by the lender for covered loans",
+        "Guarantee cover: 85% for micro loans up to ₹5 lakh, women-owned and SC/ST/NER units; 75% standard",
+        "Annual guarantee fee from ~0.37% — typically passed through by the lender",
+        "Works on top of any term loan or working capital from scheduled banks/NBFCs"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small"],
+          "label": "Micro or small enterprise (medium enterprises are outside CGTMSE)"
+        },
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam Registration — lenders require a valid Udyam number for guarantee cover"
+        }
+      ]
+    },
+    "softChecks": [
+      "Loan must be from a CGTMSE member lending institution (most scheduled banks and major NBFCs are members)",
+      "Account must be standard (not NPA) at the time of guarantee approval",
+      "Retail trade is covered with reduced guarantee parameters — confirm with your lender"
+    ],
+    "documents": [
+      "Udyam Registration certificate",
+      "Loan application with project report / financials",
+      "KYC of promoters (Aadhaar, PAN)",
+      "Bank statements and ITRs (for existing businesses)",
+      "Quotations / invoices for assets being financed"
+    ],
+    "applyUrl": "https://www.cgtmse.in",
+    "applySteps": [
+      "Apply for a business loan at any CGTMSE member bank/NBFC",
+      "Ask the lender to cover the facility under CGTMSE instead of demanding collateral",
+      "The lender applies for guarantee cover on the CGTMSE portal after sanction",
+      "Pay the annual guarantee fee as charged through the lender"
+    ],
+    "sources": [
+      { "url": "https://www.cgtmse.in", "official": true },
+      { "url": "https://msme.gov.in/credit-guarantee-fund-trust-micro-and-small-enterprises-cgtmse", "official": true }
+    ],
+    "lastVerified": "2026-06-10",
+    "confidence": "high"
+  },
+  {
+    "id": "zed",
+    "shortName": "ZED",
+    "name": "MSME Sustainable (ZED) Certification",
+    "level": "central",
+    "authority": "Ministry of MSME · QCI",
+    "category": "certification",
+    "tags": ["quality"],
+    "benefit": {
+      "headline": "Up to 80% subsidy on Zero Defect Zero Effect certification + handholding support",
+      "maxValue": 100000,
+      "maxValueNote": "subsidy on certification cost plus up to ₹5 lakh handholding/technology support linked to ZED",
+      "details": [
+        "Certification subsidy: 80% for micro, 60% for small, 40% for medium enterprises",
+        "Additional 10% subsidy for women/SC/ST-owned units and units in NER/Himalayan/LWE/island territories",
+        "₹10,000 joining reward credited on taking the ZED pledge",
+        "ZED-certified units get priority in procurement and concessions from several lenders"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam-registered MSME (registration is free at udyamregistration.gov.in)"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small", "medium"],
+          "label": "Within MSME limits (micro/small/medium under the revised classification)"
+        },
+        {
+          "fact": "sector",
+          "op": "in",
+          "value": ["manufacturing", "food_processing", "agri_allied", "artisan"],
+          "label": "Manufacturing activity — ZED certifies manufacturing units"
+        }
+      ]
+    },
+    "softChecks": [
+      "Certification levels are Bronze → Silver → Gold; subsidy applies at each level",
+      "Unit should be operational — assessment covers actual production processes"
+    ],
+    "documents": [
+      "Udyam Registration certificate",
+      "Basic enterprise profile (filled on the ZED portal)",
+      "Self-assessment responses on ZED parameters",
+      "Production/process details for assessment"
+    ],
+    "applyUrl": "https://zed.msme.gov.in",
+    "applySteps": [
+      "Register on zed.msme.gov.in with your Udyam number",
+      "Take the ZED pledge (claims the ₹10,000 reward)",
+      "Complete Bronze self-assessment online",
+      "Schedule desktop/remote assessment for Silver/Gold with accredited agencies"
+    ],
+    "sources": [
+      { "url": "https://zed.msme.gov.in", "official": true }
+    ],
+    "lastVerified": "2026-06-10",
+    "confidence": "high"
+  }
+]
