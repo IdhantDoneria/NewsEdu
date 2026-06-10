@@ -1,0 +1,706 @@
+/* ------------------------------------------------------------------ */
+/* The Meridian Brief — editorial design system                        */
+/* Palette: classic broadsheet (ivory paper, ink) with oxblood and     */
+/* antique-gold accents; finance edition shifts the accent to a deep   */
+/* ledger green. Inspired by WSJ/NYT, deliberately not a copy.         */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --paper: #f7f3ea;
+  --paper-raised: #fffdf6;
+  --paper-shade: #efe9da;
+  --ink: #181511;
+  --ink-soft: #4a443a;
+  --ink-faint: #8a8170;
+  --rule: #d8d0bd;
+  --rule-dark: #181511;
+  --gold: #a8852e;
+  --accent: #8c2f1b; /* oxblood — geopolitics */
+  --accent-soft: rgba(140, 47, 27, 0.08);
+  --serif-display: 'Playfair Display', Georgia, serif;
+  --serif-text: 'Source Serif 4', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+}
+
+[data-edition='finance'] {
+  --accent: #1f5c45; /* ledger green — finance */
+  --accent-soft: rgba(31, 92, 69, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--serif-text);
+  background-color: var(--paper);
+  /* faint paper grain */
+  background-image: radial-gradient(rgba(24, 21, 17, 0.025) 1px, transparent 1px);
+  background-size: 4px 4px;
+  color: var(--ink);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+.shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+
+/* ----------------------------- Masthead ----------------------------- */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  gap: 16px;
+}
+
+.masthead {
+  text-align: center;
+  padding: 26px 0 18px;
+  border-bottom: 3px double var(--rule-dark);
+  perspective: 700px;
+}
+
+.masthead h1 {
+  font-family: var(--serif-display);
+  font-weight: 900;
+  font-size: clamp(2.1rem, 5.4vw, 4rem);
+  letter-spacing: 0.015em;
+  line-height: 1;
+  transform-style: preserve-3d;
+  animation: masthead-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.masthead .tagline {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+@keyframes masthead-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotateX(28deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+/* ----------------------- Edition toggle (top right) ------------------ */
+
+.edition-toggle {
+  position: relative;
+  display: inline-flex;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-raised);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  overflow: hidden;
+  box-shadow: 0 2px 0 rgba(24, 21, 17, 0.35);
+  flex-shrink: 0;
+}
+
+.edition-toggle .thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: calc(50% - 2px);
+  border-radius: 999px;
+  background: var(--accent);
+  transition: transform 0.45s cubic-bezier(0.7, -0.2, 0.25, 1.2), background 0.45s ease;
+  transform: translateX(2px);
+}
+
+.edition-toggle[data-active='finance'] .thumb {
+  transform: translateX(calc(100% + 2px));
+}
+
+.edition-toggle button {
+  position: relative;
+  z-index: 1;
+  border: none;
+  background: transparent;
+  padding: 9px 18px;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--ink-soft);
+  transition: color 0.3s ease;
+  min-width: 110px;
+}
+
+.edition-toggle button.on {
+  color: var(--paper);
+}
+
+/* ------------------------------ Ticker ------------------------------ */
+
+.ticker {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule-dark);
+  overflow: hidden;
+  background: var(--paper-raised);
+}
+
+.ticker-label {
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.ticker-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: ticker-scroll 70s linear infinite;
+  will-change: transform;
+}
+
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+.ticker-item {
+  font-family: var(--serif-text);
+  font-size: 0.85rem;
+  padding: 8px 0;
+  color: var(--ink-soft);
+}
+
+.ticker-item b {
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+
+.ticker-item .diamond {
+  color: var(--gold);
+  margin: 0 18px;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* --------------------------- Section header -------------------------- */
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 30px 0 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule-dark);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.section-head h2 {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+.section-head .meta {
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------------------------- Stage / flip --------------------------- */
+
+.stage {
+  perspective: 1600px;
+}
+
+.stage-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.stage-inner.flipping {
+  transform: rotateY(12deg) translateZ(-90px);
+  opacity: 0;
+}
+
+/* ------------------------------ Layout ------------------------------- */
+
+.front-page {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 0;
+  margin-top: 18px;
+}
+
+.lead-column {
+  padding-right: 32px;
+  border-right: 1px solid var(--rule);
+}
+
+.rail-column {
+  padding-left: 32px;
+}
+
+/* ----------------------------- Lead story ---------------------------- */
+
+.lead-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  padding: 8px;
+  margin: -8px;
+  border-radius: 4px;
+}
+
+.lead-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.lead-kicker::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.lead-card h3 {
+  font-family: var(--serif-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+
+.lead-card:hover h3 {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  text-decoration-color: var(--accent);
+}
+
+.lead-card .summary {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.byline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  flex-wrap: wrap;
+}
+
+.byline .src {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* --------------------------- Score dial badge ------------------------ */
+
+.dial {
+  --pct: 0%;
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) var(--pct), var(--paper-shade) 0);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transform: translateZ(30px);
+  box-shadow: 0 1px 3px rgba(24, 21, 17, 0.25);
+}
+
+.dial::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--paper-raised);
+}
+
+.dial b {
+  position: relative;
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.dial small {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--sans);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.dial.small {
+  width: 40px;
+  height: 40px;
+}
+
+.dial.small::before {
+  inset: 4px;
+}
+
+.dial.small b {
+  font-size: 0.78rem;
+}
+
+/* ----------------------------- Ranked rail --------------------------- */
+
+.rail-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 16px 8px;
+  margin: 0 -8px;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+  border-radius: 4px;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.rail-item:hover {
+  background: var(--paper-raised);
+}
+
+.rail-rank {
+  font-family: var(--serif-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--gold);
+  line-height: 1;
+  min-width: 34px;
+}
+
+.rail-item h4 {
+  font-family: var(--serif-text);
+  font-weight: 600;
+  font-size: 1.02rem;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.rail-item:hover h4 {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+/* ------------------------------ Card grid ---------------------------- */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin-top: 18px;
+}
+
+.news-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--paper);
+  padding: 22px;
+  text-decoration: none;
+  color: inherit;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.news-card:hover {
+  background: var(--paper-raised);
+  box-shadow: 0 18px 40px -18px rgba(24, 21, 17, 0.45);
+  z-index: 2;
+}
+
+.news-card .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.news-card h4 {
+  font-family: var(--serif-text);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  transform: translateZ(18px);
+}
+
+.news-card:hover h4 {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.news-card .summary {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-card .byline {
+  margin-top: auto;
+}
+
+/* ------------------------- Metric bars (breakdown) -------------------- */
+
+.metric-strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.metric {
+  flex: 1;
+}
+
+.metric label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 3px;
+  cursor: inherit;
+}
+
+.metric .bar {
+  height: 3px;
+  background: var(--paper-shade);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.metric .bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------- Methodology box -------------------------- */
+
+.methodology {
+  margin-top: 56px;
+  border: 1px solid var(--rule-dark);
+  background: var(--paper-raised);
+  padding: 28px 32px;
+  box-shadow: 6px 6px 0 var(--paper-shade);
+}
+
+.methodology h3 {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.3rem;
+  margin-bottom: 14px;
+}
+
+.methodology-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.methodology-grid h5 {
+  font-family: var(--sans);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.methodology-grid p {
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ------------------------------- Footer ------------------------------ */
+
+.footer {
+  margin-top: 48px;
+  padding-top: 16px;
+  border-top: 3px double var(--rule-dark);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ----------------------------- States -------------------------------- */
+
+.state-box {
+  padding: 80px 0;
+  text-align: center;
+  color: var(--ink-faint);
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.2rem;
+}
+
+.press {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 18px;
+  border: 1.5px solid var(--rule-dark);
+  border-radius: 50%;
+  border-top-color: var(--accent);
+  border-right-color: var(--gold);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --------------------------- Responsiveness -------------------------- */
+
+@media (max-width: 1000px) {
+  .front-page {
+    grid-template-columns: 1fr;
+  }
+  .lead-column {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 24px;
+  }
+  .rail-column {
+    padding-left: 0;
+    padding-top: 8px;
+  }
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .methodology-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding: 0 16px 60px;
+  }
+  .card-grid,
+  .methodology-grid {
+    grid-template-columns: 1fr;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
