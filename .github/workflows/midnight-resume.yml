@@ -15,9 +15,9 @@ name: Midnight resume (continue unfinished work)
 
 on:
   schedule:
-    # 18:50 UTC = 00:20 IST — a short buffer after midnight so the reset has
-    # landed. GitHub cron is always UTC. Adjust if your reset time differs.
-    - cron: "50 18 * * *"
+    # 21:30 UTC = 03:00 IST — comfortably after the midnight reset has landed.
+    # GitHub cron is always UTC. Adjust if your reset time differs.
+    - cron: "30 21 * * *"
   workflow_dispatch:
     # Lets you trigger a run by hand from the Actions tab to test it.
     inputs:

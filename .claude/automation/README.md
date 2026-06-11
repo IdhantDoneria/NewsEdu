@@ -46,8 +46,8 @@ work it opens a **draft** PR for you to review in the morning.
 
 ## Schedule
 
-Currently set to **00:20 IST** (`50 18 * * *` UTC) — a small buffer after
-midnight so the reset has landed. To change it, edit the `cron:` line in
+Currently set to **03:00 IST** (`30 21 * * *` UTC) — comfortably after the
+midnight reset has landed. To change it, edit the `cron:` line in
 `.github/workflows/midnight-resume.yml`. GitHub cron is always in UTC, so
 subtract 5h30m from your desired IST time.
 
