@@ -194,6 +194,7 @@ describe("schemes.json integrity", () => {
                 profile: [...profile],
                 state: "MH",
                 udyam: "yes",
+                needs: ["capital", "subsidy", "quality", "market", "infra", "export"],
               });
 
     const everMatched = new Set<string>();

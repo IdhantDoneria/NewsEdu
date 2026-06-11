@@ -150,7 +150,7 @@ export default function ResultsPage() {
                     {top.scheme.level === "state" ? "Maharashtra" : "Central"}
                   </span>
                 </div>
-                <div className="benefit-value">{top.scheme.benefit.maxValue > 0 ? `up to ${formatINR(top.scheme.benefit.maxValue)}` : "Non-monetary benefit"}</div>
+                <div className="benefit-value">{top.scheme.benefit.maxValue > 0 ? `up to ${formatINR(top.scheme.benefit.maxValue)}` : "Credit / facilitation benefit"}</div>
                 <p className="scheme-benefit" style={{ margin: 0 }}>{top.scheme.benefit.headline}</p>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <span className="verified-badge">✓ rules verified {top.scheme.lastVerified}</span>

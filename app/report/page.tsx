@@ -174,7 +174,7 @@ export default function ReportPage() {
 
           <div className="report-section-label">Benefit</div>
           <div className="benefit-value">
-            {r.scheme.benefit.maxValue > 0 ? `up to ${formatINR(r.scheme.benefit.maxValue)}` : "Support benefit"}
+            {r.scheme.benefit.maxValue > 0 ? `up to ${formatINR(r.scheme.benefit.maxValue)}` : "Credit / facilitation benefit"}
           </div>
           <p className="scheme-benefit" style={{ margin: "4px 0 8px" }}>{r.scheme.benefit.headline}</p>
           <ul className="doc-list">

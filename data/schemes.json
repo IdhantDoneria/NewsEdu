@@ -8,14 +8,14 @@
     "category": "credit_subsidy",
     "tags": ["capital", "subsidy"],
     "benefit": {
-      "headline": "15–35% margin-money subsidy on bank loan for setting up a new unit",
+      "headline": "15–35% margin-money subsidy on a bank loan for setting up a new unit",
       "maxValue": 1750000,
-      "maxValueNote": "35% (special category, rural) on the ₹50 lakh manufacturing project ceiling",
+      "maxValueNote": "35% (special category, rural area) on the ₹50 lakh manufacturing project ceiling",
       "details": [
-        "Project cost ceiling: ₹50 lakh for manufacturing, ₹20 lakh for services",
-        "Subsidy: general category 15% (urban) / 25% (rural); SC/ST/OBC/minority/women/ex-serviceman/divyang/NER 25% (urban) / 35% (rural)",
-        "Own contribution: 10% (general) or 5% (special category); balance financed as bank loan",
-        "Second loan up to ₹1 crore available for upgradation of successful existing PMEGP/MUDRA units (15% subsidy, 20% in NER/hill states)"
+        "Project cost ceiling: ₹50 lakh for manufacturing, ₹20 lakh for business/services",
+        "Subsidy: general category 15% (urban) / 25% (rural); SC/ST/OBC/minority/women/ex-serviceman/transgender/divyang/NER/aspirational-district 25% (urban) / 35% (rural)",
+        "Own contribution just 10% (general) or 5% (special category); the rest is bank-financed",
+        "Successful units can take a 2nd upgradation loan: up to ₹1 crore (manufacturing) / ₹25 lakh (services) with 15% subsidy (20% in NER & hill states)"
       ]
     },
     "eligibility": {
@@ -29,7 +29,7 @@
           "fact": "entityType",
           "op": "in",
           "value": ["unregistered", "proprietorship", "shg_coop_trust"],
-          "label": "Eligible applicant type: individual / SHG / co-operative society / institution / charitable trust (companies & partnership firms are not eligible)"
+          "label": "Eligible applicant: individual (18+), SHG, registered society, production co-operative or charitable trust — companies & partnership firms are not eligible"
         },
         {
           "fact": "sector",
@@ -41,51 +41,130 @@
     },
     "softChecks": [
       "Applicant must be at least 18 years old",
-      "Minimum 8th-pass education for manufacturing projects above ₹10 lakh and service projects above ₹5 lakh",
-      "Unit must not have availed subsidy under any other central/state self-employment scheme",
-      "Activity must not be on the PMEGP negative list (e.g. certain meat/intoxicant items, crop farming)"
+      "Minimum 8th-pass for manufacturing projects above ₹10 lakh and service projects above ₹5 lakh",
+      "Unit must not have availed subsidy under any other central/state self-employment scheme (incl. PMRY)",
+      "Activity must not be on the PMEGP negative list",
+      "10-day EDP training is mandatory before margin money release (projects above ₹5 lakh)"
     ],
     "documents": [
-      "Aadhaar card and PAN card of applicant",
+      "Aadhaar card and PAN card",
       "Passport-size photograph",
-      "Project report / DPR (the portal has a project-report generator)",
-      "Caste certificate (if claiming special-category subsidy)",
-      "Education certificate (8th pass, where applicable)",
-      "Rural-area certificate from competent authority (for rural rate)",
+      "Project report / DPR (the e-portal has a free generator)",
+      "Caste certificate (for special-category subsidy)",
+      "Education certificate (where the 8th-pass rule applies)",
+      "Rural-area certificate (for the rural subsidy rate)",
       "Quotations for machinery and equipment"
     ],
     "applyUrl": "https://www.kviconline.gov.in/pmegpeportal/jsp/pmegponline.jsp",
     "applySteps": [
-      "Register and fill the online application on the PMEGP e-portal (kviconline.gov.in)",
-      "Upload documents and submit; note your application ID",
-      "Appear for district-level scrutiny/interview when called",
-      "On approval, the application is forwarded to your chosen financing bank",
-      "Complete EDP training (10 days for projects above ₹5 lakh) before margin money release"
+      "Fill the online application on the PMEGP e-portal (kviconline.gov.in) and note your application ID",
+      "Upload documents and choose your financing bank",
+      "Appear for the district-level task force scrutiny/interview when called",
+      "On approval the file moves to your bank for sanction",
+      "Complete EDP training; margin money is credited to the loan account"
     ],
     "sources": [
-      { "url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp", "official": true },
-      { "url": "https://msme.gov.in/1-prime-ministers-employment-generation-programme-pmegp", "official": true }
+      { "url": "https://msme.gov.in/1-prime-ministers-employment-generation-programme-pmegp", "official": true },
+      { "url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp", "official": true }
     ],
-    "lastVerified": "2026-06-10",
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "cmegp",
+    "shortName": "CMEGP (MH)",
+    "name": "Chief Minister Employment Generation Programme, Maharashtra",
+    "level": "state",
+    "state": "MH",
+    "authority": "Govt. of Maharashtra · DICs (urban) & MSKVIB (rural)",
+    "category": "credit_subsidy",
+    "tags": ["capital", "subsidy"],
+    "benefit": {
+      "headline": "Maharashtra's own PMEGP: 15–35% margin-money subsidy for new units",
+      "maxValue": 1750000,
+      "maxValueNote": "35% (special category, rural area) on the ₹50 lakh manufacturing project ceiling",
+      "details": [
+        "Project cost ceiling: ₹50 lakh for manufacturing, ₹10 lakh for services",
+        "Subsidy: general 15% (urban) / 25% (rural); SC/ST/OBC/women/ex-serviceman/divyang 25% (urban) / 35% (rural)",
+        "Own contribution 10% (general) or 5% (special category)",
+        "Stackable strategy: if you miss PMEGP allocation, CMEGP is the state-funded parallel track (you can avail only one)"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "state",
+          "op": "eq",
+          "value": "MH",
+          "label": "Business located in Maharashtra (applicant must be a Maharashtra resident)"
+        },
+        {
+          "fact": "isNewUnit",
+          "op": "isTrue",
+          "label": "Brand-new unit — CMEGP funds only new projects"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["unregistered", "proprietorship"],
+          "label": "Individual applicant (proprietorship or about-to-register individual)"
+        },
+        {
+          "fact": "sector",
+          "op": "neq",
+          "value": "trading",
+          "label": "Manufacturing or service activity — pure trading is not eligible"
+        }
+      ]
+    },
+    "softChecks": [
+      "Age 18–45 years (relaxed by 5 years for SC/ST/women/ex-servicemen/divyang)",
+      "Minimum 7th-pass for projects above ₹10 lakh; 10th-pass above ₹25 lakh",
+      "Only one person per family can avail the scheme",
+      "Must not have taken subsidy under any other government self-employment scheme",
+      "Maharashtra domicile certificate required"
+    ],
+    "documents": [
+      "Aadhaar card and PAN card",
+      "Maharashtra domicile / residence proof",
+      "Passport-size photograph",
+      "Project report",
+      "Caste certificate (for special-category rate)",
+      "Education certificates (7th/10th where applicable)",
+      "Population certificate for rural rate (village < 20,000)"
+    ],
+    "applyUrl": "https://maha-cmegp.gov.in/",
+    "applySteps": [
+      "Apply online at maha-cmegp.gov.in with documents",
+      "District task force scrutinises and recommends to the bank",
+      "Bank sanctions the loan; complete the mandated EDP training",
+      "Margin money subsidy is released to the loan account"
+    ],
+    "sources": [
+      { "url": "https://maha-cmegp.gov.in/", "official": true },
+      { "url": "https://mskvib.org/en/chief-ministers-employment-generation-programme-cmegp/", "official": true },
+      { "url": "https://maitri.maharashtra.gov.in/about-us/department-initiative/cmegpchief-minister-employment-generation-programme-cmegp/", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
     "confidence": "high"
   },
   {
     "id": "cgtmse",
     "shortName": "CGTMSE",
-    "name": "Credit Guarantee Scheme for Micro & Small Enterprises (CGTMSE)",
+    "name": "Credit Guarantee Scheme for Micro & Small Enterprises",
     "level": "central",
     "authority": "CGTMSE Trust · Ministry of MSME + SIDBI",
     "category": "guarantee",
     "tags": ["capital"],
     "benefit": {
-      "headline": "Collateral-free bank loans — the Trust guarantees your lender up to 85%",
-      "maxValue": 100000000,
-      "maxValueNote": "guarantee cover on credit facilities up to ₹10 crore (enhanced from ₹5 crore in Budget 2025-26)",
+      "headline": "Collateral-free loans up to ₹10 crore — the Trust guarantees your lender instead",
+      "maxValue": 0,
+      "maxValueNote": "guarantee cover, not a cash subsidy — enables the loan rather than paying you",
       "details": [
-        "No collateral or third-party guarantee demanded by the lender for covered loans",
-        "Guarantee cover: 85% for micro loans up to ₹5 lakh, women-owned and SC/ST/NER units; 75% standard",
-        "Annual guarantee fee from ~0.37% — typically passed through by the lender",
-        "Works on top of any term loan or working capital from scheduled banks/NBFCs"
+        "Guarantee ceiling raised from ₹5 crore to ₹10 crore for guarantees approved on/after 1 April 2025 (Budget 2025-26)",
+        "Cover: 85% for micro loans up to ₹5 lakh and for SC/ST/NER units; up to 90% for women-owned units; 75% standard",
+        "Annual guarantee fee rationalised: from 0.37% p.a. (loans up to ₹10 lakh)",
+        "Works on term loans and working capital from scheduled banks and member NBFCs"
       ]
     },
     "eligibility": {
@@ -104,29 +183,357 @@
       ]
     },
     "softChecks": [
-      "Loan must be from a CGTMSE member lending institution (most scheduled banks and major NBFCs are members)",
-      "Account must be standard (not NPA) at the time of guarantee approval",
-      "Retail trade is covered with reduced guarantee parameters — confirm with your lender"
+      "Loan must be from a CGTMSE member lending institution (most scheduled banks & large NBFCs)",
+      "Account must be standard (not NPA) when the guarantee is approved",
+      "Retail trade is covered with reduced guarantee parameters — confirm specifics with your lender"
     ],
     "documents": [
       "Udyam Registration certificate",
       "Loan application with project report / financials",
       "KYC of promoters (Aadhaar, PAN)",
-      "Bank statements and ITRs (for existing businesses)",
+      "Bank statements and ITRs (existing businesses)",
       "Quotations / invoices for assets being financed"
     ],
     "applyUrl": "https://www.cgtmse.in",
     "applySteps": [
       "Apply for a business loan at any CGTMSE member bank/NBFC",
       "Ask the lender to cover the facility under CGTMSE instead of demanding collateral",
-      "The lender applies for guarantee cover on the CGTMSE portal after sanction",
-      "Pay the annual guarantee fee as charged through the lender"
+      "Lender obtains guarantee cover on the CGTMSE portal after sanction",
+      "Annual guarantee fee is charged through the lender"
     ],
     "sources": [
       { "url": "https://www.cgtmse.in", "official": true },
-      { "url": "https://msme.gov.in/credit-guarantee-fund-trust-micro-and-small-enterprises-cgtmse", "official": true }
+      { "url": "https://www.cgtmse.in/Default/ViewFile/?id=1742382157365_Circular+No.+2502024-25+5cr+to+10+cr.pdf&path=Circular", "official": true }
     ],
-    "lastVerified": "2026-06-10",
+    "lastVerified": "2026-06-11",
+    "confidence": "high",
+    "notes": "The ₹5cr→₹10cr enhancement was verified against CGTMSE Circular No. 250/2024-25 (18 March 2025)."
+  },
+  {
+    "id": "mudra",
+    "shortName": "MUDRA",
+    "name": "Pradhan Mantri MUDRA Yojana (incl. Tarun Plus)",
+    "level": "central",
+    "authority": "MUDRA Ltd · Dept. of Financial Services, via banks/NBFCs/MFIs",
+    "category": "loan",
+    "tags": ["capital"],
+    "benefit": {
+      "headline": "Collateral-free business loans up to ₹20 lakh for micro units",
+      "maxValue": 0,
+      "maxValueNote": "loan facility, not a cash subsidy",
+      "details": [
+        "Shishu: up to ₹50,000 · Kishore: ₹50,000–₹5 lakh · Tarun: ₹5–10 lakh",
+        "Tarun Plus (from Oct 2024): ₹10–20 lakh for borrowers who repaid a Tarun loan",
+        "Guarantee cover through CGFMU — no collateral demanded",
+        "Covers manufacturing, processing, trading, services and allied-agriculture activities"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "msmeClass",
+          "op": "eq",
+          "value": "micro",
+          "label": "Micro enterprise — MUDRA funds non-corporate micro units"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["unregistered", "proprietorship", "partnership", "shg_coop_trust"],
+          "label": "Non-corporate borrower (individual/proprietorship/partnership/SHG) — companies & LLPs are outside the MUDRA segment"
+        }
+      ]
+    },
+    "softChecks": [
+      "Applicant must not be a defaulter to any bank/financial institution",
+      "Tarun Plus tier requires a successfully repaid earlier Tarun loan",
+      "Income-generating non-farm activity (allied agri like dairy/poultry/fishery is eligible)"
+    ],
+    "documents": [
+      "Aadhaar and PAN",
+      "Business proof (registration/licence, address)",
+      "Bank statements (6 months) for existing units",
+      "Quotation for machinery/assets (term loan)",
+      "Simple business plan for higher tiers"
+    ],
+    "applyUrl": "https://www.mudra.org.in",
+    "applySteps": [
+      "Apply at any bank/NBFC/MFI branch or via the udyamimitra.in / JanSamarth portal",
+      "Choose the tier (Shishu/Kishore/Tarun/Tarun Plus) matching your need",
+      "Lender appraises and sanctions — no collateral, CGFMU guarantee applies",
+      "MUDRA card (working capital) issued where applicable"
+    ],
+    "sources": [
+      { "url": "https://www.mudra.org.in", "official": true },
+      { "url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2024/oct/doc20241029426401.pdf", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "standup-india",
+    "shortName": "Stand-Up India",
+    "name": "Stand-Up India",
+    "level": "central",
+    "authority": "Dept. of Financial Services · SIDBI · all scheduled commercial bank branches",
+    "category": "loan",
+    "tags": ["capital"],
+    "benefit": {
+      "headline": "₹10 lakh – ₹1 crore composite loan for SC/ST and women founders of new enterprises",
+      "maxValue": 0,
+      "maxValueNote": "composite loan (term + working capital), not a cash subsidy",
+      "details": [
+        "Composite loan covering up to ~85% of project cost (term loan + working capital)",
+        "Every bank branch is mandated to fund at least one SC/ST and one woman entrepreneur",
+        "Margin money can be reduced to ~10% by converging with other subsidy schemes (up to 25% support)",
+        "Covers manufacturing, services, trading and agri-allied activities"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "any": [
+            { "fact": "scst", "op": "isTrue", "label": "Owner is SC or ST" },
+            { "fact": "womanOwned", "op": "isTrue", "label": "Woman-owned enterprise" }
+          ],
+          "label": "Owner is SC/ST and/or a woman — Stand-Up India's target group"
+        },
+        {
+          "fact": "isNewUnit",
+          "op": "isTrue",
+          "label": "Greenfield (first-time) enterprise — existing units are not eligible"
+        }
+      ]
+    },
+    "softChecks": [
+      "Applicant must be 18 or older",
+      "For companies/partnerships: at least 51% shareholding & control with the SC/ST or woman entrepreneur",
+      "Borrower must not be in default to any bank or financial institution"
+    ],
+    "documents": [
+      "Aadhaar, PAN and caste certificate (for SC/ST applicants)",
+      "Project report with cost breakdown",
+      "Proof of identity/address of promoters",
+      "Entity documents (partnership deed / incorporation) if not individual",
+      "Quotations for machinery and premises"
+    ],
+    "applyUrl": "https://www.standupmitra.in",
+    "applySteps": [
+      "Register on standupmitra.in (handholding support available) or apply directly at a bank branch / JanSamarth",
+      "Portal connects you to your chosen branch with your project profile",
+      "Bank appraises and sanctions the composite loan",
+      "Avail margin-money convergence with eligible subsidy schemes where applicable"
+    ],
+    "sources": [
+      { "url": "https://www.standupmitra.in/Home/SUISchemes", "official": true },
+      { "url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2022/apr/doc20224535701.pdf", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "pm-vishwakarma",
+    "shortName": "PM Vishwakarma",
+    "name": "PM Vishwakarma",
+    "level": "central",
+    "authority": "Ministry of MSME (with Skill Development & Financial Services)",
+    "category": "credit_subsidy",
+    "tags": ["capital", "subsidy", "quality"],
+    "benefit": {
+      "headline": "₹15,000 toolkit + skill training + ₹3 lakh credit at 5% for traditional artisans",
+      "maxValue": 15000,
+      "maxValueNote": "toolkit e-voucher grant; the ₹3 lakh concessional credit is additional",
+      "details": [
+        "₹15,000 toolkit incentive as an e-voucher on completing basic training",
+        "Collateral-free credit: ₹1 lakh first tranche (18 months) + ₹2 lakh second tranche (30 months)",
+        "Effective interest just 5% — Government bears 8% subvention + credit guarantee",
+        "Training stipend ₹500/day; PM Vishwakarma certificate & ID; digital-transaction and marketing incentives"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "sector",
+          "op": "eq",
+          "value": "artisan",
+          "label": "Artisan/craftsperson working in one of the 18 covered family-based traditional trades (carpenter, blacksmith, potter, tailor, cobbler, goldsmith…)"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["unregistered", "proprietorship"],
+          "label": "Self-employed individual artisan (own-account worker)"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Already engaged in the trade at the time of registration"
+        }
+      ]
+    },
+    "softChecks": [
+      "Age 18+; only one member per family can enrol",
+      "Must not have taken PMEGP/PM SVANidhi/MUDRA loans in the last 5 years",
+      "Government/family-of-government-servant members are not eligible",
+      "Registration is via CSC with Aadhaar biometric verification"
+    ],
+    "documents": [
+      "Aadhaar (with linked mobile) and bank account details",
+      "Ration card (or family member Aadhaars where unavailable)",
+      "Caste/trade details as self-declared at CSC verification"
+    ],
+    "applyUrl": "https://pmvishwakarma.gov.in",
+    "applySteps": [
+      "Register at the nearest Common Service Centre (CSC) with Aadhaar",
+      "Three-step verification: gram panchayat/ULB → district committee → screening committee",
+      "Complete 5-7 day basic training; claim the ₹15,000 toolkit e-voucher",
+      "Apply for the ₹1 lakh first credit tranche through the portal/bank"
+    ],
+    "sources": [
+      { "url": "https://pmvishwakarma.gov.in", "official": true },
+      { "url": "https://www.myscheme.gov.in/schemes/pm-vishwakarma", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "pmfme",
+    "shortName": "PMFME",
+    "name": "PM Formalisation of Micro Food Processing Enterprises",
+    "level": "central",
+    "authority": "Ministry of Food Processing Industries + state nodal agencies",
+    "category": "credit_subsidy",
+    "tags": ["capital", "subsidy"],
+    "benefit": {
+      "headline": "35% credit-linked capital subsidy (up to ₹10 lakh) for micro food businesses",
+      "maxValue": 1000000,
+      "maxValueNote": "35% of eligible project cost, capped at ₹10 lakh per unit",
+      "details": [
+        "35% credit-linked capital subsidy on project cost, max ₹10 lakh, for new and existing micro food processing units",
+        "Seed capital ₹40,000 per SHG member engaged in food processing (via SHG federation)",
+        "35% grant for common infrastructure & 50% for branding/marketing to groups (FPOs/SHGs/co-ops)",
+        "Free handholding: DPR preparation, licensing (FSSAI), training support"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "sector",
+          "op": "in",
+          "value": ["food_processing", "agri_allied"],
+          "label": "Food processing activity (incl. dairy, pickles, papad, bakery, oil, spice, fishery & allied products)"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "eq",
+          "value": "micro",
+          "label": "Micro enterprise — the scheme targets micro food processing units"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["unregistered", "proprietorship", "partnership", "shg_coop_trust"],
+          "label": "Individual / proprietorship / partnership / SHG / co-operative / FPO applicants"
+        }
+      ]
+    },
+    "softChecks": [
+      "Scheme window verified as extended till September 2026; a 5-year extension with revised norms is under ministry proposal — apply early",
+      "Applicant should be 18+ with at least one unit per family receiving support",
+      "Bank loan is mandatory — the subsidy is credit-linked",
+      "ODOP (One District One Product) units get processing preference but others are eligible"
+    ],
+    "documents": [
+      "Aadhaar and PAN",
+      "Bank statement / passbook",
+      "Proof of enterprise (existing units) or project plan (new units)",
+      "Land/premises documents or rent agreement",
+      "FSSAI licence (can be obtained with scheme handholding)"
+    ],
+    "applyUrl": "https://pmfme.mofpi.gov.in",
+    "applySteps": [
+      "Register on the PMFME MIS portal (pmfme.mofpi.gov.in)",
+      "A District Resource Person is assigned free of cost to prepare your DPR",
+      "Application is recommended to the bank for the credit-linked loan",
+      "Subsidy is credited to a reserve account after loan disbursal (locked 3 years)"
+    ],
+    "sources": [
+      { "url": "https://pmfme.mofpi.gov.in", "official": true },
+      { "url": "https://www.mofpi.gov.in/sites/default/files/pmfme_guidelines_english.pdf", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high",
+    "notes": "Extension status beyond Sep 2026 pending — ministry has proposed 5 more years with a higher subsidy ceiling."
+  },
+  {
+    "id": "pm-svanidhi",
+    "shortName": "PM SVANidhi",
+    "name": "PM Street Vendor's AtmaNirbhar Nidhi (restructured 2025)",
+    "level": "central",
+    "authority": "Ministry of Housing & Urban Affairs + Dept. of Financial Services",
+    "category": "loan",
+    "tags": ["capital"],
+    "benefit": {
+      "headline": "Collateral-free working capital ₹15k → ₹25k → ₹50k for street vendors, extended to 2030",
+      "maxValue": 0,
+      "maxValueNote": "loan ladder with interest subsidy & cashback, not a lump-sum grant",
+      "details": [
+        "Restructured Aug 2025 and extended to 31 March 2030 (₹7,332 crore outlay)",
+        "Tranche ladder: ₹15,000 → ₹25,000 → ₹50,000 on timely repayment",
+        "7% interest subsidy + digital-payment cashback up to ₹1,600",
+        "UPI-linked RuPay credit card on repaying the second loan"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "sector",
+          "op": "in",
+          "value": ["trading", "services", "food_processing"],
+          "label": "Street vending activity (goods, food or services vended in urban areas)"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["unregistered", "proprietorship"],
+          "label": "Individual vendor"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "eq",
+          "value": "micro",
+          "label": "Micro-scale activity"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Vending on or before the cut-off — new aspirants enrol via ULB identification"
+        }
+      ]
+    },
+    "softChecks": [
+      "Requires Certificate of Vending / Letter of Recommendation from your Urban Local Body",
+      "Urban areas (and surrounding peri-urban/rural vendors vending in urban areas)"
+    ],
+    "documents": [
+      "Aadhaar (mobile-linked)",
+      "Certificate of Vending or ULB Letter of Recommendation",
+      "Bank account details"
+    ],
+    "applyUrl": "https://pmsvanidhi.mohua.gov.in",
+    "applySteps": [
+      "Check your ULB survey status / obtain LoR on the PM SVANidhi portal",
+      "Apply online (or via CSC/banking correspondent) for the first ₹15,000 tranche",
+      "Repay on time to unlock ₹25,000 and ₹50,000 tranches",
+      "Use digital payments to earn cashback and the RuPay credit card"
+    ],
+    "sources": [
+      { "url": "https://pmsvanidhi.mohua.gov.in", "official": true },
+      { "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2161157", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
     "confidence": "high"
   },
   {
@@ -134,18 +541,18 @@
     "shortName": "ZED",
     "name": "MSME Sustainable (ZED) Certification",
     "level": "central",
-    "authority": "Ministry of MSME · QCI",
+    "authority": "Ministry of MSME · QCI (MSME Champions component)",
     "category": "certification",
     "tags": ["quality"],
     "benefit": {
-      "headline": "Up to 80% subsidy on Zero Defect Zero Effect certification + handholding support",
-      "maxValue": 100000,
-      "maxValueNote": "subsidy on certification cost plus up to ₹5 lakh handholding/technology support linked to ZED",
+      "headline": "80–100% subsidy on Zero Defect Zero Effect certification (free for women-owned units)",
+      "maxValue": 90000,
+      "maxValueNote": "100% of the ₹90,000 Gold-level fee for women-owned MSMEs; 80% for other micro units",
       "details": [
-        "Certification subsidy: 80% for micro, 60% for small, 40% for medium enterprises",
-        "Additional 10% subsidy for women/SC/ST-owned units and units in NER/Himalayan/LWE/island territories",
-        "₹10,000 joining reward credited on taking the ZED pledge",
-        "ZED-certified units get priority in procurement and concessions from several lenders"
+        "Certification fees: Bronze ₹10,000 · Silver ₹40,000 · Gold ₹90,000",
+        "Subsidy: micro 80% / small 60% / medium 50%; women-owned MSMEs get 100%",
+        "Extra +10% for SC/ST-owned or NER/Himalayan/LWE/island/aspirational-district units; +5% for SFURTI / MSE-CDP cluster members",
+        "₹10,000 joining reward on taking the ZED pledge (can make Bronze effectively free); certified units get lender concessions & procurement preference"
       ]
     },
     "eligibility": {
@@ -153,43 +560,841 @@
         {
           "fact": "udyam",
           "op": "isTrue",
-          "label": "Udyam-registered MSME (registration is free at udyamregistration.gov.in)"
+          "label": "Udyam-registered MSME (free registration at udyamregistration.gov.in)"
         },
         {
           "fact": "msmeClass",
           "op": "in",
           "value": ["micro", "small", "medium"],
-          "label": "Within MSME limits (micro/small/medium under the revised classification)"
+          "label": "Within MSME limits (revised classification, FY 2025-26)"
         },
         {
           "fact": "sector",
           "op": "in",
           "value": ["manufacturing", "food_processing", "agri_allied", "artisan"],
-          "label": "Manufacturing activity — ZED certifies manufacturing units"
+          "label": "Manufacturing activity — ZED certifies manufacturing units (services rollout is phased)"
         }
       ]
     },
     "softChecks": [
-      "Certification levels are Bronze → Silver → Gold; subsidy applies at each level",
-      "Unit should be operational — assessment covers actual production processes"
+      "Unit should be operational — assessment covers live production processes",
+      "Levels are Bronze → Silver → Gold on the ZED rating scale; existing quality certifications count toward parameters"
     ],
     "documents": [
-      "Udyam Registration certificate",
-      "Basic enterprise profile (filled on the ZED portal)",
-      "Self-assessment responses on ZED parameters",
-      "Production/process details for assessment"
+      "Udyam Registration number",
+      "Enterprise profile on the ZED portal",
+      "Self-assessment responses against ZED parameters",
+      "Existing quality/environment certificates (if any) for parameter credit"
     ],
     "applyUrl": "https://zed.msme.gov.in",
     "applySteps": [
       "Register on zed.msme.gov.in with your Udyam number",
-      "Take the ZED pledge (claims the ₹10,000 reward)",
-      "Complete Bronze self-assessment online",
-      "Schedule desktop/remote assessment for Silver/Gold with accredited agencies"
+      "Take the ZED pledge (claims the ₹10,000 joining reward)",
+      "Complete the Bronze self-assessment online",
+      "Book Silver/Gold assessment with accredited agencies — subsidy is applied to the fee"
     ],
     "sources": [
-      { "url": "https://zed.msme.gov.in", "official": true }
+      { "url": "https://zed.msme.gov.in", "official": true },
+      { "url": "https://zed.msme.gov.in/subsidy-on-cost-of-certification", "official": true }
     ],
-    "lastVerified": "2026-06-10",
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "lean",
+    "shortName": "LEAN",
+    "name": "MSME Competitive (LEAN) Scheme",
+    "level": "central",
+    "authority": "Ministry of MSME (MSME Champions component)",
+    "category": "certification",
+    "tags": ["quality"],
+    "benefit": {
+      "headline": "Government pays 90% of your LEAN consultant — you pay ~₹12,000 to start",
+      "maxValue": 240000,
+      "maxValueNote": "90% of consultancy cost at the Advanced level (cap ₹2.4 lakh); Basic capped at ₹1.08 lakh",
+      "details": [
+        "90% of implementation/consultancy cost borne by Government across Basic → Intermediate → Advanced levels",
+        "Your share at Basic level: 10% (max ₹12,000 + taxes)",
+        "Extra +5% contribution for SFURTI-cluster, women/SC/ST-owned and NER units; +5% when registering through industry associations/OEMs",
+        "Trained LEAN consultants implement 5S, Kaizen, Kanban, Poka-Yoke etc. on your shopfloor"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam-registered MSME"
+        },
+        {
+          "fact": "sector",
+          "op": "in",
+          "value": ["manufacturing", "food_processing", "agri_allied", "artisan"],
+          "label": "Manufacturing unit — LEAN targets shopfloor productivity"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Operational unit with a running shopfloor"
+        }
+      ]
+    },
+    "softChecks": [
+      "Commitment to implement LEAN tools with the assigned consultant for the level duration",
+      "Group/cluster mode implementation may apply in your district"
+    ],
+    "documents": [
+      "Udyam Registration number",
+      "Basic unit profile on the LEAN portal",
+      "Undertaking for the 10% contribution"
+    ],
+    "applyUrl": "https://lean.msme.gov.in",
+    "applySteps": [
+      "Register on lean.msme.gov.in with Udyam details",
+      "Take the LEAN pledge and pay the 10% contribution for Basic level",
+      "Assigned consultant implements Basic level (~6 months); progress to Intermediate/Advanced",
+      "Government share is settled directly with the consultant"
+    ],
+    "sources": [
+      { "url": "https://lean.msme.gov.in", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "sfurti",
+    "shortName": "SFURTI",
+    "name": "Scheme of Fund for Regeneration of Traditional Industries",
+    "level": "central",
+    "authority": "Ministry of MSME · KVIC/Coir Board nodal agencies",
+    "category": "grant",
+    "tags": ["infra"],
+    "benefit": {
+      "headline": "Up to ₹5 crore grant to organise traditional artisans into a modern cluster",
+      "maxValue": 50000000,
+      "maxValueNote": "major cluster (>500 artisans); regular clusters (≤500) get up to ₹2.5 crore, heritage clusters up to ₹8 crore",
+      "details": [
+        "Regular cluster (up to 500 artisans): up to ₹2.5 crore government assistance",
+        "Major cluster (500+ artisans): up to ₹5 crore; heritage clusters (1000–2500 artisans): up to ₹8 crore",
+        "Funds common facility centres, equipment, raw-material banks, skill training, design & marketing",
+        "Minimum 100 artisans per cluster (50 in hilly/NER states)"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "entityType",
+          "op": "eq",
+          "value": "shg_coop_trust",
+          "label": "Implementing agency: NGO / co-operative / trust / producer company / Section-8 company (individual units apply as cluster members, not directly)"
+        },
+        {
+          "fact": "sector",
+          "op": "in",
+          "value": ["artisan", "manufacturing", "food_processing", "agri_allied"],
+          "label": "Traditional industry cluster: khadi, coir, village industries, handicrafts, agro-processing"
+        }
+      ]
+    },
+    "softChecks": [
+      "A Special Purpose Vehicle with majority artisan representation must be formed",
+      "Land availability for the common facility centre is required",
+      "Proposals route through a Technical Agency and the scheme steering committee"
+    ],
+    "documents": [
+      "Implementing agency registration documents & track record",
+      "Artisan census/baseline of the cluster (100+ artisans)",
+      "Detailed Project Report",
+      "Land documents for CFC",
+      "SPV formation documents"
+    ],
+    "applyUrl": "https://sfurti.msme.gov.in",
+    "applySteps": [
+      "Identify the artisan cluster and form/partner with an eligible implementing agency",
+      "Submit proposal on sfurti.msme.gov.in through the nodal agency",
+      "Technical agency appraisal → scheme steering committee approval",
+      "Funds released in tranches against milestones"
+    ],
+    "sources": [
+      { "url": "https://sfurti.msme.gov.in", "official": true },
+      { "url": "https://msme.gov.in/scheme-fund-regeneration-traditional-industries", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "mse-cdp",
+    "shortName": "MSE-CDP",
+    "name": "Micro & Small Enterprises Cluster Development Programme",
+    "level": "central",
+    "authority": "DC-MSME, Ministry of MSME",
+    "category": "grant",
+    "tags": ["infra"],
+    "benefit": {
+      "headline": "70–90% government grant for Common Facility Centres (up to ₹18 crore)",
+      "maxValue": 180000000,
+      "maxValueNote": "90% of a ₹20-crore CFC project for special-category clusters; 70% standard",
+      "details": [
+        "Common Facility Centres: GoI grant 70% of project cost up to ₹20 crore (90% in NER/hill states, island territories, aspirational/LWE districts, and clusters with 50%+ micro/village, women-owned or SC/ST units)",
+        "Infrastructure development: 60% grant (₹10 crore industrial estate / ₹15 crore flatted factory); 80% for special categories",
+        "Marketing hubs/exhibition centres: 60% grant up to ₹10 crore (80% for women-entrepreneur associations)",
+        "Land can be up to 25% of project cost"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "entityType",
+          "op": "eq",
+          "value": "shg_coop_trust",
+          "label": "Applies via a cluster SPV / industry association / co-operative — not as an individual unit"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small"],
+          "label": "Cluster of micro & small enterprises"
+        }
+      ]
+    },
+    "softChecks": [
+      "SPV typically needs 20+ member MSE units with user commitment",
+      "State government recommendation is part of the approval flow",
+      "Hard copies route through State Govt / MSME-DI field institutes"
+    ],
+    "documents": [
+      "SPV registration & member-unit list (with Udyam numbers)",
+      "DPR for the CFC/infrastructure project",
+      "Land documents",
+      "State government recommendation",
+      "Bank appraisal where applicable"
+    ],
+    "applyUrl": "https://cluster.dcmsme.gov.in",
+    "applySteps": [
+      "Form the cluster SPV with member MSEs",
+      "Prepare DPR and apply online at cluster.dcmsme.gov.in",
+      "Route hard copy via State Government / MSME-DI",
+      "Steering committee approval → tranche-wise grant release"
+    ],
+    "sources": [
+      { "url": "https://www.dcmsme.gov.in/mse-cdprog.htm", "official": true },
+      { "url": "https://cluster.dcmsme.gov.in", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "nsic-sprs",
+    "shortName": "NSIC SPRS",
+    "name": "NSIC Single Point Registration Scheme",
+    "level": "central",
+    "authority": "National Small Industries Corporation",
+    "category": "market_access",
+    "tags": ["market"],
+    "benefit": {
+      "headline": "Sell to government without EMD, with free tenders and the L1+15% price band",
+      "maxValue": 0,
+      "maxValueNote": "market-access benefit rather than a cash amount",
+      "details": [
+        "Exemption from Earnest Money Deposit (EMD) in government tenders",
+        "Tender documents issued free of cost",
+        "MSEs quoting within L1+15% may supply up to 25% of the tender at the L1 price",
+        "Access to 358 items reserved for exclusive purchase from MSEs; counts toward the 25% MSE procurement mandate",
+        "New units get provisional registration (₹5 lakh monetary limit) for one year; SC/ST units register for just ₹100+GST"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam-registered enterprise"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small"],
+          "label": "Micro or small enterprise (SPRS is for MSEs)"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Unit has commenced production (new units under 1 year get provisional registration)"
+        }
+      ]
+    },
+    "softChecks": [
+      "Third-party technical inspection of the unit is part of the process",
+      "Registration fee varies by turnover and category; NER units get 20% concession"
+    ],
+    "documents": [
+      "Udyam Registration certificate",
+      "PAN, GST registration",
+      "Audited financials / provisional accounts for new units",
+      "List of plant & machinery and products",
+      "Banker's report"
+    ],
+    "applyUrl": "https://www.nsicspronline.com",
+    "applySteps": [
+      "Apply online at nsicspronline.com with documents",
+      "Pay the category/turnover-based fee",
+      "Technical inspection of the unit is conducted",
+      "G.P. Registration certificate issued — quote in government tenders with exemptions"
+    ],
+    "sources": [
+      { "url": "https://www.nsic.co.in/Schemes/Single-Point-Registration", "official": true },
+      { "url": "https://www.nsicspronline.com", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "nsic-rma",
+    "shortName": "NSIC RMA",
+    "name": "NSIC Raw Material Assistance",
+    "level": "central",
+    "authority": "National Small Industries Corporation",
+    "category": "loan",
+    "tags": ["capital"],
+    "benefit": {
+      "headline": "Buy raw material now, pay NSIC in up to 180 days (8.75% onward)",
+      "maxValue": 0,
+      "maxValueNote": "credit facility against bank guarantee, not a subsidy",
+      "details": [
+        "Finances indigenous & imported raw material purchases with up to 180 days credit",
+        "Interest from 8.75% p.a. for well-rated micro units (rates effective 01.07.2025); 9.25–10.25% for others",
+        "NSIC handles bulk procurement — better rates than buying alone",
+        "Processing fee 0.5–1% p.a.; security via bank guarantee from approved banks"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam-registered MSME"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small", "medium"],
+          "label": "Manufacturing MSME needing raw-material credit"
+        },
+        {
+          "fact": "sector",
+          "op": "in",
+          "value": ["manufacturing", "food_processing", "artisan", "agri_allied"],
+          "label": "Production activity that consumes raw material"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Operational unit (NSIC inspects the unit before sanction)"
+        }
+      ]
+    },
+    "softChecks": [
+      "Bank guarantee from an approved bank is mandatory security",
+      "Concessional rates require a timely-repayment track record; delays attract 1.25%/quarter penal interest"
+    ],
+    "documents": [
+      "Udyam certificate, PAN, GST",
+      "Application form to the nearest NSIC branch",
+      "Financials and banker's details",
+      "Bank guarantee documents"
+    ],
+    "applyUrl": "https://www.nsic.co.in/Schemes/Raw-Material-Against-bg",
+    "applySteps": [
+      "Submit application at the nearest NSIC branch office",
+      "NSIC conducts preliminary appraisal and unit inspection",
+      "Limit sanctioned; sign agreement and furnish bank guarantee",
+      "Raw material financed with up to 180 days to repay"
+    ],
+    "sources": [
+      { "url": "https://www.nsic.co.in/Schemes/Raw-Material-Against-bg", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "pms",
+    "shortName": "PMS",
+    "name": "Procurement and Marketing Support Scheme",
+    "level": "central",
+    "authority": "DC-MSME, Ministry of MSME",
+    "category": "market_access",
+    "tags": ["market"],
+    "benefit": {
+      "headline": "Government pays your stall & travel for domestic trade fairs",
+      "maxValue": 150000,
+      "maxValueNote": "indicative ceiling per event — exact caps depend on fair category and space",
+      "details": [
+        "Reimbursement of space rent and contingency for participation in domestic trade fairs/exhibitions",
+        "Higher support rates for women/SC/ST/NER entrepreneurs",
+        "Funds vendor-development programmes, domestic capacity-building workshops",
+        "Supports adoption of GeM, e-commerce onboarding, packaging & barcode awareness"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam-registered enterprise"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small"],
+          "label": "Micro or small enterprise"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Operating business with products/services to exhibit"
+        }
+      ]
+    },
+    "softChecks": [
+      "Participation must be in MSME-approved fairs/exhibitions for that financial year",
+      "Reimbursement caps vary by event — confirm the sanctioned list with your MSME-DFO before booking"
+    ],
+    "documents": [
+      "Udyam certificate",
+      "Event participation proof & invoices (stall, travel)",
+      "Bank details for reimbursement",
+      "Product profile"
+    ],
+    "applyUrl": "https://www.dcmsme.gov.in/CLCS_TUS_Scheme/PMS/",
+    "applySteps": [
+      "Check the approved event calendar with your nearest MSME-DFO (Development & Facilitation Office)",
+      "Apply for participation under PMS before the event",
+      "Attend and retain all invoices",
+      "Submit the reimbursement claim through the DFO"
+    ],
+    "sources": [
+      { "url": "https://www.dcmsme.gov.in/CLCS_TUS_Scheme/PMS/", "official": true },
+      { "url": "https://www.dcmsme.gov.in/", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "medium",
+    "notes": "Scheme confirmed live on DC-MSME; per-event caps not re-verified — treat amounts as indicative."
+  },
+  {
+    "id": "ic-scheme",
+    "shortName": "IC Scheme",
+    "name": "International Cooperation Scheme",
+    "level": "central",
+    "authority": "Ministry of MSME",
+    "category": "market_access",
+    "tags": ["export", "market"],
+    "benefit": {
+      "headline": "Airfare + stall reimbursed for international trade fairs & delegations",
+      "maxValue": 300000,
+      "maxValueNote": "indicative per-event support — exact caps depend on destination and enterprise category",
+      "details": [
+        "Reimburses economy airfare and space/stall rent for MSEs exhibiting abroad (higher % for women/SC/ST/NER entrepreneurs)",
+        "Capacity Building of First-Time Exporters (CBFTE) component: reimburses RCMC fees, export insurance premium and testing/certification for first-time exporters",
+        "Delegations and buyer-seller meets organised through industry associations"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam-registered MSME"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small", "medium"],
+          "label": "Within MSME limits"
+        },
+        {
+          "fact": "needs",
+          "op": "includesAny",
+          "value": ["export", "market"],
+          "label": "Pursuing export/international market development"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Operating business with exportable products/services"
+        }
+      ]
+    },
+    "softChecks": [
+      "Event participation generally routes through eligible industry associations / registered bodies",
+      "First-time exporter reimbursements (RCMC, insurance, testing) need proof of export initiation"
+    ],
+    "documents": [
+      "Udyam certificate, IEC (Import Export Code)",
+      "Event/delegation participation proof and invoices",
+      "RCMC / insurance / testing receipts (CBFTE component)",
+      "Association recommendation where applicable"
+    ],
+    "applyUrl": "https://ic.msme.gov.in",
+    "applySteps": [
+      "Register on ic.msme.gov.in",
+      "Apply for the event/component (fair, delegation, or CBFTE reimbursement) before participation",
+      "Attend / complete the export step and retain invoices",
+      "File the online reimbursement claim"
+    ],
+    "sources": [
+      { "url": "https://ic.msme.gov.in", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "medium",
+    "notes": "Scheme live; exact reimbursement caps vary by event/geography — verify the current ceiling on the IC portal before travel."
+  },
+  {
+    "id": "procurement-mse",
+    "shortName": "MSE Procurement+",
+    "name": "Public Procurement Policy benefits & MSME Samadhaan protection",
+    "level": "central",
+    "authority": "Ministry of MSME (statutory: MSMED Act 2006 + Procurement Policy Order 2012)",
+    "category": "protection",
+    "tags": ["market"],
+    "benefit": {
+      "headline": "25% of central purchases reserved for MSEs — plus statutory interest on late payments",
+      "maxValue": 0,
+      "maxValueNote": "statutory rights & market access rather than a cash amount",
+      "details": [
+        "Minimum 25% of central ministries'/PSUs' annual procurement must come from MSEs (4% from SC/ST-owned, 3% from women-owned MSEs)",
+        "358 items reserved for exclusive procurement from MSEs",
+        "Tender-set exemption and EMD exemption for registered MSEs",
+        "MSMED Act: buyers must pay within 45 days, else compound interest at 3× RBI bank rate — file claims on MSME Samadhaan",
+        "GeM onboarding gives direct access to government buyers"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "udyam",
+          "op": "isTrue",
+          "label": "Udyam Registration is the gateway to procurement preference & Samadhaan"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small"],
+          "label": "Micro or small enterprise (procurement policy covers MSEs)"
+        },
+        {
+          "fact": "stage",
+          "op": "neq",
+          "value": "idea",
+          "label": "Operating business able to supply goods/services"
+        }
+      ]
+    },
+    "softChecks": [
+      "Register on GeM (gem.gov.in) to actually receive government orders",
+      "Samadhaan claims need invoices proving supply and the 45-day breach"
+    ],
+    "documents": [
+      "Udyam certificate",
+      "GeM seller registration",
+      "Invoices/purchase orders (for delayed-payment claims)"
+    ],
+    "applyUrl": "https://samadhaan.msme.gov.in",
+    "applySteps": [
+      "Complete Udyam Registration (free) and register as a seller on GeM",
+      "Quote in tenders with EMD/tender-fee exemptions as an MSE",
+      "For payments delayed beyond 45 days, file on samadhaan.msme.gov.in",
+      "The MSE Facilitation Council adjudicates with statutory interest"
+    ],
+    "sources": [
+      { "url": "https://samadhaan.msme.gov.in", "official": true },
+      { "url": "https://www.dcmsme.gov.in/", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "miisp-2025",
+    "shortName": "MIISP 2025 (MH)",
+    "name": "Maharashtra Industries, Investment & Services Policy 2025 — MSME incentives",
+    "level": "state",
+    "state": "MH",
+    "authority": "Industries Dept., Govt. of Maharashtra · DIC (for MSMEs)",
+    "category": "credit_subsidy",
+    "tags": ["subsidy", "capital"],
+    "benefit": {
+      "headline": "30–100% of your fixed capital investment back as SGST refund over 5–10 years",
+      "maxValue": 25000000,
+      "maxValueNote": "illustrative: a ₹3.5 crore-FCI unit in a D+ taluka at the 70% IPS cap; actual scales with investment & zone",
+      "details": [
+        "Industrial Promotion Subsidy (SGST reimbursement) by taluka zone: A 30% of FCI (5 yrs) · B 40% (7 yrs) · C 50% (7 yrs) · D 60% (10 yrs) · D+ 70% (10 yrs) · Vidarbha/Marathwada belts 80% · no-industry/aspirational districts 100%",
+        "Food processing, green energy & Industry 4.0 units: +20% cap and +2 years",
+        "Stamp duty: 50% waiver (zones A/B), 100% exemption (C and beyond); electricity duty exemption 3 years (A/B) or full period (C+)",
+        "Interest subsidy up to 5% p.a. (cap ₹1 crore/yr) and power tariff subsidy ₹1/unit in C+ zones",
+        "Capital subsidy 20% of FCI (cap ₹25 crore) for thrust sectors",
+        "Replaced PSI-2019 on 31 Dec 2025; valid until 30 Dec 2030"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "state",
+          "op": "eq",
+          "value": "MH",
+          "label": "Unit located in Maharashtra (benefit scales by taluka zone)"
+        },
+        {
+          "fact": "sector",
+          "op": "in",
+          "value": ["manufacturing", "food_processing"],
+          "label": "Manufacturing enterprise under the MSMED Act (IT/BT units also covered by the policy)"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small", "medium"],
+          "label": "MSME unit (large/mega units have separate incentive tracks)"
+        }
+      ]
+    },
+    "softChecks": [
+      "Obtain the Eligibility Certificate via the Invest Maharashtra / MAITRI portal after completing one 'effective step' (land, registration or MPCB consent)",
+      "New units, expansions and diversifications all qualify; check your taluka's zone classification",
+      "Excluded: alcohol/tobacco products and textile units covered by the separate textile policy",
+      "Annual IPS claims require GSTR returns + CA certification"
+    ],
+    "documents": [
+      "Udyam certificate & entity registration",
+      "Land/lease documents (an 'effective step')",
+      "MPCB consent where applicable",
+      "FCI computation with invoices",
+      "GSTR returns for annual claims"
+    ],
+    "applyUrl": "https://maitri.maharashtra.gov.in",
+    "applySteps": [
+      "Verify your taluka zone (A/B/C/D/D+/NID) with the District Industries Centre",
+      "Complete one effective step and apply for the Eligibility Certificate on the Invest Maharashtra portal",
+      "Commission the unit and commence production",
+      "File annual IPS (SGST reimbursement) claims with GSTR returns and CA certificate"
+    ],
+    "sources": [
+      { "url": "https://maitri.maharashtra.gov.in/policies/", "official": true },
+      { "url": "https://www.krprassociates.com/maharashtras-new-industrial-incentive-policy-miisp-2025/", "official": false }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "medium",
+    "notes": "Policy GR dated 31 Dec 2025 (replaces PSI-2019). Zone-wise percentages verified via secondary analysis of the GR; confirm your unit's exact entitlement with the DIC before financial commitments."
+  },
+  {
+    "id": "apamvm-ir1",
+    "shortName": "Annasaheb Patil IR",
+    "name": "Annasaheb Patil Mahamandal — Interest Reimbursement (IR-I/IR-II)",
+    "level": "state",
+    "state": "MH",
+    "authority": "Annasaheb Patil Arthik Magas Vikas Mahamandal, Govt. of Maharashtra",
+    "category": "credit_subsidy",
+    "tags": ["capital", "subsidy"],
+    "benefit": {
+      "headline": "Your business loan becomes near interest-free — up to ₹3 lakh interest refunded",
+      "maxValue": 300000,
+      "maxValueNote": "IR-I individual cap: full interest (≤12% p.a.) on loans up to ₹10 lakh, max ₹3 lakh over 5 years",
+      "details": [
+        "IR-I (individual): bank loan up to ₹10 lakh — government refunds the interest (up to ₹3 lakh over max 5 years)",
+        "IR-II (group): loans up to ₹50 lakh for partnerships/FPOs — interest refund up to ₹15 lakh",
+        "Refund credited against EMI proof, making the loan effectively interest-free",
+        "Targets Maratha-community and economically backward youth not covered by caste-corporation schemes"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "state",
+          "op": "eq",
+          "value": "MH",
+          "label": "Maharashtra permanent resident"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["unregistered", "proprietorship", "partnership"],
+          "label": "Individual entrepreneurs (IR-I) or partnership/FPO groups (IR-II)"
+        }
+      ]
+    },
+    "softChecks": [
+      "Primarily for Maratha community & economically backward groups outside other corporation schemes",
+      "Family income within the non-creamy-layer limit (~₹8 lakh/yr)",
+      "Age limits apply (men up to ~50, women up to ~55); one-time benefit per person",
+      "Loan must be from a recognised bank; refund claimed against EMI receipts"
+    ],
+    "documents": [
+      "Aadhaar, PAN and Maharashtra domicile certificate",
+      "Income certificate (non-creamy layer)",
+      "Caste/community documentation as applicable",
+      "Project report and bank loan sanction letter",
+      "EMI payment proofs for refund claims"
+    ],
+    "applyUrl": "https://udyog.mahaswayam.gov.in",
+    "applySteps": [
+      "Register on udyog.mahaswayam.gov.in and obtain the Letter of Intent (LOI)",
+      "Take the LOI to a recognised bank and get your business loan sanctioned",
+      "Start repaying EMIs and upload proof on the portal",
+      "Interest refund is credited periodically up to the cap"
+    ],
+    "sources": [
+      { "url": "https://udyog.mahaswayam.gov.in", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high"
+  },
+  {
+    "id": "ahilyadevi-women-startup",
+    "shortName": "Ahilyadevi Holkar (MH)",
+    "name": "Punyashlok Ahilyadevi Holkar Women Startup Scheme",
+    "level": "state",
+    "state": "MH",
+    "authority": "Maharashtra State Innovation Society (MSInS)",
+    "category": "grant",
+    "tags": ["capital", "subsidy"],
+    "benefit": {
+      "headline": "₹1–25 lakh non-dilutive grant for women-led Maharashtra startups",
+      "maxValue": 2500000,
+      "maxValueNote": "grant ceiling per startup; no equity taken",
+      "details": [
+        "Financial assistance from ₹1 lakh up to ₹25 lakh as a grant (no equity dilution)",
+        "For women-led startups registered in Maharashtra with DPIIT recognition",
+        "Implemented by Maharashtra State Innovation Society in application rounds"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "state",
+          "op": "eq",
+          "value": "MH",
+          "label": "Startup registered and based in Maharashtra"
+        },
+        {
+          "fact": "womanOwned",
+          "op": "isTrue",
+          "label": "Woman founder holding more than 51% equity"
+        },
+        {
+          "fact": "entityType",
+          "op": "in",
+          "value": ["pvt_ltd", "llp", "partnership"],
+          "label": "Registered entity capable of DPIIT recognition (Pvt Ltd / LLP / registered partnership)"
+        },
+        {
+          "fact": "stage",
+          "op": "in",
+          "value": ["y1to3", "y3to10"],
+          "label": "Operational for more than one year"
+        },
+        {
+          "fact": "turnover",
+          "op": "eq",
+          "value": "lt2cr",
+          "label": "Annual turnover between ₹10 lakh and ₹1 crore"
+        }
+      ]
+    },
+    "softChecks": [
+      "DPIIT startup recognition is required before applying",
+      "Applications open in rounds via MSInS — the round was closed at our last verification; watch msins.in for the next window"
+    ],
+    "documents": [
+      "DPIIT recognition certificate",
+      "Incorporation documents showing >51% women shareholding",
+      "Pitch deck / business plan",
+      "Financials showing ₹10 lakh–1 crore turnover",
+      "Founder KYC (Maharashtra residence)"
+    ],
+    "applyUrl": "https://msins.in",
+    "applySteps": [
+      "Obtain DPIIT recognition for the startup (startupindia.gov.in)",
+      "Watch msins.in / the scheme application portal for the open round",
+      "Submit the online application with pitch and financials",
+      "Shortlisted startups pitch to the selection committee for the grant"
+    ],
+    "sources": [
+      { "url": "https://msins.in/assets/MSINS_Info-Flyers_English-D-I7b6l_.pdf", "official": true },
+      { "url": "https://nashik.gov.in/en/scheme-category/punyashlok-ahilya-devi-holkar-mahila-startup-yojana/", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
+    "confidence": "high",
+    "notes": "Round-based scheme — applications were closed at verification; eligibility encoded from the official flyer & district pages."
+  },
+  {
+    "id": "mh-textile",
+    "shortName": "MH Textile Policy",
+    "name": "Maharashtra Integrated & Sustainable Textile Policy 2023-28 — capital subsidy",
+    "level": "state",
+    "state": "MH",
+    "authority": "Co-operation, Marketing & Textiles Dept., Govt. of Maharashtra",
+    "category": "credit_subsidy",
+    "tags": ["subsidy", "capital"],
+    "benefit": {
+      "headline": "30–45% capital subsidy on fixed investment for textile units (+5% special category)",
+      "maxValue": 10000000,
+      "maxValueNote": "illustrative: 45% + 5% top-up on a ₹2 crore Zone-1 investment; policy covers units up to ₹50 crore",
+      "details": [
+        "Zone-wise capital subsidy on fixed capital investment: Zone 1 — 45% · Zone 2 — 40% · Zone 3 — 35% · Zone 4 — 30%",
+        "Additional 5% for units run by SC/ST/minority/ex-servicemen/women entrepreneurs",
+        "Applies to MSME textile units (investment up to ₹50 crore): spinning, weaving, knitting, processing, garmenting & technical textiles",
+        "Separate solar-power capital subsidy guidelines for textile units under the same policy"
+      ]
+    },
+    "eligibility": {
+      "all": [
+        {
+          "fact": "state",
+          "op": "eq",
+          "value": "MH",
+          "label": "Textile unit located in Maharashtra"
+        },
+        {
+          "fact": "sector",
+          "op": "eq",
+          "value": "manufacturing",
+          "label": "Manufacturing unit in the textile value chain"
+        },
+        {
+          "fact": "msmeClass",
+          "op": "in",
+          "value": ["micro", "small", "medium"],
+          "label": "MSME-scale unit (policy MSME track covers investment up to ₹50 crore)"
+        }
+      ]
+    },
+    "softChecks": [
+      "Unit must be in the textile value chain (ginning to garmenting/technical textiles) — non-textile manufacturers use MIISP 2025 instead",
+      "Note: textile units covered here are excluded from MIISP/PSI incentives (no double-dipping)",
+      "Zone classification of your taluka determines the percentage"
+    ],
+    "documents": [
+      "Udyam certificate & entity registration",
+      "Project report with FCI computation",
+      "Land/premises documents",
+      "Bank loan sanction (where credit-linked)",
+      "Machinery invoices"
+    ],
+    "applyUrl": "https://mahatextile.maharashtra.gov.in",
+    "applySteps": [
+      "Confirm your zone and eligible activity with the Textiles Department / DIC",
+      "Apply with project details on the Mahatextile portal",
+      "Eligibility scrutiny and sanction by the department",
+      "Subsidy disbursed against verified fixed capital investment"
+    ],
+    "sources": [
+      { "url": "https://mahatextile.maharashtra.gov.in/en/document/integrated-and-sustainable-textile-industry-policy-2023-28-guidelines-for-capital-subsidy-scheme-for-textile-projects-in-the-state/", "official": true },
+      { "url": "https://oldpolicy-mahatextile.maharashtra.gov.in/GR/English_2023_28.pdf", "official": true }
+    ],
+    "lastVerified": "2026-06-11",
     "confidence": "high"
   }
 ]
