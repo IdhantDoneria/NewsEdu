@@ -32,3 +32,6 @@ next-env.d.ts
 
 # vitest
 /coverage
+
+# python (skill search scripts)
+__pycache__/
