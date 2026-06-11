@@ -85,8 +85,8 @@ export default function ResultsPage() {
           <svg width="168" height="168" viewBox="0 0 168 168">
             <defs>
               <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#ffc46b" />
-                <stop offset="100%" stopColor="#ff7a1f" />
+                <stop offset="0%" stopColor="#f59e0b" />
+                <stop offset="100%" stopColor="#d96a06" />
               </linearGradient>
             </defs>
             <circle className="score-ring-bg" cx="84" cy="84" r="74" fill="none" strokeWidth="10" />

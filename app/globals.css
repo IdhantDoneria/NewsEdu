@@ -1,46 +1,54 @@
 /* ==========================================================================
-   YojanaScan design system
-   Dark ink canvas, saffron signal, glass surfaces. Fraunces for display,
-   Manrope for UI (wired via next/font in app/layout.tsx).
+   YojanaScan design system — "Paper Ledger"
+   Warm paper canvas, near-black ink, AA-compliant saffron accent split
+   (#A8510A text-safe / #BF580A display), ledger shadows, Fraunces italic
+   display accents, DM Sans for UI (wired via next/font in app/layout.tsx).
+   The hero is a full-bleed ink plate so the 3D rupee scene keeps its glow.
+   Winner of the three-prototype bake-off (/prototypes/*) — see README.
    ========================================================================== */
 
 :root {
-  --bg: #060a13;
-  --bg-2: #0a101d;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-2: rgba(255, 255, 255, 0.075);
-  --line: rgba(255, 255, 255, 0.09);
-  --line-strong: rgba(255, 255, 255, 0.16);
+  --bg: #faf8f4;        /* paper */
+  --bg-2: #f3efe8;      /* paper-2 */
+  --bg-3: #ede8df;      /* paper-3, dividers/tints */
+  --ink-plate: #131316; /* full-bleed dark editorial plates (hero) */
 
-  --text: #eef2fb;
-  --text-2: #a9b4c9;
-  --text-3: #6f7b92;
+  --surface: #ffffff;
+  --surface-2: #f6f3ed;
+  --line: rgba(24, 24, 27, 0.1);
+  --line-strong: rgba(24, 24, 27, 0.2);
 
-  --saffron: #ff9933;
-  --saffron-hi: #ffc46b;
-  --saffron-deep: #ff7a1f;
-  --green: #2fd6a3;
-  --cyan: #5ec4ff;
-  --gold: #f3cd87;
-  --danger: #ff7b7b;
+  --text: #18181b;      /* 16.7:1 on paper */
+  --text-2: #3a3a3f;    /* 10.7:1 */
+  --text-3: #6b6b72;    /* 5.0:1 — smallest text only */
 
-  --grad-saffron: linear-gradient(135deg, #ffc46b 0%, #ff9933 45%, #ff7a1f 100%);
-  --grad-text: linear-gradient(100deg, #ffe3b3 0%, #ff9933 55%, #ff8a4d 100%);
+  --saffron: #a8510a;       /* 5.15:1 on paper — safe for text & icons */
+  --saffron-hi: #bf580a;    /* 4.3:1 — large display type only */
+  --saffron-deep: #8a4208;
+  --amber: #d96a06;         /* gradients & glows, never body text */
+  --green: #15803d;
+  --cyan: #0e7490;
+  --gold: #92400e;          /* rupee figures on paper */
+  --danger: #b91c1c;
 
-  --radius: 16px;
-  --radius-lg: 24px;
-  --shadow-1: 0 8px 30px rgba(0, 0, 0, 0.35);
-  --glow-saffron: 0 10px 40px -8px rgba(255, 153, 51, 0.45);
+  --grad-saffron: linear-gradient(135deg, #f7a11b 0%, #e97d0d 48%, #d96a06 100%);
+  --grad-text: none; /* legacy name; accent is now italic saffron, see .grad-text */
+
+  --radius: 12px;
+  --radius-lg: 18px;
+  --shadow-1: 0 2px 12px rgba(60, 40, 10, 0.08), 0 0 0 1px rgba(24, 24, 27, 0.05);
+  --shadow-2: 0 6px 28px rgba(60, 40, 10, 0.12), 0 0 0 1px rgba(24, 24, 27, 0.06);
+  --glow-saffron: 0 8px 28px -8px rgba(217, 106, 6, 0.45);
 
   --font-display: var(--font-fraunces), "Georgia", serif;
-  --font-ui: var(--font-manrope), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-ui: var(--font-dmsans), system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --wrap: 1160px;
 }
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; color-scheme: light; }
 
 html, body { max-width: 100vw; overflow-x: hidden; }
 
@@ -50,25 +58,24 @@ body {
   color: var(--text);
   font-family: var(--font-ui);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Ambient color washes behind everything */
+/* Faint warm washes so the paper never reads as flat white */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(900px 600px at 12% -8%, rgba(255, 153, 51, 0.10), transparent 60%),
-    radial-gradient(800px 600px at 95% 14%, rgba(94, 196, 255, 0.07), transparent 55%),
-    radial-gradient(900px 700px at 70% 105%, rgba(47, 214, 163, 0.07), transparent 60%),
+    radial-gradient(900px 600px at 14% -8%, rgba(217, 106, 6, 0.05), transparent 60%),
+    radial-gradient(700px 500px at 98% 4%, rgba(24, 24, 27, 0.035), transparent 55%),
     var(--bg);
 }
 
-/* Fine grain so the dark canvas never looks flat */
+/* Paper grain */
 body::after {
   content: "";
   position: fixed;
@@ -76,12 +83,12 @@ body::after {
   z-index: -1;
   pointer-events: none;
   opacity: 0.5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; }
-::selection { background: rgba(255, 153, 51, 0.35); }
+::selection { background: rgba(191, 88, 10, 0.22); }
 
 h1, h2, h3 { line-height: 1.12; margin: 0; }
 
@@ -89,12 +96,20 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
 
 .font-display { font-family: var(--font-display); font-weight: 560; letter-spacing: -0.015em; }
 
-.grad-text {
-  background: var(--grad-text);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* The Paper Ledger signature: emphasized display words set in Fraunces italic
+   saffron. .grad-text keeps its legacy name from the dark theme. */
+.grad-text,
+.hero-title em, .section-title em, .q-title em, .report-h em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--saffron-hi);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
 }
+
+/* Rupee figures, counts and dates align like a ledger */
+.stat-number, .benefit-value, .price-tag, .tnum { font-variant-numeric: tabular-nums; }
 
 /* ==========================================================================
    Buttons & chips
@@ -114,27 +129,26 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
   will-change: transform;
 }
-.btn:focus-visible, .opt:focus-visible, a:focus-visible {
-  outline: 2px solid var(--saffron);
+.btn:focus-visible, .opt:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 2.5px solid var(--saffron);
   outline-offset: 3px;
 }
 
 .btn-primary {
   background: var(--grad-saffron);
-  color: #1a0e02;
+  color: #221103;
   box-shadow: var(--glow-saffron);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 50px -8px rgba(255, 153, 51, 0.6); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 40px -8px rgba(217, 106, 6, 0.55); }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .btn-ghost {
   background: var(--surface);
   color: var(--text);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(8px);
+  border: 1px solid var(--line-strong);
 }
-.btn-ghost:hover { background: var(--surface-2); border-color: var(--line-strong); transform: translateY(-2px); }
+.btn-ghost:hover { background: var(--surface-2); border-color: rgba(24, 24, 27, 0.32); transform: translateY(-2px); }
 
 .btn-lg { padding: 18px 38px; font-size: 17.5px; }
 .btn-sm { padding: 10px 20px; font-size: 14px; }
@@ -153,46 +167,50 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
-.chip-green { color: #8ef0d2; border-color: rgba(47, 214, 163, 0.35); background: rgba(47, 214, 163, 0.08); }
-.chip-saffron { color: #ffce8f; border-color: rgba(255, 153, 51, 0.4); background: rgba(255, 153, 51, 0.09); }
-.chip-cyan { color: #a7dcff; border-color: rgba(94, 196, 255, 0.35); background: rgba(94, 196, 255, 0.08); }
+.chip-green { color: var(--green); border-color: rgba(21, 128, 61, 0.35); background: rgba(21, 128, 61, 0.07); }
+.chip-saffron { color: var(--saffron); border-color: rgba(168, 81, 10, 0.35); background: rgba(168, 81, 10, 0.07); }
+.chip-cyan { color: var(--cyan); border-color: rgba(14, 116, 144, 0.35); background: rgba(14, 116, 144, 0.07); }
 .chip-dim { color: var(--text-3); }
 
 /* ==========================================================================
    Nav & footer
    ========================================================================== */
 
+/* Paper-glass bar, always on — it floats over the ink hero plate and the
+   paper page alike, so nav text never loses contrast. */
 .nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 50;
-  transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
-  border-bottom: 1px solid transparent;
+  background: rgba(250, 248, 244, 0.85);
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  border-bottom: 1px solid rgba(24, 24, 27, 0.08);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 .nav.scrolled {
-  background: rgba(6, 10, 19, 0.72);
-  backdrop-filter: blur(14px);
-  border-bottom-color: var(--line);
+  background: rgba(250, 248, 244, 0.96);
+  box-shadow: 0 8px 30px rgba(60, 40, 10, 0.07);
 }
 .nav-inner {
   max-width: var(--wrap);
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 14px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
-.logo { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; font-size: 19px; letter-spacing: -0.01em; }
+.logo { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; font-size: 19px; letter-spacing: -0.01em; color: var(--text); }
 .logo-mark {
   width: 34px; height: 34px;
   display: grid; place-items: center;
   border-radius: 10px;
   background: var(--grad-saffron);
-  color: #1a0e02;
+  color: #221103;
   font-family: var(--font-display);
   font-size: 19px; font-weight: 700;
-  box-shadow: 0 4px 18px -2px rgba(255, 153, 51, 0.5);
+  box-shadow: 0 4px 14px -2px rgba(217, 106, 6, 0.4);
 }
 .nav-links { display: flex; align-items: center; gap: 26px; font-size: 14.5px; color: var(--text-2); font-weight: 600; }
 .nav-links a:hover { color: var(--text); }
@@ -204,12 +222,14 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   padding: 44px 0 56px;
   color: var(--text-3);
   font-size: 13.5px;
+  background: var(--bg-2);
 }
 .footer-grid { display: flex; flex-wrap: wrap; gap: 28px; justify-content: space-between; align-items: flex-start; }
 .footer a:hover { color: var(--text-2); }
 
 /* ==========================================================================
-   Hero
+   Hero — full-bleed ink plate inside the paper page. The particle scene
+   keeps additive glow; the plate dissolves into paper at its foot.
    ========================================================================== */
 
 .hero {
@@ -218,33 +238,50 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   display: flex;
   align-items: center;
   overflow: hidden;
+  background: var(--ink-plate);
 }
 .hero-canvas { position: absolute; inset: 0; z-index: 0; }
 .hero-canvas canvas { display: block; }
 .hero-fade {
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(180deg, rgba(6,10,19,0.18) 0%, rgba(6,10,19,0) 35%, rgba(6,10,19,0.92) 88%, var(--bg) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(19, 19, 22, 0.45) 0%,
+    rgba(19, 19, 22, 0) 30%,
+    rgba(19, 19, 22, 0) 58%,
+    rgba(250, 248, 244, 0.4) 86%,
+    var(--bg) 100%
+  );
 }
 .hero-content {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding: 130px 0 90px;
+  padding: 130px 0 110px;
   pointer-events: none; /* let the 3D scene receive the mouse… */
 }
 .hero-content a, .hero-content button, .hero-content .chip { pointer-events: auto; } /* …except real controls */
 
+/* Ink-plate text overrides */
+.hero .hero-title { color: #f7f5f0; }
+.hero .hero-sub { color: #c6c6cc; }
+.hero .grad-text, .hero .hero-title em { color: #f59e0b; }
+.hero .chip { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.17); color: #d2d2d8; }
+.hero .chip-green { color: #7ce0bc; border-color: rgba(47, 214, 163, 0.4); background: rgba(47, 214, 163, 0.09); }
+.hero .btn-ghost { background: rgba(255, 255, 255, 0.07); color: #f7f5f0; border-color: rgba(255, 255, 255, 0.22); }
+.hero .btn-ghost:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.34); }
+
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 9px;
   font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: #ffce8f;
+  color: #f5b04c;
   padding: 8px 16px;
-  border: 1px solid rgba(255, 153, 51, 0.35);
+  border: 1px solid rgba(245, 158, 11, 0.4);
   border-radius: 999px;
-  background: rgba(255, 153, 51, 0.07);
+  background: rgba(245, 158, 11, 0.08);
   backdrop-filter: blur(6px);
 }
-.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(47, 214, 163, 0.7); animation: pulse 2.2s infinite; }
+.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: #2fd6a3; box-shadow: 0 0 0 0 rgba(47, 214, 163, 0.7); animation: pulse 2.2s infinite; }
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(47, 214, 163, 0.6); }
   70% { box-shadow: 0 0 0 9px rgba(47, 214, 163, 0); }
@@ -259,13 +296,13 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   margin: 26px 0 22px;
   max-width: 13ch;
 }
-.hero-sub { font-size: clamp(16.5px, 1.6vw, 19.5px); color: var(--text-2); max-width: 56ch; margin: 0 0 36px; }
+.hero-sub { font-size: clamp(16.5px, 1.6vw, 19.5px); max-width: 56ch; margin: 0 0 36px; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 .hero-meta { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 10px; }
 
 .scroll-cue {
   position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
-  z-index: 2; color: var(--text-3); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+  z-index: 2; color: #8a8a92; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   animation: bob 2.6s ease-in-out infinite;
 }
@@ -277,7 +314,13 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
 
 .section { padding: 96px 0 0; }
 .section-head { max-width: 680px; margin-bottom: 44px; }
-.section-eyebrow { font-size: 12.5px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--saffron); margin-bottom: 14px; }
+.section-eyebrow {
+  font-size: 12.5px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--saffron); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+/* Printed-report hairline before each section label */
+.section-eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--saffron); flex-shrink: 0; }
 .section-title { font-family: var(--font-display); font-weight: 560; font-size: clamp(30px, 4vw, 44px); letter-spacing: -0.018em; margin-bottom: 14px; }
 .section-sub { color: var(--text-2); font-size: 17px; }
 
@@ -286,10 +329,10 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   padding: 28px;
-  backdrop-filter: blur(10px);
-  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+  box-shadow: var(--shadow-1);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
-.card:hover { border-color: var(--line-strong); background: var(--surface-2); }
+.card:hover { border-color: var(--line-strong); box-shadow: var(--shadow-2); }
 .card-lift:hover { transform: translateY(-4px); }
 
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
@@ -311,9 +354,9 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   font-size: 15px; font-weight: 700;
   width: 34px; height: 34px; border-radius: 50%;
   display: grid; place-items: center;
-  background: rgba(255, 153, 51, 0.12);
-  border: 1px solid rgba(255, 153, 51, 0.4);
-  color: var(--saffron-hi);
+  background: rgba(191, 88, 10, 0.1);
+  border: 1px solid rgba(168, 81, 10, 0.4);
+  color: var(--saffron);
 }
 
 /* Reveal-on-scroll */
@@ -335,8 +378,8 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   margin: 0 auto;
   padding: 96px 24px 40px;
 }
-.progress-track { height: 5px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 999px; background: var(--grad-saffron); transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 14px rgba(255,153,51,0.55); }
+.progress-track { height: 5px; border-radius: 999px; background: var(--bg-3); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 999px; background: var(--grad-saffron); transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
 .progress-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-3); margin-top: 10px; font-weight: 600; }
 
 .q-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 34px 0; }
@@ -355,16 +398,17 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  box-shadow: var(--shadow-1);
   transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
-.opt:hover { border-color: var(--line-strong); background: var(--surface-2); transform: translateY(-2px); }
+.opt:hover { border-color: var(--line-strong); transform: translateY(-2px); box-shadow: var(--shadow-2); }
 .opt.selected {
-  border-color: rgba(255, 153, 51, 0.75);
-  background: rgba(255, 153, 51, 0.1);
-  box-shadow: 0 6px 24px -6px rgba(255, 153, 51, 0.35);
+  border-color: rgba(191, 88, 10, 0.65);
+  background: rgba(191, 88, 10, 0.06);
+  box-shadow: 0 6px 22px -8px rgba(191, 88, 10, 0.3);
 }
-.opt-icon { font-size: 22px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--surface-2); flex-shrink: 0; }
-.opt.selected .opt-icon { background: rgba(255, 153, 51, 0.18); }
+.opt-icon { font-size: 22px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--bg-2); flex-shrink: 0; }
+.opt.selected .opt-icon { background: rgba(191, 88, 10, 0.12); }
 .opt-label { font-weight: 700; font-size: 15.5px; line-height: 1.3; }
 .opt-hint { color: var(--text-3); font-size: 12.5px; margin-top: 3px; line-height: 1.35; }
 .opt-check { margin-left: auto; color: var(--saffron); font-weight: 800; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; }
@@ -382,8 +426,8 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
 .results-hero { padding: 130px 0 22px; text-align: center; }
 .score-ring-wrap { position: relative; width: 168px; height: 168px; margin: 0 auto 26px; }
 .score-ring-wrap svg { transform: rotate(-90deg); }
-.score-ring-bg { stroke: var(--surface-2); }
-.score-ring-fg { stroke: url(#ringGrad); stroke-linecap: round; transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1); filter: drop-shadow(0 0 8px rgba(255,153,51,0.5)); }
+.score-ring-bg { stroke: var(--bg-3); }
+.score-ring-fg { stroke: url(#ringGrad); stroke-linecap: round; transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1); filter: drop-shadow(0 0 6px rgba(217, 106, 6, 0.35)); }
 .score-ring-label { position: absolute; inset: 0; display: grid; place-items: center; }
 
 .scheme-card { display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
@@ -394,23 +438,22 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
 .benefit-value { font-family: var(--font-display); font-size: 26px; color: var(--gold); letter-spacing: -0.01em; }
 
 .locked-card { position: relative; overflow: hidden; }
-.locked-blur { filter: blur(9px); user-select: none; pointer-events: none; opacity: 0.75; }
+.locked-blur { filter: blur(9px); user-select: none; pointer-events: none; opacity: 0.8; }
 .locked-overlay {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  background: linear-gradient(180deg, rgba(6,10,19,0.25), rgba(6,10,19,0.66));
+  background: linear-gradient(180deg, rgba(250, 248, 244, 0.2), rgba(250, 248, 244, 0.88));
   color: var(--text-2); font-weight: 700; font-size: 14px;
   border-radius: var(--radius-lg);
 }
-.lock-icon { font-size: 22px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+.lock-icon { font-size: 22px; }
 
 .paywall {
   position: sticky; bottom: 18px; z-index: 30;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 153, 51, 0.4);
-  background: linear-gradient(180deg, rgba(26, 17, 6, 0.92), rgba(15, 11, 5, 0.95));
-  backdrop-filter: blur(16px);
-  box-shadow: 0 -10px 60px rgba(0,0,0,0.5), var(--glow-saffron);
+  border: 1px solid rgba(191, 88, 10, 0.45);
+  background: linear-gradient(180deg, #ffffff, #fdf8f1);
+  box-shadow: 0 18px 60px rgba(60, 40, 10, 0.18), var(--glow-saffron);
   padding: 22px 26px;
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
 }
@@ -418,11 +461,11 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
 .price-strike { color: var(--text-3); text-decoration: line-through; font-size: 15px; margin-right: 9px; font-family: var(--font-ui); }
 
 /* ==========================================================================
-   Report (/report)
+   Report (/report) — on paper, the screen IS the printed ledger
    ========================================================================== */
 
 .report-wrap { max-width: 880px; margin: 0 auto; padding: 120px 24px 80px; }
-.report-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 34px; margin-bottom: 22px; backdrop-filter: blur(10px); }
+.report-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 34px; margin-bottom: 22px; box-shadow: var(--shadow-1); }
 .report-h { font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: -0.015em; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .report-section-label { font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin: 22px 0 10px; }
 .doc-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
@@ -432,28 +475,23 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
 .trace-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text-2); }
 .trace-pass::before { content: "✓"; color: var(--green); font-weight: 800; }
 .trace-fail::before { content: "✕"; color: var(--danger); font-weight: 800; }
-.verified-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #8ef0d2; font-weight: 700; }
+.verified-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--green); font-weight: 700; }
 .narration {
-  border-left: 3px solid var(--saffron);
-  background: rgba(255, 153, 51, 0.06);
+  border-left: 3px solid var(--saffron-hi);
+  background: #f8efe3;
   border-radius: 0 var(--radius) var(--radius) 0;
   padding: 18px 22px;
   color: var(--text-2);
   font-size: 15.5px;
 }
 
-/* Print = the ₹499 PDF */
+/* Print = the ₹499 PDF. The site already lives on paper; just strip chrome. */
 @media print {
-  body { background: #fff; color: #101418; }
+  body { background: #fff; }
   body::before, body::after { display: none; }
-  .nav, .footer, .no-print { display: none !important; }
+  .nav, .footer, .no-print, .scroll-cue { display: none !important; }
   .report-wrap { padding: 0; max-width: 100%; }
-  .report-card { background: #fff; border: 1px solid #d8dde6; break-inside: avoid; color: #101418; box-shadow: none; }
-  .report-h { color: #101418; }
-  .doc-list li, .trace-list li, .scheme-benefit, .narration { color: #333a45; }
-  .scheme-authority, .report-section-label { color: #5a6372; }
-  .benefit-value { color: #9a6200; }
-  .narration { background: #fff7ec; border-left-color: #e08a1e; }
+  .report-card { box-shadow: none; break-inside: avoid; }
   a { color: #0b5fff; text-decoration: underline; }
 }
 
@@ -468,13 +506,13 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
   padding: 18px 2px; font-weight: 700; font-size: 16px;
 }
 .faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary::after { content: "+"; font-size: 22px; color: var(--saffron); transition: transform 0.25s ease; }
+.faq-item summary::after { content: "+"; font-size: 22px; color: var(--saffron-hi); transition: transform 0.25s ease; }
 .faq-item[open] summary::after { transform: rotate(45deg); }
 .faq-body { color: var(--text-2); font-size: 15px; padding: 0 2px 20px; max-width: 70ch; }
 
 .spinner {
   width: 44px; height: 44px; border-radius: 50%;
-  border: 3px solid var(--surface-2); border-top-color: var(--saffron);
+  border: 3px solid var(--bg-3); border-top-color: var(--saffron-hi);
   animation: spin 0.85s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -489,4 +527,5 @@ h1, h2, h3 { line-height: 1.12; margin: 0; }
     transition-duration: 0.01ms !important;
   }
   html { scroll-behavior: auto; }
+  .reveal { opacity: 1 !important; transform: none !important; }
 }

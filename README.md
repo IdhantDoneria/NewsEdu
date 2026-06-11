@@ -29,6 +29,30 @@ print-ready PDF) — plus near-misses: "fix one thing, unlock N more"
 - **@anthropic-ai/sdk** — optional report narration (`/api/narrate`)
 - **vitest** — engine + data integrity tests
 
+## Design: "Paper Ledger"
+
+The UI was chosen by a three-way prototype bake-off driven by the vendored
+[ui-ux-pro-max](.claude/skills/ui-ux-pro-max/) design-intelligence skill
+(50+ styles, 161 palettes, 99 UX guidelines, offline search CLI). All three
+competitors still live in the app for comparison:
+
+| Route | Direction |
+|---|---|
+| `/prototypes/trust` | Civic Trust — light institutional, WCAG-AAA, GOV.UK-grade |
+| `/prototypes/fintech` | Cinematic Money — dark terminal-editorial, 11rem statement type |
+| `/prototypes/editorial` | **Paper Ledger — winner**, now the site-wide system |
+
+Why Paper Ledger won: the site becomes the thing the customer buys — a
+precisely typeset money ledger. Warm paper surfaces, near-black ink, an
+AA-compliant saffron split (`#A8510A` text-safe / `#BF580A` display-only —
+fixing the old `#ff9933`-on-light contrast failure), Fraunces italic display
+accents, `tabular-nums` on every figure, and the print stylesheet stops being
+a special case because the screen already looks like the PDF. The 3D rupee
+hero survives as a full-bleed ink plate inside the paper page. Ported from
+the losing variants: the verified-date-everywhere discipline and
+"independent tool, not a government website" line (Civic Trust), and the
+numeric/reduced-motion discipline (Cinematic Money).
+
 ## Run it
 
 ```bash

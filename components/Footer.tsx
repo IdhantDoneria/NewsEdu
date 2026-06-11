@@ -14,6 +14,9 @@ export default function Footer() {
             Hand-encoded rules, verified against official sources — no AI
             guesswork in the verdict.
           </p>
+          <p style={{ margin: "10px 0 0", fontWeight: 700, color: "var(--text-2)" }}>
+            Independent tool — not a government website.
+          </p>
         </div>
         <div style={{ display: "grid", gap: 8 }}>
           <strong style={{ color: "var(--text-2)" }}>Product</strong>
