@@ -1,95 +1,135 @@
-# The Meridian Brief
+# YojanaScan
 
-A news intelligence dashboard that surfaces the most trustworthy, timely stories from global RSS wires — ranked by the **Meridian Score**, a transparent 100-point algorithm. Two editions: **Geopolitics** and **Finance**, toggled from the top right.
+**Government scheme eligibility engine for Indian MSMEs.** Answer 10 questions, get a deterministic verdict across hand-encoded central + Maharashtra schemes — benefit amounts, document checklists, application links, and a last-verified date on every rule. Free teaser, ₹499 full report.
 
-**UI design (Canva):** [view](https://www.canva.com/d/gFXk9iwoJ3Temwq) · [edit](https://www.canva.com/d/jPzlvn-58viI3IQ)
+> India runs 100+ MSME schemes. Consultants charge ₹10,000–50,000 just to say which ones apply. Government portals list schemes but can't answer *"which apply to my business?"* — that's the gap this sells into.
 
----
+## Why this isn't an AI wrapper
 
-## Running locally
+The moat is **data, not AI**: every scheme's eligibility (entity type, sector, turnover/investment bands, Udyam status, ownership category, new-vs-existing unit) is hand-encoded as machine-readable conditions in [`data/schemes.json`](data/schemes.json), researched from official government portals.
+
+- **Matching is deterministic.** `lib/engine/evaluate.ts` walks each scheme's rule tree against your answers. Same answers → same verdict, every time, with a condition-by-condition trace.
+- **The LLM only narrates.** The optional Claude call writes the plain-language opening of the paid report from results the engine already computed. It cannot hallucinate you into (or out of) a scheme. No API key → deterministic template, product fully works.
+- **Honest coverage.** Central schemes + ONE state (Maharashtra) at launch. Every scheme card shows `lastVerified` and source links. Pan-India on day one would be fake.
+
+## Product flow
+
+```
+Landing (3D hero) → /scan (10 questions) → /results (free teaser:
+match count + benefit ceiling + 1 unlocked scheme, rest blurred)
+→ ₹499 checkout (Razorpay, or demo mode) → /report (full deliverable,
+print-ready PDF) — plus near-misses: "fix one thing, unlock N more"
+```
+
+## Stack
+
+- **Next.js 16 / React 19 / TypeScript** — App Router, custom CSS design system (no UI framework)
+- **three.js + react-three-fiber** — interactive hero: ~7k particles assemble into the ₹ glyph, repel around the cursor; respects `prefers-reduced-motion`, degrades without WebGL
+- **Razorpay** — order creation + HMAC signature verification (`/api/checkout`, `/api/verify`); clean demo mode when keys are absent
+- **@anthropic-ai/sdk** — optional report narration (`/api/narrate`)
+- **vitest** — engine + data integrity tests
+
+## Design: "Paper Ledger"
+
+The UI was chosen by a three-way prototype bake-off driven by the vendored
+[ui-ux-pro-max](.claude/skills/ui-ux-pro-max/) design-intelligence skill
+(50+ styles, 161 palettes, 99 UX guidelines, offline search CLI). All three
+competitors still live in the app for comparison:
+
+| Route | Direction |
+|---|---|
+| `/prototypes/trust` | Civic Trust — light institutional, WCAG-AAA, GOV.UK-grade |
+| `/prototypes/fintech` | Cinematic Money — dark terminal-editorial, 11rem statement type |
+| `/prototypes/editorial` | **Paper Ledger — winner**, now the site-wide system |
+
+Why Paper Ledger won: the site becomes the thing the customer buys — a
+precisely typeset money ledger. Warm paper surfaces, near-black ink, an
+AA-compliant saffron split (`#A8510A` text-safe / `#BF580A` display-only —
+fixing the old `#ff9933`-on-light contrast failure), Fraunces italic display
+accents, `tabular-nums` on every figure, and the print stylesheet stops being
+a special case because the screen already looks like the PDF. The 3D rupee
+hero survives as a full-bleed ink plate inside the paper page. Ported from
+the losing variants: the verified-date-everywhere discipline and
+"independent tool, not a government website" line (Civic Trust), and the
+numeric/reduced-motion discipline (Cinematic Money).
+
+## Run it
 
 ```bash
 npm install
 npm run dev        # http://localhost:3000
+npm test           # engine + schemes.json integrity tests
+npm run build      # production build
 ```
 
-Production mode:
+Works with zero configuration (demo checkout, template narration). For production:
 
 ```bash
-npm run build && npm start
+cp .env.example .env.local
+# RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET  -> real ₹499 payments
+# ANTHROPIC_API_KEY                      -> Claude-narrated report opening
 ```
 
-No API keys, no database, no environment variables required.
-
-## Deploying to Vercel
-
-Stock Next.js — Vercel deploys it with zero configuration:
-
-```bash
-npm i -g vercel
-vercel             # preview deploy
-vercel --prod      # production deploy
-```
-
-Or click: [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FIdhantDoneria%2FNewsEdu)
-
-Optional: set `FINNHUB_API_KEY` in Vercel → Project → Settings → Environment Variables to merge [Finnhub's](https://finnhub.io) free-tier market wire into the Finance edition.
-
-## News refresh cadence
-
-- **Auto-refresh:** every 5 minutes in the background.
-- **Force refresh:** the "Refresh now" button in the section header bypasses the cache and re-fetches all feeds immediately.
-- Feeds that are unreachable degrade gracefully — only live sources contribute to each refresh.
-
-## The Meridian Score
-
-Every article is scored out of **100 points** across four metrics, server-side in [`lib/score.js`](lib/score.js). The per-metric breakdown is displayed on each card — the ranking is never a black box.
-
-### 1. Headline Integrity — 0–40 pts
-Starts at 24. **Penalties:** curiosity-gap phrases ("you won't believe", "here's why"… −8 each), listicle patterns (−8), question-mark headlines (−5, Betteridge's law), exclamation marks (−3 each), trailing ellipsis (−4), all-caps shouting (−6), hedging words (−2), too-thin headlines (−5). **Bonuses:** attributed actions — *says, raises, acquires, sanctions…* (+6), concrete figures — $, %, magnitudes (+5), substantive length 40–120 chars (+5).
-
-### 2. Source Trust — 0–30 pts
-Each outlet carries a **baseline reliability** score (0–20) plus a **topical authority** bonus (0–10) for the edition it appears in — MarketWatch testifies on markets, Foreign Policy on statecraft. The registry lives in [`lib/feeds.js`](lib/feeds.js).
-
-### 3. Freshness — 0–30 pts
-Exponential half-life decay from publication time: `30 × 0.5^(age / halfLife)` with an **8-hour half-life for finance** and **18 hours for geopolitics**. Smooth, predictable, and never resurrects stale news.
-
-### 4. Corroboration — −12…+8 pts
-Articles sharing ≥3 significant title tokens are treated as one event. The strongest telling earns **+8** if a *second independent outlet* confirms it; near-duplicate retellings take **−12** so one event can't flood the page.
-
-**The clickbait cut:** anything totaling under **32 points** is dropped entirely.
-
-## Sources (all free, no API key)
-
-**Finance edition**
-- Startup fundings / venture: Crunchbase News, TechCrunch Venture, Sifted (Europe)
-- Stock-market movers: MarketWatch, CNBC Markets, Yahoo Finance, Investing.com, Fortune, Fox Business
-- Optional keyed upgrade: Finnhub market wire via `FINNHUB_API_KEY`
-
-**Geopolitics edition**
-- BBC World, Al Jazeera, France 24, Foreign Policy, The Guardian World, NYT World, Deutsche Welle
-
-Feeds that fail (some publishers block datacenter IPs) degrade gracefully via `Promise.allSettled` — they work from Vercel's edge network.
-
-## Design
-
-Designed first in Canva ([view](https://www.canva.com/d/gFXk9iwoJ3Temwq) / [edit](https://www.canva.com/d/jPzlvn-58viI3IQ)), then implemented in CSS:
-
-- **Palette:** ivory paper `#F7F3EA`, ink `#181511`, hairline rules, antique gold `#A8852E`, with an edition-keyed accent — **oxblood** `#8C2F1B` for geopolitics, **ledger green** `#1F5C45` for finance.
-- **Type:** Playfair Display (masthead/display), Source Serif 4 (text), Inter (labels/UI).
-- **3D & motion:** cursor-following 3D tilt on cards, 3D page-turn on edition switch, conic-gradient score dials, animated metric bars, pausable ticker tape, letterpress masthead rise. All effects respect `prefers-reduced-motion`.
-
-## Project structure
+## Repository map
 
 ```
-app/
-  api/news/route.js   # fetch feeds → score → corroborate → rank (5-min cache, force-refresh support)
-  globals.css         # broadsheet design system + 3D effects
-  layout.js, page.js
-components/
-  Dashboard.jsx       # toggle, ticker, force-refresh button, lead story, ranked rail, ledger grid
-lib/
-  feeds.js            # source registry with trust/authority weights
-  rss.js              # RSS 2.0 / Atom / RDF parser (fast-xml-parser)
-  score.js            # the Meridian Score algorithm
+data/schemes.json       THE data moat — encoded eligibility rules per scheme
+data/sources.md         research provenance: what was verified where & when
+lib/engine/             deterministic rule engine (types, evaluator, formatter)
+lib/questions.ts        the 10-question intake definition (drives the wizard)
+app/page.tsx            landing
+app/scan/               intake wizard
+app/results/            free teaser + paywall
+app/report/             the ₹499 report (print = PDF)
+app/api/checkout        Razorpay order / demo unlock
+app/api/verify          payment signature verification
+app/api/narrate         Claude narration (optional)
+components/three/       3D hero scene
+tests/engine.test.ts    engine behaviour + data integrity (CI gate)
 ```
+
+## Encoding a new scheme
+
+1. Research the official portal/guidelines; capture benefit slabs, hard criteria, negative list, documents, application URL.
+2. Add an entry to `data/schemes.json`: rule tree over the fact set (`lib/engine/types.ts`), `softChecks` for anything the 10 questions can't verify, `sources` (mark official ones), `lastVerified` (the date YOU verified, not today's date), `confidence`.
+3. `npm test` — integrity tests enforce documents/steps/sources/verified-date and that the scheme is actually matchable.
+
+Adding a state = adding schemes with `"level": "state"` + a state option in `lib/questions.ts`. No engine changes.
+
+## Accounts & OTP sign-in
+
+YojanaScan uses a **stateless, database-free** email-OTP flow for V1.
+
+**How it works**
+
+- OTPs are HMAC-SHA256-derived from `AUTH_SECRET + email + 5-minute window index` — no OTP table, no Redis.  Two consecutive 5-minute windows are accepted (≈10 min total validity).
+- Sessions are signed cookies (`ys_session`): `base64url(JSON payload) + "." + HMAC-SHA256 signature`.  Payload: `{email, paid, iat}`.  30-day maxAge, httpOnly, sameSite lax.
+
+**Gmail app-password setup**
+
+1. Enable 2-Step Verification on your Google Account.
+2. Go to Account → Security → App passwords, generate one for "Mail".
+3. Remove all spaces from the 16-char password.
+4. Set `GMAIL_USER` (your Gmail address) and `GMAIL_APP_PASSWORD` in `.env.local`.
+
+**Demo mode (no credentials)**
+
+When `GMAIL_USER` / `GMAIL_APP_PASSWORD` are absent, `POST /api/auth/request-otp` returns `{ok:true, mode:"demo", devOtp:"XXXXXX"}` and the login UI shows the code in a chip.  The full sign-in/pay/report flow works without any email credentials.
+
+**Payment binding**
+
+After a valid Razorpay payment (`/api/verify`), if a session cookie is present it is re-sealed with `paid:true`.  `/report` accepts either the sessionStorage unlock token (existing flow) or a `paid:true` session cookie — whichever is present.
+
+**V1 honesty note**
+
+No database is used.  Payment status is cookie-scoped — if the user clears cookies they must pay again unless a server-side receipt store is added.  Suitable for V1/demo; harden before production billing.
+
+## V1 honesty notes (production hardening)
+
+- **Report gating is client-side** (sessionStorage token after payment verification). Fine for V1/demo; production should persist payments server-side and gate `/report` by receipt lookup.
+- **No database** — scans are anonymous and stateless by design; add persistence only when you add accounts/receipts.
+- **Data freshness is the product.** Re-verify schemes on a schedule; the `lastVerified` badge is a feature, keep it honest.
+
+## Disclaimer
+
+YojanaScan is an independent screening tool, not a government body. Final eligibility rests with the implementing agency/lender. Scheme parameters change; verify against the linked official sources before applying.

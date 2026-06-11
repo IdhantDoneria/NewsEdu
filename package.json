@@ -1,18 +1,33 @@
 {
-  "name": "meridian-brief",
-  "version": "1.0.0",
+  "name": "yojanascan",
+  "version": "0.1.0",
   "private": true,
-  "description": "The Meridian Brief — a ranked geopolitics & finance news dashboard with a transparent point-based scoring algorithm",
+  "description": "Government scheme eligibility engine for Indian MSMEs — deterministic rule matching against hand-encoded scheme data.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
-    "fast-xml-parser": "^4.5.0",
-    "next": "^14.2.15",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@anthropic-ai/sdk": "^0.104.1",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "next": "^16.2.9",
+    "nodemailer": "^8.0.11",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/nodemailer": "^8.0.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.184.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
   }
 }
