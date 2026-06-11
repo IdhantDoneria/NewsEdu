@@ -52,6 +52,13 @@ export default function ResultsPage() {
     setPaying(true);
     setPayError(null);
     try {
+      // Require sign-in before checkout
+      const meRes = await fetch("/api/auth/me");
+      const me = (await meRes.json()) as { email: string | null; paid: boolean };
+      if (!me.email) {
+        router.push("/login?next=/results");
+        return;
+      }
       const token = await startCheckout();
       sessionStorage.setItem(PAID_KEY, token);
       router.push("/report");
@@ -208,6 +215,9 @@ export default function ResultsPage() {
             </div>
             <p style={{ textAlign: "center", color: "var(--text-3)", fontSize: 13, marginTop: 14 }} className="no-print">
               Secured by Razorpay · UPI, cards, netbanking · Instant access
+            </p>
+            <p style={{ textAlign: "center", color: "var(--text-3)", fontSize: 13, marginTop: 6 }} className="no-print">
+              Sign in with your email first — your report stays linked to it.
             </p>
           </div>
         </>

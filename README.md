@@ -72,6 +72,34 @@ tests/engine.test.ts    engine behaviour + data integrity (CI gate)
 
 Adding a state = adding schemes with `"level": "state"` + a state option in `lib/questions.ts`. No engine changes.
 
+## Accounts & OTP sign-in
+
+YojanaScan uses a **stateless, database-free** email-OTP flow for V1.
+
+**How it works**
+
+- OTPs are HMAC-SHA256-derived from `AUTH_SECRET + email + 5-minute window index` — no OTP table, no Redis.  Two consecutive 5-minute windows are accepted (≈10 min total validity).
+- Sessions are signed cookies (`ys_session`): `base64url(JSON payload) + "." + HMAC-SHA256 signature`.  Payload: `{email, paid, iat}`.  30-day maxAge, httpOnly, sameSite lax.
+
+**Gmail app-password setup**
+
+1. Enable 2-Step Verification on your Google Account.
+2. Go to Account → Security → App passwords, generate one for "Mail".
+3. Remove all spaces from the 16-char password.
+4. Set `GMAIL_USER` (your Gmail address) and `GMAIL_APP_PASSWORD` in `.env.local`.
+
+**Demo mode (no credentials)**
+
+When `GMAIL_USER` / `GMAIL_APP_PASSWORD` are absent, `POST /api/auth/request-otp` returns `{ok:true, mode:"demo", devOtp:"XXXXXX"}` and the login UI shows the code in a chip.  The full sign-in/pay/report flow works without any email credentials.
+
+**Payment binding**
+
+After a valid Razorpay payment (`/api/verify`), if a session cookie is present it is re-sealed with `paid:true`.  `/report` accepts either the sessionStorage unlock token (existing flow) or a `paid:true` session cookie — whichever is present.
+
+**V1 honesty note**
+
+No database is used.  Payment status is cookie-scoped — if the user clears cookies they must pay again unless a server-side receipt store is added.  Suitable for V1/demo; harden before production billing.
+
 ## V1 honesty notes (production hardening)
 
 - **Report gating is client-side** (sessionStorage token after payment verification). Fine for V1/demo; production should persist payments server-side and gate `/report` by receipt lookup.

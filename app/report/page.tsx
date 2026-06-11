@@ -59,18 +59,49 @@ export default function ReportPage() {
   useEffect(() => {
     const token = sessionStorage.getItem(PAID_KEY);
     const raw = sessionStorage.getItem(ANSWERS_KEY);
-    if (!token || !raw) {
-      router.replace(raw ? "/results" : "/scan");
+
+    // If answers are missing, always redirect to scan
+    if (!raw) {
+      router.replace("/scan");
       return;
     }
-    setDemo(token.startsWith("demo."));
-    try {
-      const parsed = JSON.parse(raw) as IntakeAnswers;
-      setAnswers(parsed);
-      setResult(runScan(SCHEMES, parsed));
-    } catch {
-      router.replace("/scan");
+
+    if (token) {
+      // Classic sessionStorage flow
+      setDemo(token.startsWith("demo."));
+      try {
+        const parsed = JSON.parse(raw) as IntakeAnswers;
+        setAnswers(parsed);
+        setResult(runScan(SCHEMES, parsed));
+      } catch {
+        router.replace("/scan");
+      }
+      return;
     }
+
+    // No sessionStorage token — check the session cookie
+    fetch("/api/auth/me")
+      .then((r) => r.json() as Promise<{ email: string | null; paid: boolean }>)
+      .then((me) => {
+        if (me.paid) {
+          // Cookie session says paid — allow access
+          setDemo(false);
+          try {
+            const parsed = JSON.parse(raw) as IntakeAnswers;
+            setAnswers(parsed);
+            setResult(runScan(SCHEMES, parsed));
+          } catch {
+            router.replace("/scan");
+          }
+        } else {
+          // Neither token nor paid cookie — redirect
+          router.replace("/results");
+        }
+      })
+      .catch(() => {
+        // If we can't check, fall back to results
+        router.replace("/results");
+      });
   }, [router]);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
+import { openSession, sealSession, buildSetCookieHeader, COOKIE_NAME } from "@/lib/auth/session";
 
 export const runtime = "nodejs";
 
@@ -43,5 +44,17 @@ export async function POST(req: NextRequest) {
     .update(`paid:${razorpay_payment_id}`)
     .digest("hex");
 
-  return NextResponse.json({ ok: true, token: `rzp.${token}` });
+  const res = NextResponse.json({ ok: true, token: `rzp.${token}` });
+
+  // If a session cookie exists, re-seal it with paid:true
+  const existingCookie = req.cookies.get(COOKIE_NAME)?.value;
+  if (existingCookie) {
+    const session = openSession(existingCookie);
+    if (session) {
+      const sealed = sealSession({ ...session, paid: true });
+      res.headers.set("Set-Cookie", buildSetCookieHeader(sealed));
+    }
+  }
+
+  return res;
 }
