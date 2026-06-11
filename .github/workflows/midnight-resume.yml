@@ -1,0 +1,170 @@
+name: Midnight resume (continue unfinished work)
+
+# Runs after your Claude limits reset at midnight IST and continues any
+# development that was left mid-way. It looks at three sources of "unfinished
+# work":
+#   1. Unchecked tasks in .claude/pending-work.md
+#   2. Open issues labelled "auto"
+#   3. Open *draft* pull requests
+# If none of them have anything pending, the run exits quietly ("if not then ok").
+#
+# Auth: it uses your Claude *subscription* via CLAUDE_CODE_OAUTH_TOKEN, which is
+# exactly the quota that resets at midnight — so it does not spend API credits.
+# Set it up once:  run `claude setup-token` locally, then add the value as a
+# repo secret named CLAUDE_CODE_OAUTH_TOKEN (Settings → Secrets → Actions).
+
+on:
+  schedule:
+    # 18:50 UTC = 00:20 IST — a short buffer after midnight so the reset has
+    # landed. GitHub cron is always UTC. Adjust if your reset time differs.
+    - cron: "50 18 * * *"
+  workflow_dispatch:
+    # Lets you trigger a run by hand from the Actions tab to test it.
+    inputs:
+      force:
+        description: "Run Claude even if no pending work is detected"
+        type: boolean
+        default: false
+
+# Don't pile up overlapping overnight runs.
+concurrency:
+  group: midnight-resume
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  resume:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gather unfinished work
+        id: gather
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: |
+          set -euo pipefail
+          CTX=".claude/automation/work-context.md"
+          mkdir -p .claude/automation
+          : > "$CTX"
+
+          had_work=0
+
+          # ---- 1. Queue file: unchecked "- [ ]" tasks --------------------
+          QUEUE=".claude/pending-work.md"
+          if [ -f "$QUEUE" ] && grep -qE '^[[:space:]]*-[[:space:]]\[ \]' "$QUEUE"; then
+            had_work=1
+            {
+              echo "## Source 1 — queue file ($QUEUE)"
+              echo
+              echo "Unchecked tasks (work these top-to-bottom):"
+              echo '```'
+              grep -nE '^[[:space:]]*-[[:space:]]\[ \]' "$QUEUE" || true
+              echo '```'
+              echo
+            } >> "$CTX"
+          fi
+
+          # ---- 2. Open issues labelled "auto" ----------------------------
+          ISSUES="$(gh issue list --state open --label auto \
+                      --json number,title,url --jq 'length' 2>/dev/null || echo 0)"
+          if [ "${ISSUES:-0}" -gt 0 ]; then
+            had_work=1
+            {
+              echo "## Source 2 — open issues labelled \"auto\""
+              echo
+              gh issue list --state open --label auto \
+                --json number,title,url \
+                --jq '.[] | "- #\(.number) \(.title) — \(.url)"'
+              echo
+            } >> "$CTX"
+          fi
+
+          # ---- 3. Open draft PRs -----------------------------------------
+          DRAFTS="$(gh pr list --state open \
+                      --json number,title,url,isDraft,headRefName \
+                      --jq '[.[] | select(.isDraft)] | length' 2>/dev/null || echo 0)"
+          if [ "${DRAFTS:-0}" -gt 0 ]; then
+            had_work=1
+            {
+              echo "## Source 3 — open draft pull requests"
+              echo
+              gh pr list --state open \
+                --json number,title,url,isDraft,headRefName \
+                --jq '.[] | select(.isDraft) | "- PR #\(.number) \(.title) (branch: \(.headRefName)) — \(.url)"'
+              echo
+            } >> "$CTX"
+          fi
+
+          if [ "$FORCE" = "true" ]; then
+            had_work=1
+          fi
+
+          if [ "$had_work" = "1" ]; then
+            echo "has_work=true" >> "$GITHUB_OUTPUT"
+            echo "Pending work detected. Context:"
+            cat "$CTX"
+          else
+            echo "has_work=false" >> "$GITHUB_OUTPUT"
+            echo "No unfinished work in any source — nothing to do. Exiting cleanly."
+          fi
+
+      - name: Set up Node
+        if: steps.gather.outputs.has_work == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        if: steps.gather.outputs.has_work == 'true'
+        run: npm ci || npm install
+
+      - name: Run Claude to continue the work
+        if: steps.gather.outputs.has_work == 'true'
+        uses: anthropic/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          claude_args: |
+            --max-turns 40
+            --allowedTools "Read,Edit,Write,Glob,Grep,Bash"
+          prompt: |
+            You are running unattended, overnight, in CI. Your job is to pick up
+            development that was left unfinished and push it forward safely.
+
+            The list of unfinished work for tonight is in
+            `.claude/automation/work-context.md` — read it first.
+
+            Then, working through the items it lists:
+
+            1. Queue tasks (`.claude/pending-work.md`): do each unchecked `- [ ]`
+               task. When a task is finished, change its `- [ ]` to `- [x]` and
+               append a one-line note under it describing what you did.
+            2. Issues labelled "auto": implement what the issue asks. Reference
+               the issue number in your commit so it links up.
+            3. Draft PRs: check out that PR's branch, finish what's incomplete,
+               and push to the SAME branch so the existing PR updates.
+
+            Rules:
+            - Work on a branch, never commit straight to main. For queue/issue
+              work, create or reuse a branch named `auto/midnight-resume`.
+            - After changing code, run `npm run build` and (if present) `npm run
+              lint`. Do not push changes that break the build — if you cannot
+              get it green, leave the task unchecked and write a note in
+              `.claude/pending-work.md` explaining what blocked you.
+            - Commit with clear messages. Push your branch.
+            - Open a DRAFT pull request for new work if one does not already
+              exist for that branch; otherwise just push to update it.
+            - Keep changes focused on the requested tasks. Do not do large
+              unrelated refactors. If a task is ambiguous or risky, skip it and
+              leave a note rather than guessing.
+            - Do NOT commit `.claude/automation/work-context.md` (it is generated
+              and git-ignored).
