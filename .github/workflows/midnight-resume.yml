@@ -123,48 +123,57 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
+      - name: Install project dependencies
         if: steps.gather.outputs.has_work == 'true'
         run: npm ci || npm install
 
+      - name: Install Claude Code CLI
+        if: steps.gather.outputs.has_work == 'true'
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Configure git identity for Claude commits
+        if: steps.gather.outputs.has_work == 'true'
+        run: |
+          git config user.name "midnight-resume[bot]"
+          git config user.email "midnight-resume[bot]@users.noreply.github.com"
+
       - name: Run Claude to continue the work
         if: steps.gather.outputs.has_work == 'true'
-        uses: anthropic/claude-code-action@v1
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          github_token: ${{ github.token }}
-          claude_args: |
-            --max-turns 40
-            --allowedTools "Read,Edit,Write,Glob,Grep,Bash"
-          prompt: |
-            You are running unattended, overnight, in CI. Your job is to pick up
-            development that was left unfinished and push it forward safely.
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          claude --dangerously-skip-permissions \
+            --max-turns 40 \
+            -p "You are running unattended, overnight, in CI. Your job is to pick up
+          development that was left unfinished and push it forward safely.
 
-            The list of unfinished work for tonight is in
-            `.claude/automation/work-context.md` — read it first.
+          The list of unfinished work for tonight is in
+          \`.claude/automation/work-context.md\` — read it first.
 
-            Then, working through the items it lists:
+          Then, working through the items it lists:
 
-            1. Queue tasks (`.claude/pending-work.md`): do each unchecked `- [ ]`
-               task. When a task is finished, change its `- [ ]` to `- [x]` and
-               append a one-line note under it describing what you did.
-            2. Issues labelled "auto": implement what the issue asks. Reference
-               the issue number in your commit so it links up.
-            3. Draft PRs: check out that PR's branch, finish what's incomplete,
-               and push to the SAME branch so the existing PR updates.
+          1. Queue tasks (\`.claude/pending-work.md\`): do each unchecked \`- [ ]\`
+             task. When a task is finished, change its \`- [ ]\` to \`- [x]\` and
+             append a one-line note under it describing what you did.
+          2. Issues labelled 'auto': implement what the issue asks. Reference
+             the issue number in your commit so it links up.
+          3. Draft PRs: check out that PR's branch, finish what's incomplete,
+             and push to the SAME branch so the existing PR updates.
 
-            Rules:
-            - Work on a branch, never commit straight to main. For queue/issue
-              work, create or reuse a branch named `auto/midnight-resume`.
-            - After changing code, run `npm run build` and (if present) `npm run
-              lint`. Do not push changes that break the build — if you cannot
-              get it green, leave the task unchecked and write a note in
-              `.claude/pending-work.md` explaining what blocked you.
-            - Commit with clear messages. Push your branch.
-            - Open a DRAFT pull request for new work if one does not already
-              exist for that branch; otherwise just push to update it.
-            - Keep changes focused on the requested tasks. Do not do large
-              unrelated refactors. If a task is ambiguous or risky, skip it and
-              leave a note rather than guessing.
-            - Do NOT commit `.claude/automation/work-context.md` (it is generated
-              and git-ignored).
+          Rules:
+          - Work on a branch, never commit straight to main. For queue/issue
+            work, create or reuse a branch named \`auto/midnight-resume\`.
+          - After changing code, run \`npm run build\` and (if present) \`npm run
+            lint\`. Do not push changes that break the build — if you cannot
+            get it green, leave the task unchecked and write a note in
+            \`.claude/pending-work.md\` explaining what blocked you.
+          - Commit with clear messages. Push your branch.
+          - Open a DRAFT pull request for new work if one does not already
+            exist for that branch; otherwise just push to update it.
+          - Keep changes focused on the requested tasks. Do not do large
+            unrelated refactors. If a task is ambiguous or risky, skip it and
+            leave a note rather than guessing.
+          - Do NOT commit \`.claude/automation/work-context.md\` (it is generated
+            and git-ignored)."
