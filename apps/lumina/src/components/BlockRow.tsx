@@ -34,6 +34,11 @@ export interface BlockRowProps {
   /** 1-based position within a run of numbered blocks */
   number: number;
   focused: boolean;
+  /** slash command menu is open and anchored to this block */
+  slashActive: boolean;
+  onSlashMove: (dir: -1 | 1) => void;
+  onSlashApply: () => void;
+  onSlashClose: () => void;
   registerRef: (el: HTMLTextAreaElement | null) => void;
   onFocus: () => void;
   onBlur: () => void;
@@ -67,6 +72,28 @@ export default function BlockRow(props: BlockRowProps) {
     const el = e.currentTarget;
     const caret = el.selectionStart;
     const collapsed = el.selectionStart === el.selectionEnd;
+
+    if (props.slashActive) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        props.onSlashMove(1);
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        props.onSlashMove(-1);
+        return;
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        props.onSlashApply();
+        return;
+      }
+      if (e.key === "Escape") {
+        props.onSlashClose();
+        return;
+      }
+    }
 
     if (e.key === "Enter" && !e.shiftKey) {
       if (block.type === "code") return; // newline inside the code block
