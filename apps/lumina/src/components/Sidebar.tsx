@@ -92,7 +92,7 @@ function PageNode({
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ onSearch }: { onSearch: () => void }) {
   const ws = useWorkspace();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const roots = childrenOf(ws, null);
@@ -114,6 +114,17 @@ export default function Sidebar() {
         >
           Lumina
         </Link>
+      </div>
+
+      <div className="px-2 pb-1">
+        <button
+          type="button"
+          onClick={onSearch}
+          className="flex w-full items-center justify-between rounded-md border border-[var(--line)] bg-[var(--bg-raised)]/60 px-3 py-1.5 text-sm text-[var(--fg-faint)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-muted)]"
+        >
+          <span>Search…</span>
+          <kbd className="text-[10px] tracking-wider">⌘K</kbd>
+        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 pb-2">
