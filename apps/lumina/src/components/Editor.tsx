@@ -20,6 +20,9 @@ const MD_TRIGGERS: Array<[RegExp, BlockType]> = [
   [/^[-*]\s$/, "bulleted"],
   [/^1[.)]\s$/, "numbered"],
   [/^\[\s?\]\s$/, "todo"],
+  [/^>>\s$/, "toggle"],
+  [/^>\s$/, "quote"],
+  [/^::\s$/, "callout"],
 ];
 
 export default function Editor({ page }: { page: Page }) {
@@ -49,16 +52,44 @@ export default function Editor({ page }: { page: Page }) {
     commit(blocks.map((b) => (b.id === id ? { ...b, ...patch } : b)));
   };
 
+  const convertTo = (index: number, type: BlockType, extra: Partial<Block> = {}) => {
+    const block = blocks[index];
+    if (type === "divider") {
+      // a divider is not editable — drop a fresh paragraph in after it
+      const fresh = makeBlock();
+      const next = [...blocks];
+      next[index] = { ...block, type, text: "" };
+      next.splice(index + 1, 0, fresh);
+      commit(next, { id: fresh.id, pos: 0 });
+      return;
+    }
+    commit(
+      blocks.map((b, i) =>
+        i === index ? { ...b, type, text: "", ...extra } : b,
+      ),
+      { id: block.id, pos: 0 },
+    );
+  };
+
   const handleText = (index: number, value: string, caret: number) => {
     const block = blocks[index];
     // markdown shortcut: only when the caret sits right after the trigger
     if (block.type === "paragraph" && caret === value.length) {
+      if (value === "```") {
+        convertTo(index, "code", { language: "javascript" });
+        return;
+      }
+      if (value === "---") {
+        convertTo(index, "divider");
+        return;
+      }
+      if (value === "![]") {
+        convertTo(index, "image", { url: "" });
+        return;
+      }
       for (const [re, type] of MD_TRIGGERS) {
         if (re.test(value)) {
-          commit(
-            blocks.map((b, i) => (i === index ? { ...b, type, text: "" } : b)),
-            { id: block.id, pos: 0 },
-          );
+          convertTo(index, type, type === "toggle" ? { collapsed: false } : {});
           return;
         }
       }
@@ -101,6 +132,18 @@ export default function Editor({ page }: { page: Page }) {
     }
     if (index === 0) return;
     const prev = blocks[index - 1];
+    // backspacing into a divider removes the divider instead of merging
+    if (prev.type === "divider") {
+      const next = [...blocks];
+      next.splice(index - 1, 1);
+      commit(next, { id: block.id, pos: 0 });
+      return;
+    }
+    if (prev.type === "image" || prev.type === "code") {
+      // don't merge text into media/code — just move the caret there
+      focusNeighbor(index, -1, "end");
+      return;
+    }
     const junction = prev.text.length;
     const next = [...blocks];
     next[index - 1] = { ...prev, text: prev.text + block.text };
@@ -108,15 +151,31 @@ export default function Editor({ page }: { page: Page }) {
     commit(next, { id: prev.id, pos: junction });
   };
 
+  const removeBlock = (index: number) => {
+    const next = blocks.filter((_, i) => i !== index);
+    if (next.length === 0) {
+      const fresh = makeBlock();
+      commit([fresh], { id: fresh.id, pos: 0 });
+      return;
+    }
+    const neighbor = next[Math.max(0, index - 1)];
+    commit(next, { id: neighbor.id, pos: 0 });
+  };
+
+  // walk past blocks that have no focusable text area (e.g. dividers)
   const focusNeighbor = (index: number, dir: -1 | 1, pos: "start" | "end") => {
-    const neighbor = blocks[index + dir];
-    if (!neighbor) return false;
-    const el = refs.current.get(neighbor.id);
-    if (!el) return false;
-    el.focus();
-    const p = pos === "start" ? 0 : el.value.length;
-    el.setSelectionRange(p, p);
-    return true;
+    let j = index + dir;
+    while (j >= 0 && j < blocks.length) {
+      const el = refs.current.get(blocks[j].id);
+      if (el) {
+        el.focus();
+        const p = pos === "start" ? 0 : el.value.length;
+        el.setSelectionRange(p, p);
+        return true;
+      }
+      j += dir;
+    }
+    return false;
   };
 
   // sequence numbers for numbered lists, reset by any other block type
@@ -148,6 +207,13 @@ export default function Editor({ page }: { page: Page }) {
           onToggleChecked={() =>
             update(block.id, { checked: !block.checked })
           }
+          onToggleCollapsed={() =>
+            update(block.id, { collapsed: !block.collapsed })
+          }
+          onBody={(body) => update(block.id, { body })}
+          onLanguage={(language) => update(block.id, { language })}
+          onSetImage={(url) => update(block.id, { url, text: "" })}
+          onRemove={() => removeBlock(i)}
         />
       ))}
       <div

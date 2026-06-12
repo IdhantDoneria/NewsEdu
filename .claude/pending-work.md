@@ -27,7 +27,8 @@ Pick the final product name if "Lumina" doesn't fit; keep it striking + premium.
   - Done 2026-06-12: `Editor`/`BlockRow` components — Enter splits/continues lists, Backspace demotes/merges, Arrow keys cross block boundaries, to-do checkboxes, numbered runs auto-number; basic markdown triggers (`#`, `-`, `1.`, `[]`) included early.
 - [x] Lumina: nested pages — collapsible sidebar tree, breadcrumbs, and sub-page links inside a page.
   - Done 2026-06-12: recursive collapsible sidebar tree with per-node add/delete, breadcrumb trail in the page header, sub-page link list + “Add sub-page” inside each page; deleting a page removes its whole subtree.
-- [ ] Lumina: advanced blocks — toggle, callout, quote, code (with syntax highlight), divider, and image (by URL).
+- [x] Lumina: advanced blocks — toggle, callout, quote, code (with syntax highlight), divider, and image (by URL).
+  - Done 2026-06-12: toggle (collapsible body), gold-accent callout, serif quote, code block with language picker + live dependency-free syntax highlighting (`src/lib/highlight.ts`), divider, image-by-URL with caption; nav/merge logic skips non-text blocks.
 - [ ] Lumina: slash "/" command menu to insert blocks, plus markdown shortcuts (#, -, [], ``` ).
 - [ ] Lumina: database/table view with typed properties (text, select, date, checkbox) and add/delete rows.
 - [ ] Lumina: global search + a Cmd-K quick switcher across pages.

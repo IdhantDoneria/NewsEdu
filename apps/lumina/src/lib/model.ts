@@ -24,6 +24,8 @@ export interface Block {
   checked?: boolean;
   /** toggle blocks */
   collapsed?: boolean;
+  /** toggle blocks — the hidden body shown when expanded */
+  body?: string;
   /** code blocks */
   language?: string;
   /** image blocks */

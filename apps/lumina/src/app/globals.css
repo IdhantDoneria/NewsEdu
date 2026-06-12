@@ -71,3 +71,17 @@ html {
 .animate-rise {
   animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* code block syntax tokens */
+.tok-k { color: #8e5bb5; }
+.tok-s { color: #3a7d4f; }
+.tok-c { color: var(--fg-faint); font-style: italic; }
+.tok-n { color: #b06030; }
+.tok-f { color: #2d6a9f; }
+.tok-a { color: #b08d4f; }
+
+.dark .tok-k { color: #c79bf0; }
+.dark .tok-s { color: #8fd6a4; }
+.dark .tok-n { color: #e0a070; }
+.dark .tok-f { color: #82b8e8; }
+.dark .tok-a { color: #d4af6e; }
