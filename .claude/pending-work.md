@@ -25,7 +25,8 @@ Pick the final product name if "Lumina" doesn't fit; keep it striking + premium.
   - Done 2026-06-12: typed model (`src/lib/model.ts`), debounced localStorage store (`src/lib/store.ts`), `/app` workspace with sidebar page CRUD, editable title and emoji icon picker.
 - [x] Lumina: block-based editor — paragraph, H1–H3, bulleted/numbered/to-do lists, with keyboard navigation between blocks.
   - Done 2026-06-12: `Editor`/`BlockRow` components — Enter splits/continues lists, Backspace demotes/merges, Arrow keys cross block boundaries, to-do checkboxes, numbered runs auto-number; basic markdown triggers (`#`, `-`, `1.`, `[]`) included early.
-- [ ] Lumina: nested pages — collapsible sidebar tree, breadcrumbs, and sub-page links inside a page.
+- [x] Lumina: nested pages — collapsible sidebar tree, breadcrumbs, and sub-page links inside a page.
+  - Done 2026-06-12: recursive collapsible sidebar tree with per-node add/delete, breadcrumb trail in the page header, sub-page link list + “Add sub-page” inside each page; deleting a page removes its whole subtree.
 - [ ] Lumina: advanced blocks — toggle, callout, quote, code (with syntax highlight), divider, and image (by URL).
 - [ ] Lumina: slash "/" command menu to insert blocks, plus markdown shortcuts (#, -, [], ``` ).
 - [ ] Lumina: database/table view with typed properties (text, select, date, checkbox) and add/delete rows.

@@ -1,12 +1,109 @@
 "use client";
 
 import Link from "next/link";
-import { childrenOf, pageTitle } from "@/lib/model";
+import { useState } from "react";
+import { childrenOf, Page, pageTitle, Workspace } from "@/lib/model";
 import { createPage, deletePage, openPage, useWorkspace } from "@/lib/store";
+
+function PageNode({
+  ws,
+  page,
+  depth,
+  expanded,
+  toggle,
+}: {
+  ws: Workspace;
+  page: Page;
+  depth: number;
+  expanded: Set<string>;
+  toggle: (id: string) => void;
+}) {
+  const kids = childrenOf(ws, page.id);
+  const open = expanded.has(page.id);
+
+  return (
+    <div>
+      <div
+        style={{ paddingLeft: `${depth * 14}px` }}
+        className={`group flex items-center gap-1 rounded-md px-2 py-1.5 text-sm transition-colors ${
+          ws.currentPageId === page.id
+            ? "bg-[var(--bg-raised)] text-[var(--fg)] shadow-[var(--shadow-soft)]"
+            : "text-[var(--fg-muted)] hover:bg-[var(--bg-raised)]/60"
+        }`}
+      >
+        <button
+          type="button"
+          aria-label={open ? "Collapse" : "Expand"}
+          onClick={() => toggle(page.id)}
+          className={`flex h-4 w-4 shrink-0 items-center justify-center rounded text-[9px] text-[var(--fg-faint)] transition-transform duration-200 hover:text-[var(--fg)] ${
+            open ? "rotate-90" : ""
+          } ${kids.length === 0 ? "opacity-0 group-hover:opacity-60" : ""}`}
+        >
+          ▶
+        </button>
+        <button
+          type="button"
+          onClick={() => openPage(page.id)}
+          className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
+        >
+          <span className="w-5 shrink-0 text-center">{page.icon}</span>
+          <span className="truncate">{pageTitle(page)}</span>
+        </button>
+        <button
+          type="button"
+          aria-label={`Add sub-page to ${pageTitle(page)}`}
+          onClick={() => {
+            if (!open) toggle(page.id);
+            createPage(page.id);
+          }}
+          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded text-[var(--fg-faint)] transition-colors group-hover:flex hover:text-[var(--accent)]"
+        >
+          ＋
+        </button>
+        <button
+          type="button"
+          aria-label={`Delete ${pageTitle(page)}`}
+          onClick={() => deletePage(page.id)}
+          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded text-[var(--fg-faint)] transition-colors group-hover:flex hover:text-red-400"
+        >
+          ×
+        </button>
+      </div>
+      {open &&
+        kids.map((k) => (
+          <PageNode
+            key={k.id}
+            ws={ws}
+            page={k}
+            depth={depth + 1}
+            expanded={expanded}
+            toggle={toggle}
+          />
+        ))}
+      {open && kids.length === 0 && (
+        <p
+          style={{ paddingLeft: `${(depth + 1) * 14 + 28}px` }}
+          className="py-1 text-xs text-[var(--fg-faint)]"
+        >
+          No pages inside
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default function Sidebar() {
   const ws = useWorkspace();
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const roots = childrenOf(ws, null);
+
+  const toggle = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-[var(--line)] bg-[var(--bg-sunken)]">
@@ -27,31 +124,14 @@ export default function Sidebar() {
           <p className="px-2 py-1 text-xs text-[var(--fg-faint)]">No pages yet.</p>
         )}
         {roots.map((p) => (
-          <div
+          <PageNode
             key={p.id}
-            className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
-              ws.currentPageId === p.id
-                ? "bg-[var(--bg-raised)] text-[var(--fg)] shadow-[var(--shadow-soft)]"
-                : "text-[var(--fg-muted)] hover:bg-[var(--bg-raised)]/60"
-            }`}
-          >
-            <button
-              type="button"
-              onClick={() => openPage(p.id)}
-              className="flex min-w-0 flex-1 items-center gap-2 text-left"
-            >
-              <span className="w-5 text-center">{p.icon}</span>
-              <span className="truncate">{pageTitle(p)}</span>
-            </button>
-            <button
-              type="button"
-              aria-label={`Delete ${pageTitle(p)}`}
-              onClick={() => deletePage(p.id)}
-              className="hidden h-5 w-5 shrink-0 items-center justify-center rounded text-[var(--fg-faint)] transition-colors group-hover:flex hover:text-red-400"
-            >
-              ×
-            </button>
-          </div>
+            ws={ws}
+            page={p}
+            depth={0}
+            expanded={expanded}
+            toggle={toggle}
+          />
         ))}
       </nav>
 
