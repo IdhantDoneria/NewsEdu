@@ -21,7 +21,8 @@ Pick the final product name if "Lumina" doesn't fit; keep it striking + premium.
 
 - [x] Scaffold `apps/lumina/` as a standalone Next.js + TypeScript + Tailwind app with its own package.json, a minimalist luxury landing shell, and a README. Must build with its own `npm run build`.
   - Done 2026-06-12: Next.js 15 + TS + Tailwind v4 app in `apps/lumina/` with an ivory/gold luxury design system, animated landing page and README; `npm run build` green.
-- [ ] Lumina: data model + a localStorage persistence layer; page create/read/update/delete with titles and icons.
+- [x] Lumina: data model + a localStorage persistence layer; page create/read/update/delete with titles and icons.
+  - Done 2026-06-12: typed model (`src/lib/model.ts`), debounced localStorage store (`src/lib/store.ts`), `/app` workspace with sidebar page CRUD, editable title and emoji icon picker.
 - [ ] Lumina: block-based editor — paragraph, H1–H3, bulleted/numbered/to-do lists, with keyboard navigation between blocks.
 - [ ] Lumina: nested pages — collapsible sidebar tree, breadcrumbs, and sub-page links inside a page.
 - [ ] Lumina: advanced blocks — toggle, callout, quote, code (with syntax highlight), divider, and image (by URL).
