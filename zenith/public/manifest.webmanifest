@@ -1,0 +1,10 @@
+{
+  "name": "Zenith — The Pinnacle Workspace",
+  "short_name": "Zenith",
+  "description": "Peak thought. Zero friction. Notes, docs, databases and AI in one minimal workspace.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#191919",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
