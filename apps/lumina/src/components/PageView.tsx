@@ -2,6 +2,7 @@
 
 import { breadcrumbOf, childrenOf, Page, pageTitle } from "@/lib/model";
 import { createPage, openPage, updatePage, useWorkspace } from "@/lib/store";
+import DatabaseView from "./DatabaseView";
 import Editor from "./Editor";
 import IconPicker from "./IconPicker";
 
@@ -62,7 +63,11 @@ export default function PageView({ page }: { page: Page }) {
             ))}
           </div>
         )}
-        <Editor page={page} />
+        {page.kind === "database" ? (
+          <DatabaseView page={page} />
+        ) : (
+          <Editor page={page} />
+        )}
         <button
           type="button"
           onClick={() => createPage(page.id)}

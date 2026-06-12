@@ -31,7 +31,8 @@ Pick the final product name if "Lumina" doesn't fit; keep it striking + premium.
   - Done 2026-06-12: toggle (collapsible body), gold-accent callout, serif quote, code block with language picker + live dependency-free syntax highlighting (`src/lib/highlight.ts`), divider, image-by-URL with caption; nav/merge logic skips non-text blocks.
 - [x] Lumina: slash "/" command menu to insert blocks, plus markdown shortcuts (#, -, [], ``` ).
   - Done 2026-06-12: typing “/” opens a filterable command menu (all 13 block types, arrow/Enter/Esc + mouse); markdown shortcuts `#`–`###`, `-`/`*`, `1.`, `[]`, `>`, `>>`, `::`, ```` ``` ````, `---`, `![]`.
-- [ ] Lumina: database/table view with typed properties (text, select, date, checkbox) and add/delete rows.
+- [x] Lumina: database/table view with typed properties (text, select, date, checkbox) and add/delete rows.
+  - Done 2026-06-12: “New database” page kind with `DatabaseView` — add/rename/retype/delete columns, add/delete rows, per-type cells (text, select with remembered options via datalist, date picker, checkbox).
 - [ ] Lumina: global search + a Cmd-K quick switcher across pages.
 - [ ] Lumina: final minimalist-luxury visual polish — refined type scale, spacing, light/dark themes, subtle motion.
 - [ ] Lumina (optional, skip if no key): AI assist (summarise / continue writing) via a free Google AI Studio API, gated behind an env var; if the key/flow blocks development, stub it and move on.

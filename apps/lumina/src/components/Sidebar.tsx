@@ -143,6 +143,13 @@ export default function Sidebar() {
         >
           ＋ New page
         </button>
+        <button
+          type="button"
+          onClick={() => createPage(null, "database")}
+          className="w-full rounded-md px-2 py-2 text-left text-sm text-[var(--fg-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--fg)]"
+        >
+          ▦ New database
+        </button>
       </div>
     </aside>
   );
