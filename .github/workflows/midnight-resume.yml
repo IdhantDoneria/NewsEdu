@@ -151,6 +151,10 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          # Defensive: GitHub secrets sometimes get pasted with a stray newline
+          # or surrounding whitespace, which makes an invalid HTTP auth header.
+          # OAuth tokens never contain whitespace, so it is safe to strip it.
+          export CLAUDE_CODE_OAUTH_TOKEN="$(printf '%s' "$CLAUDE_CODE_OAUTH_TOKEN" | tr -d '[:space:]')"
           claude --dangerously-skip-permissions \
             --model claude-fable-5 \
             --max-turns 60 \
