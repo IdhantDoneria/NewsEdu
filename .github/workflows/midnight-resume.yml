@@ -133,47 +133,97 @@ jobs:
 
       - name: Configure git identity for Claude commits
         if: steps.gather.outputs.has_work == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "midnight-resume[bot]"
           git config user.email "midnight-resume[bot]@users.noreply.github.com"
+          # Make sure the report label exists so the agent can label its issue.
+          gh label create midnight-report --color 0E8A16 \
+            --description "Overnight midnight-resume run reports" 2>/dev/null || true
 
       - name: Run Claude to continue the work
+        id: claude
         if: steps.gather.outputs.has_work == 'true'
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ github.token }}
           GITHUB_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           claude --dangerously-skip-permissions \
-            --max-turns 40 \
+            --model claude-fable-5 \
+            --max-turns 60 \
             -p "You are running unattended, overnight, in CI. Your job is to pick up
-          development that was left unfinished and push it forward safely.
+          development that was left unfinished and push it forward safely, then
+          report what happened as a GitHub issue.
 
           The list of unfinished work for tonight is in
           \`.claude/automation/work-context.md\` — read it first.
 
           Then, working through the items it lists:
 
-          1. Queue tasks (\`.claude/pending-work.md\`): do each unchecked \`- [ ]\`
-             task. When a task is finished, change its \`- [ ]\` to \`- [x]\` and
-             append a one-line note under it describing what you did.
+          1. Queue tasks (\`.claude/pending-work.md\`): do the unchecked \`- [ ]\`
+             tasks top-to-bottom, as MANY as you can finish well within your turn
+             budget. When a task is finished, change its \`- [ ]\` to \`- [x]\`
+             and append a one-line note under it describing what you did. It is
+             better to fully finish a few chunks than to half-do many — if the
+             next chunk is too big to finish cleanly, STOP there and leave it
+             unchecked rather than pushing broken work.
           2. Issues labelled 'auto': implement what the issue asks. Reference
              the issue number in your commit so it links up.
           3. Draft PRs: check out that PR's branch, finish what's incomplete,
              and push to the SAME branch so the existing PR updates.
 
+          Environment constraints (work within these; do NOT fail the run over them):
+          - You CANNOT create a new GitHub repo or deploy to Vercel from here
+            (the token is scoped to this repo only and there is no Vercel login).
+            Build each new app in-repo under \`apps/<name>/\` as the tasks say,
+            and record repo-creation / Vercel-deploy as 'action needed' items.
+          - You CANNOT reach Google Drive or external images. Where a task needs
+            them, build the structure/templates with placeholder content and flag
+            it as 'action needed'.
+
           Rules:
           - Work on a branch, never commit straight to main. For queue/issue
             work, create or reuse a branch named \`auto/midnight-resume\`.
-          - After changing code, run \`npm run build\` and (if present) \`npm run
-            lint\`. Do not push changes that break the build — if you cannot
-            get it green, leave the task unchecked and write a note in
-            \`.claude/pending-work.md\` explaining what blocked you.
-          - Commit with clear messages. Push your branch.
-          - Open a DRAFT pull request for new work if one does not already
-            exist for that branch; otherwise just push to update it.
-          - Keep changes focused on the requested tasks. Do not do large
-            unrelated refactors. If a task is ambiguous or risky, skip it and
-            leave a note rather than guessing.
-          - Do NOT commit \`.claude/automation/work-context.md\` (it is generated
-            and git-ignored)."
+          - After changing code, run the relevant build (root \`npm run build\`,
+            or \`npm run build\` inside the sub-app you touched) and lint. Do not
+            push changes that break the build — if you cannot get it green, leave
+            the task unchecked and write a note in \`.claude/pending-work.md\`.
+          - Commit with clear messages and push your branch.
+          - Open a DRAFT pull request for new work if one does not already exist
+            for that branch; otherwise just push to update it.
+          - Keep changes focused on the requested tasks; no large unrelated
+            refactors. If a task is ambiguous or risky, skip it and leave a note.
+          - Do NOT commit \`.claude/automation/work-context.md\` (git-ignored).
+
+          FINALLY — always, even if you finished nothing — post ONE GitHub issue
+          as the run report, using:
+            gh issue create --label midnight-report --title \"Midnight resume report — \$(date -u +%Y-%m-%d)\" --body \"...\"
+          The body MUST contain three markdown sections:
+            ## Done this run   — bullet list of chunks completed (or 'none')
+            ## Still remaining — bullet list of the unchecked chunks left
+            ## Action needed from you — anything blocked on you (new repo, Vercel
+               deploy, Google Drive content, Google OAuth creds, missing API key),
+               each with a one-line 'what to do'. Write 'Nothing — all clear' if
+               there is none.
+          Also link the draft PR (if any) and this run: \$RUN_URL."
+
+      - name: Report failure as a GitHub issue
+        # Runs only if the Claude step itself errored out before it could post
+        # its own report — so you always get notified of a broken overnight run.
+        if: failure() && steps.claude.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue create --label midnight-report \
+            --title "Midnight resume FAILED — $(date -u +%Y-%m-%d)" \
+            --body "The overnight run crashed before it could finish or post its own report.
+
+          ## Action needed from you
+          - Check the run log and fix the cause: $RUN_URL
+          - Common causes: invalid CLAUDE_CODE_OAUTH_TOKEN secret (must be one line, no spaces), model unavailable, or a task that breaks the build.
+
+          No code was pushed for the failed step. Re-run from the Actions tab once fixed." || true
