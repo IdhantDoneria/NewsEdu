@@ -12,7 +12,10 @@ export default function PageView({ page }: { page: Page }) {
   const subPages = childrenOf(ws, page.id);
 
   return (
-    <article className="mx-auto max-w-2xl px-8 py-12">
+    <article
+      className="animate-rise mx-auto max-w-2xl px-8 py-12"
+      style={{ animationDuration: "0.35s" }}
+    >
       <nav
         aria-label="Breadcrumb"
         className="mb-10 flex flex-wrap items-center gap-1.5 text-xs text-[var(--fg-faint)]"

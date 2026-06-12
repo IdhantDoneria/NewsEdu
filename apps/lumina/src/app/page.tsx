@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const principles = [
   {
@@ -22,12 +23,15 @@ export default function Landing() {
         <span className="font-[family-name:var(--font-display)] text-xl tracking-[0.18em] uppercase">
           Lumina
         </span>
-        <Link
-          href="/app"
-          className="rounded-full border border-[var(--line)] px-5 py-2 text-sm text-[var(--fg-muted)] transition-colors duration-300 hover:border-[var(--accent)] hover:text-[var(--fg)]"
-        >
-          Open workspace
-        </Link>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <Link
+            href="/app"
+            className="rounded-full border border-[var(--line)] px-5 py-2 text-sm text-[var(--fg-muted)] transition-colors duration-300 hover:border-[var(--accent)] hover:text-[var(--fg)]"
+          >
+            Open workspace
+          </Link>
+        </div>
       </header>
 
       <section className="flex flex-1 flex-col justify-center py-24">

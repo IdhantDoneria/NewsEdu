@@ -35,7 +35,8 @@ Pick the final product name if "Lumina" doesn't fit; keep it striking + premium.
   - Done 2026-06-12: “New database” page kind with `DatabaseView` — add/rename/retype/delete columns, add/delete rows, per-type cells (text, select with remembered options via datalist, date picker, checkbox).
 - [x] Lumina: global search + a Cmd-K quick switcher across pages.
   - Done 2026-06-12: Cmd/Ctrl-K command palette searching titles, block text, toggle bodies and database cells with snippets; keyboard + mouse navigation; sidebar “Search… ⌘K” button.
-- [ ] Lumina: final minimalist-luxury visual polish — refined type scale, spacing, light/dark themes, subtle motion.
+- [x] Lumina: final minimalist-luxury visual polish — refined type scale, spacing, light/dark themes, subtle motion.
+  - Done 2026-06-12: light/dark themes via CSS variables with pre-paint bootstrap (no flash), ☾/☼ toggle on landing + sidebar, page-transition rise animation, smooth color transitions; serif display scale and gold-accent system were built in from chunk 1.
 - [ ] Lumina (optional, skip if no key): AI assist (summarise / continue writing) via a free Google AI Studio API, gated behind an env var; if the key/flow blocks development, stub it and move on.
 - [ ] Lumina (needs you): cloud sync that stores user data via the user's Gmail/Google account. Design it and stub the interface; real Google OAuth needs your credentials, so leave a note describing exactly what you need to provide. Fall back to localStorage if unavailable.
 

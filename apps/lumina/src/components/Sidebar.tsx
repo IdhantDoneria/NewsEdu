@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { childrenOf, Page, pageTitle, Workspace } from "@/lib/model";
 import { createPage, deletePage, openPage, useWorkspace } from "@/lib/store";
+import ThemeToggle from "./ThemeToggle";
 
 function PageNode({
   ws,
@@ -114,6 +115,7 @@ export default function Sidebar({ onSearch }: { onSearch: () => void }) {
         >
           Lumina
         </Link>
+        <ThemeToggle />
       </div>
 
       <div className="px-2 pb-1">
