@@ -1,5 +1,5 @@
 import { ArchiveRestore, Trash2, X } from 'lucide-react';
-import { destroyPage, getTrashed, openPage, restorePage, setTrashOpen, updatePage, useStore } from '../../lib/store';
+import { destroyPage, getTrashed, openPage, restorePage, setTrashOpen, useStore } from '../../lib/store';
 import { timeAgo } from '../editor/editorUtils';
 import { Modal } from '../ui/Modal';
 import { toast } from '../ui/Toast';
@@ -55,5 +55,3 @@ export function TrashPanel() {
     </Modal>
   );
 }
-
-void updatePage;

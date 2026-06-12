@@ -4,7 +4,7 @@ import { editorBus } from '../../lib/bus';
 import { placeCaretAtEnd } from '../../lib/caret';
 import {
   captureUndo, createBlock, getBlock, getChildren, getPage, moveBlock,
-  setCommentsFor, updateBlock, deleteBlock, updatePage, useStore,
+  setCommentsFor, deleteBlock, updatePage, useStore,
 } from '../../lib/store';
 import { COVER_GRADIENTS } from '../../lib/types';
 import { randomPageIcon } from '../../lib/emoji';
@@ -25,7 +25,6 @@ export function PageView({ pageId, inPeek = false }: { pageId: string; inPeek?: 
   const [coverPicker, setCoverPicker] = useState<{ x: number; y: number } | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
   const refs = useRef(new Map<string, HTMLDivElement>());
-  const titleRef = useRef<HTMLDivElement>(null);
 
   const readOnly = !!page?.props.locked;
 

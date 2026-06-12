@@ -227,3 +227,17 @@
 
 /* drag ghost */
 .drag-ghost { position: fixed; top: -1000px; left: -1000px; background: var(--bg-card); border-radius: 6px; box-shadow: var(--shadow-menu); padding: 4px 10px; font-size: 13px; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 880px) {
+  .page-body { padding: 0 40px; }
+  .page-body.full-width { padding: 0 40px; }
+}
+@media (max-width: 640px) {
+  .page-body, .page-body.full-width { padding: 0 22px; }
+  .block-controls { left: -34px; }
+  .block-controls .ctl:first-child { display: none; }
+  .page-title { font-size: 31px; }
+  .b-columns > .block-content { flex-direction: column; gap: 4px; }
+  .peek { width: 100vw; }
+}

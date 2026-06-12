@@ -9,7 +9,6 @@ import {
 } from '../../lib/store';
 import { EmojiPicker } from '../ui/EmojiPicker';
 import type { Block as BlockDoc } from '../../lib/types';
-import { openAI } from '../../lib/bus';
 import { TEXTISH } from './blockMeta';
 import { BlockList } from './BlockList';
 import { BlockMenu } from './BlockMenu';

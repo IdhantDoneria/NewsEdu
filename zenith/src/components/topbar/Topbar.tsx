@@ -1,12 +1,13 @@
 import {
-  ChevronsRight, Clock, Copy, Download, History, Lock, LockOpen, Menu as MenuIcon,
+  ChevronsRight, Clock, Copy, CornerUpRight, Download, History, Lock, LockOpen, Menu as MenuIcon,
   MessageSquareText, MoreHorizontal, Star, Trash2, Type,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
-  captureUndo, deletePage, duplicatePage, getAncestry, getChildren, openPage,
+  captureUndo, deletePage, duplicatePage, getAncestry, getChildren, movePage, openPage,
   setCommentsFor, setHistoryFor, toggleFavorite, toggleSidebar, updatePage, useStore,
 } from '../../lib/store';
+import { PagePickerMenu } from '../editor/PagePicker';
 import { downloadFile, exportPageHTML, exportPageMarkdown, safeFileName } from '../../lib/export';
 import { timeAgo } from '../editor/editorUtils';
 import { Popover } from '../ui/Popover';
@@ -96,7 +97,21 @@ export function Topbar() {
 
 export function PageMenu({ pageId, anchor, onClose }: { pageId: string; anchor: { x: number; y: number }; onClose: () => void }) {
   const page = useStore((s) => s.pages[pageId]);
+  const [moveOpen, setMoveOpen] = useState(false);
   if (!page) return null;
+  if (moveOpen) {
+    return (
+      <PagePickerMenu
+        anchor={anchor}
+        onClose={onClose}
+        onPick={(target) => {
+          movePage(pageId, target);
+          toast('Page moved');
+          onClose();
+        }}
+      />
+    );
+  }
   const set = (patch: Parameters<typeof updatePage>[1]) => updatePage(pageId, patch);
 
   const wordCount = (() => {
@@ -143,6 +158,11 @@ export function PageMenu({ pageId, anchor, onClose }: { pageId: string; anchor: 
         <button className="menu-item" onClick={() => { const nid = duplicatePage(pageId); onClose(); openPage(nid); }}>
           <span className="mi-icon"><Copy size={15} /></span>
           <span className="mi-label">Duplicate</span>
+        </button>
+        <button className="menu-item" onClick={() => setMoveOpen(true)}>
+          <span className="mi-icon"><CornerUpRight size={15} /></span>
+          <span className="mi-label">Move to…</span>
+          <span className="mi-hint">›</span>
         </button>
         <button className="menu-item" onClick={() => { setHistoryFor(pageId); onClose(); }}>
           <span className="mi-icon"><History size={15} /></span>

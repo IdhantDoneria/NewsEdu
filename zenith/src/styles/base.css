@@ -228,3 +228,14 @@ input, textarea, select { font-family: inherit; color: inherit; }
 .bgdot-green { background: var(--green); } .bgdot-blue { background: var(--blue); }
 .bgdot-purple { background: var(--purple); } .bgdot-pink { background: var(--pink); }
 .bgdot-red { background: var(--red); } .bgdot-gold { background: var(--gold); }
+
+/* ─── Responsive shell ───────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 600;
+    box-shadow: var(--shadow-modal);
+  }
+  .sidebar.closed { box-shadow: none; }
+  .modal { width: calc(100vw - 24px); max-height: 86vh; }
+  .topbar .edited-hint { display: none; }
+}
