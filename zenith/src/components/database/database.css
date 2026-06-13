@@ -202,3 +202,17 @@
 .db-table.wrap .cell-text { white-space: normal; overflow: visible; }
 .db-table.wrap .cell-btn { align-items: flex-start; }
 .db-table.wrap td { vertical-align: top; }
+
+/* column resize + fixed layout */
+.db-table.fixed { table-layout: fixed; }
+.db-table thead th { position: sticky; }
+.db-th-resize { position: absolute; top: 0; right: -3px; width: 7px; height: 100%; cursor: col-resize; z-index: 4; }
+.db-th-resize:hover { background: var(--gold-soft); }
+.db-table.fixed td .cell-text { overflow: hidden; text-overflow: ellipsis; }
+
+/* table grouping */
+.db-group-row td { background: var(--bg-secondary); padding: 0; border-right: none; }
+.db-group-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; font-size: 13px; }
+.db-group-head:hover { background: var(--bg-hover); }
+.db-group-head .gchev { transition: transform 0.15s var(--ease); color: var(--text-tertiary); flex-shrink: 0; }
+.db-group-head .count { color: var(--text-tertiary); font-size: 12.5px; }

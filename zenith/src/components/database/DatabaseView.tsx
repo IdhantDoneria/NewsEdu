@@ -18,11 +18,11 @@ import { type Anchor, anchorFromEl, Popover } from '../ui/Popover';
 import { toast } from '../ui/Toast';
 import { PropCell, TitleCellInput, ValueDisplay } from './cells';
 import { NewPropertyPopover, PropertyMenuPopover } from './PropertyMenu';
-import { OP_LABELS, opNeedsValue, opsForType, PropIcon, VIEW_TYPES, viewTypeMeta } from './propertyMeta';
+import { OP_LABELS, opNeedsValue, opsForType, PropIcon, VIEW_TYPES, viewTypeMeta, colWidth } from './propertyMeta';
 import {
   addView, applyView, buildCSV, CALC_OPTIONS, computeAggregation, deleteView, duplicateView,
-  findProp, groupForBoard, optionById, parseDateValue, patchView, patchViewLayout, sameDay,
-  storedValue, toISODate, visibleProps,
+  findProp, groupableProps, groupForBoard, groupRowsByProp, optionById, parseDateValue, patchView,
+  patchViewLayout, sameDay, storedValue, toISODate, visibleProps,
 } from './queries';
 import './database.css';
 
@@ -179,7 +179,7 @@ function Toolbar({ db, schema, view, quick, setQuick, showSearch, setShowSearch,
 
   return (
     <div className="db-toolbar">
-      {view.type === 'board' && <GroupChooser db={db} schema={schema} view={view} />}
+      {(view.type === 'board' || view.type === 'table') && <GroupChooser db={db} schema={schema} view={view} allowNone={view.type === 'table'} />}
       {(view.type === 'calendar' || view.type === 'timeline') && <DatePropChooser db={db} schema={schema} view={view} />}
       <span className="spacer" />
       {showSearch ? (
@@ -228,19 +228,25 @@ function Toolbar({ db, schema, view, quick, setQuick, showSearch, setShowSearch,
   );
 }
 
-function GroupChooser({ db, schema, view }: { db: PageDoc; schema: DbSchema; view: ViewDef }) {
+function GroupChooser({ db, schema, view, allowNone = false }: { db: PageDoc; schema: DbSchema; view: ViewDef; allowNone?: boolean }) {
   const [anchor, setAnchor] = useState<Anchor | null>(null);
-  const groupable = schema.properties.filter((p) => p.type === 'select' || p.type === 'status');
+  const groupable = groupableProps(schema);
   const current = view.groupByPropId ? findProp(schema, view.groupByPropId) : undefined;
   return (
     <>
-      <button className="db-tool" onClick={(e) => setAnchor(anchorFromEl(e.currentTarget))}>
+      <button className={`db-tool ${current ? 'active' : ''}`} onClick={(e) => setAnchor(anchorFromEl(e.currentTarget))}>
         Group: <b style={{ marginLeft: 3 }}>{current?.name ?? 'None'}</b>
       </button>
       {anchor && (
         <Popover anchor={anchor} onClose={() => setAnchor(null)} width={200}>
           <div className="menu">
             <div className="menu-title">Group by</div>
+            {allowNone && (
+              <button className="menu-item" onClick={() => { patchView(db.id, view.id, { groupByPropId: undefined }, 'group'); setAnchor(null); }}>
+                <span className="mi-label">None</span>
+                {!view.groupByPropId && <span className="mi-hint">✓</span>}
+              </button>
+            )}
             {groupable.map((p) => (
               <button key={p.id} className="menu-item" onClick={() => { patchView(db.id, view.id, { groupByPropId: p.id }, 'group'); setAnchor(null); }}>
                 <span className="mi-icon"><PropIcon type={p.type} /></span>
@@ -248,7 +254,7 @@ function GroupChooser({ db, schema, view }: { db: PageDoc; schema: DbSchema; vie
                 {view.groupByPropId === p.id && <span className="mi-hint">✓</span>}
               </button>
             ))}
-            {!groupable.length && <div style={{ padding: 10, fontSize: 13, color: 'var(--text-tertiary)' }}>Add a Select or Status property to group.</div>}
+            {!groupable.length && <div style={{ padding: 10, fontSize: 13, color: 'var(--text-tertiary)' }}>Add a Select, Status or Checkbox property to group.</div>}
           </div>
         </Popover>
       )}
@@ -462,8 +468,32 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
   const [calcMenu, setCalcMenu] = useState<{ propId: string; anchor: Anchor } | null>(null);
   const [dragRow, setDragRow] = useState<string | null>(null);
   const [overRow, setOverRow] = useState<string | null>(null);
+  const [resize, setResize] = useState<{ propId: string; w: number } | null>(null);
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const calc: Record<string, Aggregation> = view.layout?.calc ?? {};
+  const widths: Record<string, number> = view.layout?.colWidths ?? {};
   const sorted = (view.sorts ?? []).length > 0;
+  const groupProp = view.groupByPropId ? findProp(schema, view.groupByPropId) : undefined;
+  const groups = groupProp ? groupRowsByProp(rows, groupProp) : null;
+
+  const colW = (p: PropertyDef) => (resize?.propId === p.id ? resize.w : colWidth(p, widths));
+  const totalW = allCols.reduce((s, p) => s + colW(p), 0) + 44;
+
+  const startResize = (e: React.PointerEvent, p: PropertyDef) => {
+    e.preventDefault(); e.stopPropagation();
+    const x0 = e.clientX; const w0 = colW(p);
+    const move = (ev: PointerEvent) => setResize({ propId: p.id, w: Math.max(72, w0 + ev.clientX - x0) });
+    const up = (ev: PointerEvent) => {
+      patchViewLayout(db.id, view.id, { colWidths: { ...widths, [p.id]: Math.max(72, w0 + ev.clientX - x0) } });
+      setResize(null);
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+  };
+
+  const toggleGroup = (key: string) => setCollapsed((prev) => {
+    const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n;
+  });
 
   const dropOnRow = (targetId: string) => {
     if (dragRow && dragRow !== targetId) { captureUndo(db.id, 'reorder row', false); moveRow(dragRow, targetId); }
@@ -471,20 +501,65 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
     setOverRow(null);
   };
 
+  const renderRow = (row: PageDoc) => (
+    <tr
+      key={row.id}
+      className={`db-row ${overRow === row.id ? 'row-over' : ''}`}
+      onDragOver={(e) => { if (e.dataTransfer.types.includes('zenith/row-move')) { e.preventDefault(); setOverRow(row.id); } }}
+      onDrop={() => dropOnRow(row.id)}
+    >
+      <td>
+        <div className="db-cell-title">
+          {!sorted && !groupProp && (
+            <span
+              className="db-row-grip"
+              draggable
+              title="Drag to reorder"
+              onDragStart={(e) => { e.dataTransfer.setData('zenith/row-move', row.id); e.dataTransfer.effectAllowed = 'move'; setDragRow(row.id); }}
+              onDragEnd={() => { setDragRow(null); setOverRow(null); }}
+            >⋮⋮</span>
+          )}
+          <span>{row.icon || ''}</span>
+          <TitleCellInput row={row} autoFocus={focusRow === row.id} />
+          <button className="db-open-btn" onClick={() => openPeek(row.id)}>⤢ Open</button>
+          <button className="icon-btn small" onClick={(e) => setRowMenu({ row, anchor: anchorFromEl(e.currentTarget) })}><MoreHorizontal size={13} /></button>
+        </div>
+      </td>
+      {cols.map((p) => (
+        <td key={p.id}><PropCell dbId={db.id} row={row} prop={p} schema={schema} /></td>
+      ))}
+      <td />
+    </tr>
+  );
+
+  const newRowCell = (preset: Record<string, any>) => (
+    <tr>
+      <td colSpan={allCols.length + 1} style={{ padding: 0 }}>
+        <div className="db-newrow" onClick={() => setFocusRow(addRow(preset))}><Plus size={15} /> New</div>
+      </td>
+    </tr>
+  );
+
   return (
     <>
       <div className="db-table-wrap">
-        <table className={`db-table ${view.layout?.wrap ? 'wrap' : ''}`}>
+        <table className={`db-table fixed ${view.layout?.wrap ? 'wrap' : ''}`} style={{ width: '100%', minWidth: totalW }}>
+          <colgroup>
+            {allCols.map((p) => <col key={p.id} style={{ width: colW(p) }} />)}
+            <col style={{ width: 44 }} />
+          </colgroup>
           <thead>
             <tr>
-              <th style={{ minWidth: 240 }}>
+              <th>
                 <div className="db-th"><span className="db-th-icon"><PropIcon type="title" /></span>{titleProp.name}</div>
+                <span className="db-th-resize" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => startResize(e, titleProp)} />
               </th>
               {cols.map((p) => (
-                <th key={p.id} style={{ minWidth: 130 }}>
+                <th key={p.id}>
                   <div className="db-th" onClick={(e) => setHeader({ propId: p.id, anchor: anchorFromEl(e.currentTarget) })}>
                     <span className="db-th-icon"><PropIcon type={p.type} /></span>{p.name}
                   </div>
+                  <span className="db-th-resize" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => startResize(e, p)} />
                 </th>
               ))}
               <th className="db-th-add">
@@ -494,38 +569,25 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr
-                key={row.id}
-                className={`db-row ${overRow === row.id ? 'row-over' : ''}`}
-                onDragOver={(e) => { if (e.dataTransfer.types.includes('zenith/row-move')) { e.preventDefault(); setOverRow(row.id); } }}
-                onDrop={() => dropOnRow(row.id)}
-              >
-                <td>
-                  <div className="db-cell-title">
-                    {!sorted && (
-                      <span
-                        className="db-row-grip"
-                        draggable
-                        title="Drag to reorder"
-                        onDragStart={(e) => { e.dataTransfer.setData('zenith/row-move', row.id); e.dataTransfer.effectAllowed = 'move'; setDragRow(row.id); }}
-                        onDragEnd={() => { setDragRow(null); setOverRow(null); }}
-                      >⋮⋮</span>
-                    )}
-                    <span>{row.icon || ''}</span>
-                    <TitleCellInput row={row} autoFocus={focusRow === row.id} />
-                    <button className="db-open-btn" onClick={() => openPeek(row.id)}>⤢ Open</button>
-                    <button className="icon-btn small" onClick={(e) => setRowMenu({ row, anchor: anchorFromEl(e.currentTarget) })}><MoreHorizontal size={13} /></button>
-                  </div>
-                </td>
-                {cols.map((p) => (
-                  <td key={p.id}><PropCell dbId={db.id} row={row} prop={p} schema={schema} /></td>
-                ))}
-                <td />
-              </tr>
-            ))}
-          </tbody>
+          {groups ? (
+            groups.map((g) => (
+              <tbody key={g.key}>
+                <tr className="db-group-row">
+                  <td colSpan={allCols.length + 1}>
+                    <div className="db-group-head" onClick={() => toggleGroup(g.key)}>
+                      <ChevronRight size={14} className="gchev" style={{ transform: collapsed.has(g.key) ? 'none' : 'rotate(90deg)' }} />
+                      {g.color ? <span className={`chip pill-${g.color}`}>{g.label}</span> : <span className="chip pill-gray">{g.label}</span>}
+                      <span className="count">{g.rows.length}</span>
+                    </div>
+                  </td>
+                </tr>
+                {!collapsed.has(g.key) && g.rows.map(renderRow)}
+                {!collapsed.has(g.key) && newRowCell(g.preset)}
+              </tbody>
+            ))
+          ) : (
+            <tbody>{rows.map(renderRow)}</tbody>
+          )}
           <tfoot>
             <tr className="db-calc-row">
               {allCols.map((p) => {
@@ -544,9 +606,11 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
             </tr>
           </tfoot>
         </table>
-        <div className="db-newrow" onClick={() => setFocusRow(addRow())}>
-          <Plus size={15} /> New row
-        </div>
+        {!groups && (
+          <div className="db-newrow" onClick={() => setFocusRow(addRow())}>
+            <Plus size={15} /> New row
+          </div>
+        )}
       </div>
       <div className="db-footcount">{rows.length} {rows.length === 1 ? 'row' : 'rows'}</div>
 

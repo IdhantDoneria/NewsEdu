@@ -471,6 +471,31 @@ export function groupForBoard(rows: PageDoc[], prop: PropertyDef): BoardGroup[] 
   return [none, ...groups];
 }
 
+export interface RowGroup { key: string; label: string; color?: string; preset: Record<string, any>; rows: PageDoc[] }
+
+/** general row grouping for the table view (select / status / checkbox) */
+export function groupRowsByProp(rows: PageDoc[], prop: PropertyDef): RowGroup[] {
+  if (prop.type === 'checkbox') {
+    const yes: RowGroup = { key: 'y', label: `${prop.name}`, color: 'green', preset: { [prop.id]: true }, rows: [] };
+    const no: RowGroup = { key: 'n', label: `Not ${prop.name}`, color: 'gray', preset: { [prop.id]: false }, rows: [] };
+    for (const r of rows) (r.rowProps?.[prop.id] ? yes : no).rows.push(r);
+    return [yes, no];
+  }
+  const groups: RowGroup[] = (prop.options ?? []).map((o) => ({ key: o.id, label: o.name, color: o.color, preset: { [prop.id]: o.id }, rows: [] }));
+  const none: RowGroup = { key: '__none', label: `No ${prop.name}`, preset: {}, rows: [] };
+  for (const r of rows) {
+    const v = r.rowProps?.[prop.id];
+    const g = groups.find((x) => x.key === v);
+    (g ?? none).rows.push(r);
+  }
+  return [...groups, none].filter((g) => g.rows.length > 0 || g.key !== '__none');
+}
+
+/** properties a view can be grouped by */
+export function groupableProps(schema: DbSchema): PropertyDef[] {
+  return schema.properties.filter((p) => p.type === 'select' || p.type === 'status' || p.type === 'checkbox');
+}
+
 /** props shown on cards / list rows / table (schema order minus hidden minus title) */
 export function visibleProps(schema: DbSchema, view: ViewDef, includeTitle = false): PropertyDef[] {
   return schema.properties.filter((p) =>
