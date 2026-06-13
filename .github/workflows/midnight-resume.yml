@@ -137,7 +137,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "midnight-resume[bot]"
-          git config user.email "midnight-resume[bot]@users.noreply.github.com"
+          # Use the repo owner's email so commits link to their GitHub account
+          # (lets Vercel build PR previews, which it refuses for an unknown email).
+          git config user.email "doneriaidhant@gmail.com"
           # Make sure the report label exists so the agent can label its issue.
           gh label create midnight-report --color 0E8A16 \
             --description "Overnight midnight-resume run reports" 2>/dev/null || true
