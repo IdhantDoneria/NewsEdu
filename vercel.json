@@ -10,6 +10,8 @@
     { "path": "/api/cron/daily-digest", "schedule": "0 14 * * *" }
   ],
   "rewrites": [
+    { "source": "/api/auth/:action", "destination": "/api/auth?action=:action" },
+    { "source": "/api/billing/:action", "destination": "/api/billing?action=:action" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
