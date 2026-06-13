@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useTilt } from "@/hooks/useTilt";
 
 const CASES = [
   {
@@ -38,10 +39,67 @@ const CASES = [
   },
 ];
 
+function CaseCard({ c, i, inView }: { c: typeof CASES[0]; i: number; inView: boolean }) {
+  const { cardRef, onMouseMove, onMouseLeave } = useTilt(5);
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: i * 0.12 }}
+    >
+      <div
+        ref={cardRef}
+        onMouseMove={onMouseMove}
+        onMouseLeave={(e) => { onMouseLeave(); setHovered(false); }}
+        onMouseEnter={() => setHovered(true)}
+        style={{ willChange: "transform", transition: "transform 0.1s ease" }}
+        className="relative overflow-hidden rounded-sm gold-border hover:border-gold/60 transition-border duration-500 group cursor-pointer"
+      >
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${c.color} transition-opacity duration-500 ${hovered ? "opacity-100" : "opacity-0"}`}
+        />
+        {/* Shimmer line on hover */}
+        <motion.div
+          initial={false}
+          animate={{ x: hovered ? "100%" : "-100%" }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/70 to-transparent"
+        />
+        <div className="relative p-8">
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-xs text-gold tracking-[0.25em] uppercase px-3 py-1 border border-gold/30 rounded-full">
+              {c.tag}
+            </span>
+            <span className="font-display text-3xl font-bold text-white/5 group-hover:text-white/10 transition-colors duration-500">
+              {c.index}
+            </span>
+          </div>
+          <p className="text-ivory-dim text-xs tracking-widest uppercase mb-3">{c.client}</p>
+          <h3 className="font-display text-2xl font-bold text-ivory mb-6 leading-tight group-hover:text-gold transition-colors duration-300">
+            {c.headline}
+          </h3>
+          <div className="h-px bg-white/5 mb-5" />
+          <p className="text-ivory-dim text-sm leading-relaxed">{c.result}</p>
+
+          <motion.div
+            animate={{ x: hovered ? 0 : -10, opacity: hovered ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-2 mt-6 text-gold text-xs tracking-widest uppercase"
+          >
+            <span>Read Case Study</span>
+            <div className="w-4 h-px bg-gold" />
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function CaseStudies() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-  const [hovered, setHovered] = useState<number | null>(null);
 
   return (
     <section id="work" ref={ref} className="py-32 px-6 bg-carbon/50 relative overflow-hidden">
@@ -65,42 +123,7 @@ export default function CaseStudies() {
 
         <div className="grid md:grid-cols-2 gap-6">
           {CASES.map((c, i) => (
-            <motion.div
-              key={c.index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.12 }}
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-              className="relative overflow-hidden rounded-sm gold-border hover:border-gold/60 transition-all duration-500 group cursor-pointer"
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${c.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-              <div className="relative p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-xs text-gold tracking-[0.25em] uppercase px-3 py-1 border border-gold/30 rounded-full">
-                    {c.tag}
-                  </span>
-                  <span className="font-display text-3xl font-bold text-white/5 group-hover:text-white/10 transition-colors duration-500">
-                    {c.index}
-                  </span>
-                </div>
-                <p className="text-ivory-dim text-xs tracking-widest uppercase mb-3">{c.client}</p>
-                <h3 className="font-display text-2xl font-bold text-ivory mb-6 leading-tight group-hover:text-gold transition-colors duration-300">
-                  {c.headline}
-                </h3>
-                <div className="h-px bg-white/5 mb-5" />
-                <p className="text-ivory-dim text-sm leading-relaxed">{c.result}</p>
-
-                <motion.div
-                  animate={{ x: hovered === i ? 0 : -10, opacity: hovered === i ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-center gap-2 mt-6 text-gold text-xs tracking-widest uppercase"
-                >
-                  <span>Read Case Study</span>
-                  <div className="w-4 h-px bg-gold" />
-                </motion.div>
-              </div>
-            </motion.div>
+            <CaseCard key={c.index} c={c} i={i} inView={inView} />
           ))}
         </div>
       </div>

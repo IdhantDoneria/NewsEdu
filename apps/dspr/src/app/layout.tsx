@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ScrollProgressBar from "@/components/ScrollProgressBar";
+import CursorGlow from "@/components/CursorGlow";
 
 export const metadata: Metadata = {
   title: "DSPR — Elite PR & Communications",
@@ -22,6 +24,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <div className="noise-overlay" aria-hidden="true" />
+        <ScrollProgressBar />
+        <CursorGlow />
         {children}
       </body>
     </html>

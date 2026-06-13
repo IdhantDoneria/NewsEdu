@@ -2,14 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import FloatingParticles from "@/components/FloatingParticles";
+import AnimatedCounter from "@/components/AnimatedCounter";
+import { useMouseParallax } from "@/hooks/useMouseParallax";
 
 const ROTATING_WORDS = ["Stories.", "Movements.", "Legacies.", "Impact.", "Culture."];
+
+const STATS = [
+  { value: "200+", label: "Campaigns" },
+  { value: "98%", label: "Client Retention" },
+  { value: "₹50Cr+", label: "Media Value" },
+];
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const mouse = useMouseParallax(30);
 
   const [wordIndex, setWordIndex] = useState(0);
   useEffect(() => {
@@ -22,21 +32,27 @@ export default function Hero() {
       ref={ref}
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
     >
-      {/* Ambient orbs */}
+      {/* Floating gold particles */}
+      <FloatingParticles />
+
+      {/* Ambient orbs — mouse parallax */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.25, 0.15] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          style={{ x: mouse.x * -1.6, y: mouse.y * -1.6 }}
           className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-gold/10 blur-[120px]"
         />
         <motion.div
           animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          style={{ x: mouse.x * 2.2, y: mouse.y * 2.2 }}
           className="absolute -bottom-40 -right-40 w-[700px] h-[700px] rounded-full bg-gold/8 blur-[140px]"
         />
         <motion.div
           animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          style={{ translateX: mouse.x * 1.2, translateY: mouse.y * 1.2 }}
           className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-crimson/5 blur-[80px]"
         />
       </div>
@@ -62,11 +78,21 @@ export default function Hero() {
           transition={{ duration: 0.7 }}
           className="flex items-center justify-center gap-3 mb-8"
         >
-          <div className="h-px w-12 bg-gold/60" />
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="h-px w-12 bg-gold/60 origin-right"
+          />
           <span className="text-gold text-xs tracking-[0.35em] uppercase font-medium">
             Strategic Communications
           </span>
-          <div className="h-px w-12 bg-gold/60" />
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="h-px w-12 bg-gold/60 origin-left"
+          />
         </motion.div>
 
         {/* Main headline */}
@@ -115,7 +141,7 @@ export default function Hero() {
         >
           <a
             href="#contact"
-            className="group relative overflow-hidden px-8 py-4 bg-gold text-obsidian text-sm tracking-widest uppercase font-bold hover:shadow-[0_0_40px_rgba(201,168,76,0.4)] transition-shadow duration-500"
+            className="group relative overflow-hidden px-8 py-4 bg-gold text-obsidian text-sm tracking-widest uppercase font-bold hover:shadow-[0_0_50px_rgba(201,168,76,0.5)] transition-all duration-500"
           >
             <span className="relative z-10">Start Your Campaign</span>
             <div className="absolute inset-0 bg-gold-light translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
@@ -129,26 +155,34 @@ export default function Hero() {
           </a>
         </motion.div>
 
-        {/* Stats strip */}
+        {/* Stats strip — with animated counters */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1, duration: 0.8 }}
           className="mt-20 grid grid-cols-3 gap-8 max-w-lg mx-auto"
         >
-          {[
-            { value: "200+", label: "Campaigns" },
-            { value: "98%", label: "Client Retention" },
-            { value: "₹50Cr+", label: "Media Value" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
+          {STATS.map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 + i * 0.1 }}
+              className="text-center group"
+            >
               <div className="font-display text-2xl font-bold gold-gradient mb-1">
-                {stat.value}
+                <AnimatedCounter value={stat.value} />
               </div>
               <div className="text-ivory-dim text-xs tracking-widest uppercase">
                 {stat.label}
               </div>
-            </div>
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 1.6 + i * 0.1, duration: 0.5 }}
+                className="mt-2 h-px bg-gold/20 origin-left"
+              />
+            </motion.div>
           ))}
         </motion.div>
       </motion.div>

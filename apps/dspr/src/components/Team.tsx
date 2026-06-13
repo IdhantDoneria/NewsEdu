@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useTilt } from "@/hooks/useTilt";
 
 const TEAM = [
   {
@@ -9,30 +10,59 @@ const TEAM = [
     role: "Founder & CEO",
     bio: "15 years transforming India's most ambitious brands. Former Head of Communications at three Fortune 500 companies. The architect behind DSPR's fearless approach.",
     initials: "DS",
-    accent: "gold",
+    accentClass: "bg-gold/20 border-gold/30",
   },
   {
     name: "Arjun Mehra",
     role: "Chief Strategy Officer",
     bio: "Ex-McKinsey communications consultant turned narrative engineer. Arjun builds the strategic frameworks that make our campaigns structurally unbeatable.",
     initials: "AM",
-    accent: "crimson",
+    accentClass: "bg-crimson/20 border-crimson/30",
   },
   {
     name: "Priya Nair",
     role: "Head of Media Relations",
     bio: "Journalist-turned-communicator with 12 years building relationships with India's most influential editors and broadcasters. She knows what makes a story irresistible.",
     initials: "PN",
-    accent: "blue-700",
+    accentClass: "bg-blue-700/20 border-blue-700/30",
   },
   {
     name: "Rohan Kapoor",
     role: "Digital & Influencer Lead",
     bio: "Pioneer of India's influencer marketing space. Rohan has executed over 300 creator campaigns and built a network of 5,000+ vetted voices across every category.",
     initials: "RK",
-    accent: "purple-700",
+    accentClass: "bg-purple-700/20 border-purple-700/30",
   },
 ];
+
+function TeamCard({ member, i }: { member: typeof TEAM[0]; i: number }) {
+  const { cardRef, onMouseMove, onMouseLeave } = useTilt(5);
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ willChange: "transform", transition: "transform 0.1s ease" }}
+      className="group glass rounded-sm p-6 gold-border hover:border-gold/60 transition-colors duration-500"
+    >
+      <div className="mb-6 relative">
+        <div
+          className={`w-16 h-16 rounded-sm ${member.accentClass} border flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+        >
+          <span className="font-display text-xl font-bold text-ivory">{member.initials}</span>
+        </div>
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], opacity: [0, 0.3, 0] }}
+          transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+          className="absolute top-0 left-0 w-16 h-16 rounded-sm bg-gold blur-md"
+        />
+      </div>
+      <h3 className="font-display text-lg font-bold text-ivory mb-1">{member.name}</h3>
+      <p className="text-gold text-xs tracking-[0.2em] uppercase mb-4">{member.role}</p>
+      <p className="text-ivory-dim text-sm leading-relaxed">{member.bio}</p>
+    </div>
+  );
+}
 
 export default function Team() {
   const ref = useRef<HTMLDivElement>(null);
@@ -67,28 +97,8 @@ export default function Team() {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8 }}
-              className="group glass rounded-sm p-6 gold-border hover:border-gold/60 transition-all duration-500"
             >
-              <div className="mb-6 relative">
-                <div className={`w-16 h-16 rounded-sm bg-${member.accent}/20 border border-${member.accent}/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  <span className="font-display text-xl font-bold text-ivory">
-                    {member.initials}
-                  </span>
-                </div>
-                <motion.div
-                  animate={{ scale: [1, 1.3, 1], opacity: [0, 0.3, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                  className="absolute top-0 left-0 w-16 h-16 rounded-sm bg-gold blur-md"
-                />
-              </div>
-              <h3 className="font-display text-lg font-bold text-ivory mb-1">
-                {member.name}
-              </h3>
-              <p className="text-gold text-xs tracking-[0.2em] uppercase mb-4">
-                {member.role}
-              </p>
-              <p className="text-ivory-dim text-sm leading-relaxed">{member.bio}</p>
+              <TeamCard member={member} i={i} />
             </motion.div>
           ))}
         </div>

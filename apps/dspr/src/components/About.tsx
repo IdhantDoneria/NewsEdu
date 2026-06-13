@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useTilt } from "@/hooks/useTilt";
 
 const PILLARS = [
   {
@@ -25,6 +26,26 @@ const PILLARS = [
     body: "Relationships built over decades with India's top editors, broadcasters, and digital tastemakers — your unfair advantage in a crowded media landscape.",
   },
 ];
+
+function PillarCard({ p, delay }: { p: typeof PILLARS[0]; delay: number }) {
+  const { cardRef, onMouseMove, onMouseLeave } = useTilt(6);
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ willChange: "transform", transition: "transform 0.1s ease" }}
+      className="glass rounded-sm p-6 gold-border hover:border-gold/60 cursor-default"
+    >
+      <div className="text-3xl mb-4">{p.icon}</div>
+      <h3 className="font-display text-lg font-semibold text-ivory mb-2">{p.title}</h3>
+      <p className="text-ivory-dim text-sm leading-relaxed">{p.body}</p>
+      {/* Shine overlay */}
+      <div className="absolute inset-0 rounded-sm opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%)" }} />
+    </div>
+  );
+}
 
 export default function About() {
   const ref = useRef<HTMLDivElement>(null);
@@ -96,7 +117,7 @@ export default function About() {
             </motion.a>
           </div>
 
-          {/* Right pillars */}
+          {/* Right pillars with 3D tilt */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {PILLARS.map((p, i) => (
               <motion.div
@@ -104,14 +125,9 @@ export default function About() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.15 + i * 0.1 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="glass rounded-sm p-6 gold-border hover:border-gold/60 transition-all duration-300 cursor-default"
+                className="relative"
               >
-                <div className="text-3xl mb-4">{p.icon}</div>
-                <h3 className="font-display text-lg font-semibold text-ivory mb-2">
-                  {p.title}
-                </h3>
-                <p className="text-ivory-dim text-sm leading-relaxed">{p.body}</p>
+                <PillarCard p={p} delay={i} />
               </motion.div>
             ))}
           </div>
