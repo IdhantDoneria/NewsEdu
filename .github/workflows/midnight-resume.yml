@@ -231,13 +231,26 @@ jobs:
           AHEAD=$(git rev-list --count origin/main..origin/auto/midnight-resume 2>/dev/null || echo 0)
 
           # Open a draft PR for the work branch if it has commits and no open PR yet.
+          # Errors from gh are surfaced to the log (not muted) so silent failures
+          # become diagnosable. We still tolerate non-fatal outcomes so the
+          # report still gets posted.
           PR_URL=""
+          PR_CREATE_LOG=""
           if [ "${AHEAD:-0}" -gt 0 ]; then
-            PR_URL=$(gh pr list --head auto/midnight-resume --state open --json url --jq '.[0].url // ""' 2>/dev/null || echo "")
+            PR_URL=$(gh pr list --head auto/midnight-resume --state open \
+                       --json url --jq '.[0].url // ""' || echo "")
             if [ -z "$PR_URL" ]; then
-              PR_URL=$(gh pr create --draft --base main --head auto/midnight-resume \
-                --title "Overnight work — $(date -u +%Y-%m-%d)" \
-                --body "Automated overnight progress from the midnight-resume agent. See the linked report issue and run: $RUN_URL" 2>/dev/null || echo "")
+              # Capture stderr so a failure is visible in both the log and report.
+              if PR_URL=$(gh pr create --draft --base main --head auto/midnight-resume \
+                            --title "Overnight work — $(date -u +%Y-%m-%d)" \
+                            --body "Automated overnight progress from the midnight-resume agent. See the linked report issue and run: $RUN_URL" \
+                            2> "$RUNNER_TEMP/pr-create.err"); then
+                echo "Opened draft PR: $PR_URL"
+              else
+                PR_CREATE_LOG=$(cat "$RUNNER_TEMP/pr-create.err" || true)
+                echo "::warning::gh pr create failed: $PR_CREATE_LOG"
+                PR_URL=""
+              fi
             fi
           fi
 
@@ -252,6 +265,9 @@ jobs:
             echo
             echo "- Run: $RUN_URL"
             [ -n "$PR_URL" ] && echo "- Draft PR: $PR_URL"
+            if [ -z "$PR_URL" ] && [ "${AHEAD:-0}" -gt 0 ]; then
+              echo "- ⚠️ Draft PR NOT opened automatically. Commits are on \`auto/midnight-resume\`; please open a PR by hand. Error: \`${PR_CREATE_LOG:-(none captured)}\`"
+            fi
             echo "- Claude step outcome: \`${CLAUDE_OUTCOME:-unknown}\` (a turn-limit stop is reported as success — partial progress is normal)"
             echo "- New commits pushed to \`auto/midnight-resume\`: ${AHEAD:-0}"
             echo
