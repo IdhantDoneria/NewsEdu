@@ -44,6 +44,31 @@ When Claude finishes a queue task it ticks the box (`- [x]`) and writes a short
 note. For draft PRs it pushes to the same branch so the PR just updates. For new
 work it opens a **draft** PR for you to review in the morning.
 
+## How you get notified — a GitHub issue each run
+
+At the end of every run the agent opens **one GitHub issue** (labelled
+`midnight-report`) with three sections:
+
+- **Done this run** — chunks it completed
+- **Still remaining** — unchecked chunks left for future nights
+- **Action needed from you** — anything it couldn't do unattended, each with a
+  one-line "what to do" (e.g. create a new repo, deploy to Vercel, provide
+  Google Drive content or OAuth credentials, add a missing API key)
+
+If the run itself crashes before it can report, a fallback step opens a
+`Midnight resume FAILED …` issue linking the run log. Either way you wake up to
+a GitHub notification — no email needed. (Email sending isn't available to the
+agent; GitHub issues are the reliable unattended channel.)
+
+### Why big features come back in pieces
+
+The agent runs on Fable 5 with a bounded turn budget, so large features are
+split into small chunks in the queue. Each night it finishes as many chunks as
+it cleanly can and leaves the rest unchecked — so progress is steady and nothing
+gets pushed half-broken. New apps are built **in-repo under `apps/<name>/`**
+because CI can't create separate repos or deploy to Vercel; those steps show up
+as "action needed" for you to do.
+
 ## Schedule
 
 Currently set to **03:00 IST** (`30 21 * * *` UTC) — comfortably after the
