@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #faf8f3;
+  --color-parchment: #f3efe6;
+  --color-ink: #1a1816;
+  --color-graphite: #2b2825;
+  --color-stone: #6e675e;
+  --color-mist: #a39b8f;
+  --color-hairline: #e6e0d4;
+  --color-gold: #b08d4f;
+  --color-gold-bright: #d4af6e;
+
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas,
+    monospace;
+}
+
+:root {
+  --bg: var(--color-ivory);
+  --bg-raised: #ffffff;
+  --bg-sunken: var(--color-parchment);
+  --fg: var(--color-ink);
+  --fg-muted: var(--color-stone);
+  --fg-faint: var(--color-mist);
+  --line: var(--color-hairline);
+  --accent: var(--color-gold);
+  --accent-bright: var(--color-gold-bright);
+  --shadow-soft: 0 1px 2px rgba(26, 24, 22, 0.04), 0 8px 32px rgba(26, 24, 22, 0.06);
+}
+
+.dark {
+  --bg: #14120f;
+  --bg-raised: #1c1916;
+  --bg-sunken: #0f0d0b;
+  --fg: #ece7dd;
+  --fg-muted: #a39b8f;
+  --fg-faint: #6e675e;
+  --line: #2b2825;
+  --accent: #d4af6e;
+  --accent-bright: #e7c98e;
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* code block syntax tokens */
+.tok-k { color: #8e5bb5; }
+.tok-s { color: #3a7d4f; }
+.tok-c { color: var(--fg-faint); font-style: italic; }
+.tok-n { color: #b06030; }
+.tok-f { color: #2d6a9f; }
+.tok-a { color: #b08d4f; }
+
+.dark .tok-k { color: #c79bf0; }
+.dark .tok-s { color: #8fd6a4; }
+.dark .tok-n { color: #e0a070; }
+.dark .tok-f { color: #82b8e8; }
+.dark .tok-a { color: #d4af6e; }

@@ -19,15 +19,24 @@ Built in-repo under `apps/lumina/` (CI can't create a separate GitHub repo —
 that, plus the Vercel deploy, is flagged as an "action needed" in the report).
 Pick the final product name if "Lumina" doesn't fit; keep it striking + premium.
 
-- [ ] Scaffold `apps/lumina/` as a standalone Next.js + TypeScript + Tailwind app with its own package.json, a minimalist luxury landing shell, and a README. Must build with its own `npm run build`.
-- [ ] Lumina: data model + a localStorage persistence layer; page create/read/update/delete with titles and icons.
-- [ ] Lumina: block-based editor — paragraph, H1–H3, bulleted/numbered/to-do lists, with keyboard navigation between blocks.
-- [ ] Lumina: nested pages — collapsible sidebar tree, breadcrumbs, and sub-page links inside a page.
-- [ ] Lumina: advanced blocks — toggle, callout, quote, code (with syntax highlight), divider, and image (by URL).
-- [ ] Lumina: slash "/" command menu to insert blocks, plus markdown shortcuts (#, -, [], ``` ).
-- [ ] Lumina: database/table view with typed properties (text, select, date, checkbox) and add/delete rows.
-- [ ] Lumina: global search + a Cmd-K quick switcher across pages.
-- [ ] Lumina: final minimalist-luxury visual polish — refined type scale, spacing, light/dark themes, subtle motion.
+- [x] Scaffold `apps/lumina/` as a standalone Next.js + TypeScript + Tailwind app with its own package.json, a minimalist luxury landing shell, and a README. Must build with its own `npm run build`.
+  - Done 2026-06-12: Next.js 15 + TS + Tailwind v4 app in `apps/lumina/` with an ivory/gold luxury design system, animated landing page and README; `npm run build` green.
+- [x] Lumina: data model + a localStorage persistence layer; page create/read/update/delete with titles and icons.
+  - Done 2026-06-12: typed model (`src/lib/model.ts`), debounced localStorage store (`src/lib/store.ts`), `/app` workspace with sidebar page CRUD, editable title and emoji icon picker.
+- [x] Lumina: block-based editor — paragraph, H1–H3, bulleted/numbered/to-do lists, with keyboard navigation between blocks.
+  - Done 2026-06-12: `Editor`/`BlockRow` components — Enter splits/continues lists, Backspace demotes/merges, Arrow keys cross block boundaries, to-do checkboxes, numbered runs auto-number; basic markdown triggers (`#`, `-`, `1.`, `[]`) included early.
+- [x] Lumina: nested pages — collapsible sidebar tree, breadcrumbs, and sub-page links inside a page.
+  - Done 2026-06-12: recursive collapsible sidebar tree with per-node add/delete, breadcrumb trail in the page header, sub-page link list + “Add sub-page” inside each page; deleting a page removes its whole subtree.
+- [x] Lumina: advanced blocks — toggle, callout, quote, code (with syntax highlight), divider, and image (by URL).
+  - Done 2026-06-12: toggle (collapsible body), gold-accent callout, serif quote, code block with language picker + live dependency-free syntax highlighting (`src/lib/highlight.ts`), divider, image-by-URL with caption; nav/merge logic skips non-text blocks.
+- [x] Lumina: slash "/" command menu to insert blocks, plus markdown shortcuts (#, -, [], ``` ).
+  - Done 2026-06-12: typing “/” opens a filterable command menu (all 13 block types, arrow/Enter/Esc + mouse); markdown shortcuts `#`–`###`, `-`/`*`, `1.`, `[]`, `>`, `>>`, `::`, ```` ``` ````, `---`, `![]`.
+- [x] Lumina: database/table view with typed properties (text, select, date, checkbox) and add/delete rows.
+  - Done 2026-06-12: “New database” page kind with `DatabaseView` — add/rename/retype/delete columns, add/delete rows, per-type cells (text, select with remembered options via datalist, date picker, checkbox).
+- [x] Lumina: global search + a Cmd-K quick switcher across pages.
+  - Done 2026-06-12: Cmd/Ctrl-K command palette searching titles, block text, toggle bodies and database cells with snippets; keyboard + mouse navigation; sidebar “Search… ⌘K” button.
+- [x] Lumina: final minimalist-luxury visual polish — refined type scale, spacing, light/dark themes, subtle motion.
+  - Done 2026-06-12: light/dark themes via CSS variables with pre-paint bootstrap (no flash), ☾/☼ toggle on landing + sidebar, page-transition rise animation, smooth color transitions; serif display scale and gold-accent system were built in from chunk 1.
 - [ ] Lumina (optional, skip if no key): AI assist (summarise / continue writing) via a free Google AI Studio API, gated behind an env var; if the key/flow blocks development, stub it and move on.
 - [ ] Lumina (needs you): cloud sync that stores user data via the user's Gmail/Google account. Design it and stub the interface; real Google OAuth needs your credentials, so leave a note describing exactly what you need to provide. Fall back to localStorage if unavailable.
 

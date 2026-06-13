@@ -1,0 +1,135 @@
+"use client";
+
+// Client-side workspace store with a localStorage persistence layer.
+// A tiny external store (useSyncExternalStore) — no state library needed.
+
+import { useSyncExternalStore } from "react";
+import {
+  Block,
+  Page,
+  Workspace,
+  emptyWorkspace,
+  makePage,
+  pageById,
+  subtreeIds,
+} from "./model";
+
+const STORAGE_KEY = "lumina.workspace.v1";
+
+let state: Workspace = emptyWorkspace();
+let loaded = false;
+const listeners = new Set<() => void>();
+
+// Stable server/first-render snapshot so SSR HTML matches the first client
+// render; real data arrives via loadWorkspace() after mount.
+const EMPTY = emptyWorkspace();
+
+function emit() {
+  for (const l of listeners) l();
+}
+
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+function persist() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // storage full or unavailable — keep working in memory
+    }
+  }, 150);
+}
+
+function setState(next: Workspace) {
+  state = next;
+  persist();
+  emit();
+}
+
+export function loadWorkspace() {
+  if (loaded || typeof window === "undefined") return;
+  loaded = true;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Workspace;
+      if (parsed && Array.isArray(parsed.pages)) {
+        state = parsed;
+      }
+    }
+  } catch {
+    // corrupt payload — start fresh rather than crash
+  }
+  if (state.pages.length === 0) {
+    const welcome = makePage(null);
+    welcome.title = "Welcome to Lumina";
+    welcome.icon = "✦";
+    welcome.blocks = [
+      {
+        id: welcome.blocks[0].id,
+        type: "paragraph",
+        text: "A quieter place to think. Create a page from the sidebar, give it an icon, and start writing.",
+      },
+    ];
+    state = { pages: [welcome], currentPageId: welcome.id };
+  }
+  emit();
+}
+
+export function subscribe(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+export function getWorkspace(): Workspace {
+  return state;
+}
+
+export function useWorkspace(): Workspace {
+  return useSyncExternalStore(subscribe, getWorkspace, () => EMPTY);
+}
+
+// ---------------------------------------------------------------- actions
+
+function touch(p: Page): Page {
+  return { ...p, updatedAt: Date.now() };
+}
+
+export function createPage(parentId: string | null = null, kind: Page["kind"] = "document"): Page {
+  const page = makePage(parentId, kind);
+  setState({
+    ...state,
+    pages: [...state.pages, page],
+    currentPageId: page.id,
+  });
+  return page;
+}
+
+export function updatePage(id: string, patch: Partial<Omit<Page, "id">>) {
+  setState({
+    ...state,
+    pages: state.pages.map((p) => (p.id === id ? touch({ ...p, ...patch }) : p)),
+  });
+}
+
+export function deletePage(id: string) {
+  const doomed = subtreeIds(state, id);
+  const parentId = pageById(state, id)?.parentId ?? null;
+  const pages = state.pages.filter((p) => !doomed.has(p.id));
+  let currentPageId = state.currentPageId;
+  if (currentPageId && doomed.has(currentPageId)) {
+    currentPageId = parentId ?? pages[0]?.id ?? null;
+  }
+  setState({ ...state, pages, currentPageId });
+}
+
+export function openPage(id: string | null) {
+  setState({ ...state, currentPageId: id });
+}
+
+export function setBlocks(pageId: string, blocks: Block[]) {
+  setState({
+    ...state,
+    pages: state.pages.map((p) => (p.id === pageId ? touch({ ...p, blocks }) : p)),
+  });
+}
