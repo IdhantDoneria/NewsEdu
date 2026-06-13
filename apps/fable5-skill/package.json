@@ -1,0 +1,17 @@
+{
+  "name": "fable5-skill",
+  "version": "1.0.0",
+  "description": "Fable 5 thinking patterns for Claude Opus 4.8 — Claude Code skill + API wrappers",
+  "private": true,
+  "scripts": {
+    "install-skill": "bash install.sh",
+    "install-skill-global": "bash install.sh --global"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20"
+  }
+}
