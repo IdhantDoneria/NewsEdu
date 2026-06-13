@@ -212,6 +212,12 @@ function Toolbar({ db, schema, view, quick, setQuick, showSearch, setShowSearch,
       {pop?.kind === 'more' && (
         <Popover anchor={pop.anchor} onClose={() => setPop(null)} width={210}>
           <div className="menu">
+            {view.type === 'table' && (
+              <button className="menu-item" onClick={() => { patchViewLayout(db.id, view.id, { wrap: !view.layout?.wrap }); setPop(null); }}>
+                <span className="mi-icon">↩</span>
+                <span className="mi-label">{view.layout?.wrap ? 'Unwrap cells' : 'Wrap cells'}</span>
+              </button>
+            )}
             <button className="menu-item" onClick={() => { downloadFile(`${safeFileName(db.title)}.csv`, buildCSV(db, view), 'text/csv'); setPop(null); }}>
               <span className="mi-icon"><Download size={14} /></span><span className="mi-label">Export view to CSV</span>
             </button>
@@ -468,7 +474,7 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
   return (
     <>
       <div className="db-table-wrap">
-        <table className="db-table">
+        <table className={`db-table ${view.layout?.wrap ? 'wrap' : ''}`}>
           <thead>
             <tr>
               <th style={{ minWidth: 240 }}>

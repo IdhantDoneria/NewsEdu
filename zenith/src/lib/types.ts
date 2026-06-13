@@ -8,7 +8,7 @@ export type BlockType =
   | 'code' | 'image' | 'bookmark' | 'embed' | 'video'
   | 'table' | 'columns' | 'column'
   | 'childPage' | 'linkPage' | 'toc' | 'math'
-  | 'childDatabase';
+  | 'childDatabase' | 'button';
 
 export interface Block {
   id: string;

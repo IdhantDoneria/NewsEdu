@@ -1,4 +1,4 @@
-import { Copy, MessageSquare, Paintbrush, Repeat2, Trash2 } from 'lucide-react';
+import { Copy, Link2, MessageSquare, Paintbrush, Repeat2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import {
   addComment, captureUndo, deleteBlock, duplicateBlock, setCommentsFor, updateBlock,
@@ -6,6 +6,7 @@ import {
 import type { Block as BlockDoc, BlockType } from '../../lib/types';
 import { BLOCK_COLORS } from '../../lib/types';
 import { Popover } from '../ui/Popover';
+import { toast } from '../ui/Toast';
 import { BLOCK_META, TURN_INTO_TYPES } from './blockMeta';
 import { useEditor } from './ctx';
 
@@ -58,6 +59,18 @@ export function BlockMenu({ block, anchor, onClose }: {
           >
             <span className="mi-icon"><MessageSquare size={16} /></span>
             <span className="mi-label">Comment</span>
+          </button>
+          <button
+            className="menu-item"
+            onClick={() => {
+              const url = `${location.origin}${location.pathname}#/p/${ctx.pageId}#${block.id}`;
+              navigator.clipboard.writeText(url);
+              toast('Link to block copied');
+              onClose();
+            }}
+          >
+            <span className="mi-icon"><Link2 size={16} /></span>
+            <span className="mi-label">Copy link to block</span>
           </button>
           <div className="menu-sep" />
           <button

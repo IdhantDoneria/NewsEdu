@@ -84,6 +84,30 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
+  // scroll to a deep-linked block (#/p/<page>#<blockId>) and flash it
+  useEffect(() => {
+    const scrollToAnchor = () => {
+      const m = location.hash.match(/^#\/p\/[\w-]+#([\w-]+)/);
+      if (!m) return;
+      const blockId = m[1];
+      let tries = 0;
+      const attempt = () => {
+        const el = document.querySelector(`[data-block-id="${blockId}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('block-flash');
+          setTimeout(() => el.classList.remove('block-flash'), 1600);
+        } else if (++tries < 30) {
+          setTimeout(attempt, 100);
+        }
+      };
+      setTimeout(attempt, 180);
+    };
+    scrollToAnchor();
+    window.addEventListener('hashchange', scrollToAnchor);
+    return () => window.removeEventListener('hashchange', scrollToAnchor);
+  }, [currentPageId, booted]);
+
   // global shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

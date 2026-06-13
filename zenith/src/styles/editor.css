@@ -260,3 +260,20 @@
 .backlinks-item .bl-body { min-width: 0; }
 .backlinks-item .bl-title { display: block; font-weight: 520; font-size: 14px; border-bottom: 1px solid var(--border-strong); width: fit-content; }
 .backlinks-item .bl-snippet { display: block; font-size: 12.5px; color: var(--text-tertiary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 560px; }
+
+/* deep-link block flash */
+.block-flash > .block-row { animation: block-flash 1.6s var(--ease); border-radius: var(--radius); }
+@keyframes block-flash { 0%, 30% { background: var(--gold-soft); } 100% { background: transparent; } }
+
+/* button block */
+.b-button .block-content { margin: 3px 0; }
+.zbutton {
+  display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border-strong);
+  background: var(--bg-secondary); color: var(--text); border-radius: 7px; padding: 6px 13px;
+  font-size: 14px; font-weight: 520; cursor: pointer; user-select: none;
+}
+.zbutton:hover { background: var(--bg-hover); }
+.zbutton.gold { background: var(--gold-grad); color: #1d1709; border-color: transparent; }
+.zbutton-wrap { display: flex; align-items: center; gap: 6px; }
+.zbutton-cog { opacity: 0; color: var(--text-tertiary); cursor: pointer; display: inline-grid; place-items: center; }
+.b-button:hover .zbutton-cog { opacity: 1; }

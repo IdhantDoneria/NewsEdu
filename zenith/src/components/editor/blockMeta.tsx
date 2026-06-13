@@ -1,7 +1,7 @@
 import {
   Type, Heading1, Heading2, Heading3, List, ListOrdered, ListTodo, ChevronRight,
   Quote, Lightbulb, Minus, Code2, Image, Bookmark, Film, AppWindow, Table2,
-  FileText, Link2, ListTree, Sigma, Database, Sparkles, Columns2,
+  FileText, Link2, ListTree, Sigma, Database, Sparkles, Columns2, MousePointerClick,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { BlockType } from '../../lib/types';
@@ -45,6 +45,7 @@ export const BLOCK_META: Record<string, BlockMeta> = {
   childDatabase: { type: 'childDatabase', label: 'Database', desc: 'Table, board, calendar & more.', icon: I(Database), keywords: 'database table board kanban calendar gallery list timeline collection', textish: false, canChildren: false },
   columns: { type: 'columns', label: 'Columns', desc: 'Side-by-side layout.', icon: I(Columns2), keywords: 'columns layout side', textish: false, canChildren: true },
   column: { type: 'column', label: 'Column', desc: '', icon: I(Columns2), keywords: '', textish: false, canChildren: true },
+  button: { type: 'button', label: 'Button', desc: 'A button that inserts a block or opens a page.', icon: I(MousePointerClick), keywords: 'button action template insert click', textish: false, canChildren: false },
 };
 
 export const TEXTISH = (t: string) => !!BLOCK_META[t]?.textish;
@@ -81,6 +82,7 @@ export const SLASH_ITEMS: SlashItem[] = [
   ...(['image', 'bookmark', 'video', 'embed', 'code', 'math', 'table'] as BlockType[])
     .map((t) => ({ id: t, label: BLOCK_META[t].label, desc: BLOCK_META[t].desc, icon: BLOCK_META[t].icon, keywords: BLOCK_META[t].keywords, group: 'Media & advanced' })),
   { id: 'toc', label: 'Table of contents', desc: BLOCK_META.toc.desc, icon: BLOCK_META.toc.icon, keywords: BLOCK_META.toc.keywords, group: 'Media & advanced' },
+  { id: 'button', label: 'Button', desc: BLOCK_META.button.desc, icon: BLOCK_META.button.icon, keywords: BLOCK_META.button.keywords, group: 'Media & advanced' },
   { id: 'columns2', label: '2 columns', desc: 'Two side-by-side columns.', icon: BLOCK_META.columns.icon, keywords: 'columns two layout', group: 'Media & advanced' },
   { id: 'columns3', label: '3 columns', desc: 'Three side-by-side columns.', icon: BLOCK_META.columns.icon, keywords: 'columns three layout', group: 'Media & advanced' },
   { id: 'date', label: 'Date mention', desc: "Insert today's date inline.", icon: BLOCK_META.divider.icon, keywords: 'date today now mention @', group: 'Media & advanced' },

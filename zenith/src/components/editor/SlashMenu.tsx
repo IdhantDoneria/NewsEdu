@@ -64,12 +64,13 @@ export function SlashMenu({ block, anchor, onClose }: {
 
   const run = (item: SlashItem) => {
     captureUndo(ctx.pageId, 'slash', false);
-    const basicTypes: BlockType[] = ['paragraph', 'h1', 'h2', 'h3', 'bulleted', 'numbered', 'todo', 'toggle', 'quote', 'callout', 'divider', 'image', 'bookmark', 'video', 'embed', 'code', 'math', 'table', 'toc'];
+    const basicTypes: BlockType[] = ['paragraph', 'h1', 'h2', 'h3', 'bulleted', 'numbered', 'todo', 'toggle', 'quote', 'callout', 'divider', 'image', 'bookmark', 'video', 'embed', 'code', 'math', 'table', 'toc', 'button'];
 
     if (basicTypes.includes(item.id as BlockType)) {
       const props: any = item.id === 'code' ? { language: 'plaintext' }
         : item.id === 'table' ? { rows: [['', ''], ['', '']], headerRow: true }
-        : item.id === 'callout' ? { icon: '💡' } : {};
+        : item.id === 'callout' ? { icon: '💡' }
+        : item.id === 'button' ? { label: 'New button', mode: 'insert', insert: 'todo' } : {};
       updateBlock(block.id, { type: item.id as BlockType, props });
       if (['paragraph', 'h1', 'h2', 'h3', 'bulleted', 'numbered', 'todo', 'toggle', 'quote', 'callout'].includes(item.id)) {
         ctx.focusBlock(block.id, 'end');

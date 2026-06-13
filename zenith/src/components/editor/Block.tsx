@@ -23,6 +23,7 @@ import {
   BookmarkBlock, CodeBlock, EmbedBlock, ImageBlock, MathBlock, TableBlock, TocBlock, VideoBlock,
 } from './blocks';
 import { PageChipBlock } from './PageChip';
+import { ButtonBlock } from './ButtonBlock';
 import { DatabaseBlock } from '../database/DatabaseBlock';
 
 const MD_MAP: Record<string, { type: BlockDoc['type']; props?: any }> = {
@@ -465,6 +466,7 @@ export function Block({ block, listIndex = 1, depth = 0 }: { block: BlockDoc; li
     case 'math': content = <MathBlock block={b} />; break;
     case 'toc': content = <TocBlock block={b} />; break;
     case 'childPage': case 'linkPage': content = <PageChipBlock block={b} />; break;
+    case 'button': content = <ButtonBlock block={b} />; break;
     case 'childDatabase': content = <DatabaseBlock block={b} />; break;
     case 'columns':
       content = (

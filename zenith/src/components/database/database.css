@@ -197,3 +197,8 @@
 .db-calc-cell:hover .db-calc-hint { opacity: 1; }
 .db-calc-label { color: var(--text-tertiary); }
 .db-calc-val b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* wrap-cells mode */
+.db-table.wrap .cell-text { white-space: normal; overflow: visible; }
+.db-table.wrap .cell-btn { align-items: flex-start; }
+.db-table.wrap td { vertical-align: top; }
