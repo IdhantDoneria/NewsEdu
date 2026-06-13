@@ -20,6 +20,7 @@ import { ShortcutsHelp } from './components/panels/ShortcutsHelp';
 import { TemplatesGallery } from './components/panels/TemplatesGallery';
 import { TrashPanel } from './components/panels/TrashPanel';
 import { SettingsModal } from './components/settings/SettingsModal';
+import { PricingModal } from './components/billing/PricingModal';
 import { Sidebar } from './components/sidebar/Sidebar';
 import { Topbar } from './components/topbar/Topbar';
 import { ToastHost } from './components/ui/Toast';
@@ -187,6 +188,7 @@ export default function App() {
       <CommentsPanel />
       <HistoryPanel />
       <SettingsModal />
+      <PricingModal />
       <ToastHost />
     </div>
   );

@@ -2,11 +2,11 @@ import {
   ChevronRight, ChevronsLeft, Copy, FileText, LayoutTemplate, MoreHorizontal,
   Plus, Search, Settings, SquarePen, Star, StarOff, Trash2,
 } from 'lucide-react';
-import { LogOut, Settings as SettingsIcon2 } from 'lucide-react';
+import { LogOut, Settings as SettingsIcon2, Sparkles } from 'lucide-react';
 import { type DragEvent, useEffect, useState } from 'react';
 import {
   createPage, deletePage, duplicatePage, getFavorites, getPageList, getRecents, movePage,
-  openPage, setSearchOpen, setSettingsOpen, setSidebarWidth, setTemplatesOpen,
+  openPage, setPricingOpen, setSearchOpen, setSettingsOpen, setSidebarWidth, setTemplatesOpen,
   setTrashOpen, toggleFavorite, toggleSidebar, useStore,
 } from '../../lib/store';
 import { currentSession, onAuth, signOut, type Session } from '../../lib/auth';
@@ -201,6 +201,10 @@ function AccountChip() {
               <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)', marginTop: 2, textTransform: 'capitalize' }}>{session.provider} account</div>
             </div>
             <div className="menu-sep" />
+            <button className="menu-item" onClick={() => { setMenu(null); setPricingOpen(true); }}>
+              <span className="mi-icon"><Sparkles size={15} style={{ color: 'var(--gold)' }} /></span>
+              <span className="mi-label">Upgrade plan</span>
+            </button>
             <button className="menu-item" onClick={() => { setMenu(null); setSettingsOpen(true); }}>
               <span className="mi-icon"><SettingsIcon2 size={15} /></span><span className="mi-label">Settings</span>
             </button>
