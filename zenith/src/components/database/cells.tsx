@@ -11,6 +11,7 @@ import { captureUndo, getPage, getRows, openPeek, updatePage } from '../../lib/s
 import type { DbSchema, PageDoc, PropertyDef, SelectOption } from '../../lib/types';
 import { SELECT_COLORS } from '../../lib/types';
 import { type Anchor, anchorFromEl, Popover } from '../ui/Popover';
+import { fileToDataURL } from '../editor/editorUtils';
 import {
   addSelectOption, computeFormula, deleteSelectOption, displayValue, formatDate,
   formatDateTime, formatFormulaResult, formatNumber, optionById, patchSelectOption,
@@ -70,6 +71,17 @@ export function ValueDisplay({ row, prop, schema }: { row: PageDoc; prop: Proper
       if (!v) return null;
       return <span className="dbc-link">{String(v).replace(/^https?:\/\/(www\.)?/, '')}</span>;
     }
+    case 'file': {
+      const arr: Array<{ name: string; url: string }> = Array.isArray(v) ? v : [];
+      if (!arr.length) return null;
+      return (
+        <span className="chips">
+          {arr.map((f, i) => (
+            <a key={i} className="chip rel-chip" href={f.url} download={f.name} onClick={(e) => e.stopPropagation()}>{f.name}</a>
+          ))}
+        </span>
+      );
+    }
     case 'formula': {
       const r = computeFormula(row, prop, schema);
       const err = typeof r === 'string' && r.startsWith('⚠');
@@ -100,6 +112,8 @@ export function PropCell({ dbId, row, prop, schema, variant = 'table' }: {
       return <SelectCell dbId={dbId} row={row} prop={prop} variant={variant} />;
     case 'relation':
       return <RelationCell row={row} prop={prop} variant={variant} />;
+    case 'file':
+      return <FileCell row={row} prop={prop} variant={variant} />;
     case 'formula':
       return (
         <div className="cell-btn ro" title={prop.formula}>
@@ -540,6 +554,45 @@ function RelationPopover({ anchor, targetDb, selected, onToggle, onClose }: {
       )}
     </Popover>
   );
+}
+
+// file / media ─────────────────────────────────────────────────────────────────
+
+function FileCell({ row, prop, variant }: { row: PageDoc; prop: PropertyDef; variant: 'table' | 'page' }) {
+  const ref = useRef<HTMLInputElement>(null);
+  const files: Array<{ name: string; url: string }> = Array.isArray(storedValue(row, prop)) ? storedValue(row, prop) : [];
+
+  const add = async (list: FileList) => {
+    const next = [...files];
+    for (const f of Array.from(list)) {
+      try { next.push({ name: f.name, url: await fileToDataURL(f) }); } catch { /* skip unreadable */ }
+    }
+    setRowProp(row, prop, next);
+  };
+  const remove = (i: number) => {
+    const next = files.filter((_, j) => j !== i);
+    setRowProp(row, prop, next.length ? next : undefined);
+  };
+
+  return (
+    <div className="cell-btn" onClick={() => ref.current?.click()}>
+      {files.length ? (
+        <span className="chips">
+          {files.map((f, i) => (
+            <span key={i} className="chip rel-chip" title={f.name}>
+              <a href={f.url} download={f.name} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none' }}>{shortFileName(f.name)}</a>
+              <span onClick={(e) => { e.stopPropagation(); remove(i); }} style={{ cursor: 'pointer', opacity: 0.55 }}>×</span>
+            </span>
+          ))}
+        </span>
+      ) : <EmptyHint variant={variant} />}
+      <input ref={ref} type="file" multiple hidden onChange={(e) => { if (e.target.files?.length) void add(e.target.files); e.target.value = ''; }} />
+    </div>
+  );
+}
+
+function shortFileName(n: string): string {
+  return n.length > 22 ? `${n.slice(0, 12)}…${n.slice(-7)}` : n;
 }
 
 // title (used by the table) ───────────────────────────────────────────────────

@@ -261,6 +261,8 @@ export function displayValue(row: PageDoc, prop: PropertyDef, schema: DbSchema):
     case 'formula': return formatFormulaResult(computeFormula(row, prop, schema));
     case 'relation':
       return Array.isArray(v) ? v.map((id) => getPage(id)?.title || 'Untitled').join(', ') : '';
+    case 'file':
+      return Array.isArray(v) ? v.map((f: any) => f?.name ?? '').filter(Boolean).join(', ') : '';
     case 'rollup': return computeRollup(row, prop, schema).display;
     case 'createdTime': return formatDateTime(row.createdAt);
     case 'updatedTime': return formatDateTime(row.updatedAt);

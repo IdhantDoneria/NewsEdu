@@ -40,7 +40,7 @@ export interface Block {
 export type PropertyType =
   | 'title' | 'text' | 'number' | 'select' | 'multiSelect' | 'status'
   | 'date' | 'checkbox' | 'url' | 'email' | 'phone'
-  | 'formula' | 'relation' | 'rollup' | 'createdTime' | 'updatedTime';
+  | 'formula' | 'relation' | 'rollup' | 'file' | 'createdTime' | 'updatedTime';
 
 export interface SelectOption { id: string; name: string; color: string }
 
