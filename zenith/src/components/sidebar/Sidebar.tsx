@@ -2,12 +2,15 @@ import {
   ChevronRight, ChevronsLeft, Copy, FileText, LayoutTemplate, MoreHorizontal,
   Plus, Search, Settings, SquarePen, Star, StarOff, Trash2,
 } from 'lucide-react';
-import { type DragEvent, useState } from 'react';
+import { LogOut, Settings as SettingsIcon2 } from 'lucide-react';
+import { type DragEvent, useEffect, useState } from 'react';
 import {
   createPage, deletePage, duplicatePage, getFavorites, getPageList, movePage,
   openPage, setSearchOpen, setSettingsOpen, setSidebarWidth, setTemplatesOpen,
   setTrashOpen, toggleFavorite, toggleSidebar, useStore,
 } from '../../lib/store';
+import { currentSession, onAuth, signOut, type Session } from '../../lib/auth';
+import { signOut as googleSignOut } from '../../lib/sync';
 import type { PageDoc } from '../../lib/types';
 import { Popover } from '../ui/Popover';
 import { toast } from '../ui/Toast';
@@ -130,6 +133,7 @@ export function Sidebar() {
           <span className="nav-icon"><Trash2 size={16} /></span>
           <span className="nav-label">Trash</span>
         </div>
+        <AccountChip />
       </div>
 
       <div
@@ -148,6 +152,48 @@ export function Sidebar() {
         }}
       />
     </aside>
+  );
+}
+
+function AccountChip() {
+  const [session, setSession] = useState<Session | null>(currentSession());
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
+  useEffect(() => onAuth(setSession), []);
+  if (!session) return null;
+  const label = session.provider === 'guest' ? 'Guest' : session.name || session.email;
+  const initial = (session.name || session.email || 'G').trim()[0]?.toUpperCase() ?? 'G';
+  return (
+    <>
+      <div className="nav-item" onClick={(e) => setMenu({ x: e.clientX, y: e.clientY - 90 })}>
+        <span className="nav-icon">
+          <span style={{ width: 20, height: 20, borderRadius: '50%', background: 'var(--gold-grad)', color: '#1d1709', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 700 }}>{initial}</span>
+        </span>
+        <span className="nav-label">{label}</span>
+      </div>
+      {menu && (
+        <Popover anchor={menu} onClose={() => setMenu(null)} width={220}>
+          <div className="menu">
+            <div style={{ padding: '8px 10px 6px' }}>
+              <div style={{ fontWeight: 600, fontSize: 13.5 }}>{session.name || 'Guest'}</div>
+              {session.email && <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{session.email}</div>}
+              <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)', marginTop: 2, textTransform: 'capitalize' }}>{session.provider} account</div>
+            </div>
+            <div className="menu-sep" />
+            <button className="menu-item" onClick={() => { setMenu(null); setSettingsOpen(true); }}>
+              <span className="mi-icon"><SettingsIcon2 size={15} /></span><span className="mi-label">Settings</span>
+            </button>
+            <button className="menu-item" onClick={() => {
+              if (session.provider === 'google') void googleSignOut().catch(() => {});
+              signOut();
+              setMenu(null);
+            }}>
+              <span className="mi-icon"><LogOut size={15} /></span>
+              <span className="mi-label">{session.provider === 'guest' ? 'Exit guest mode' : 'Log out'}</span>
+            </button>
+          </div>
+        </Popover>
+      )}
+    </>
   );
 }
 

@@ -6,7 +6,9 @@ import {
   setShortcutsOpen, setTemplatesOpen, toggleSidebar, undo, updateSettings, useStore,
 } from './lib/store';
 import { initSync } from './lib/sync';
+import { currentSession, loadSession, onAuth, type Session } from './lib/auth';
 import { ensureSeed } from './seed';
+import { AuthGate } from './components/auth/AuthGate';
 import { AIHost } from './components/ai/AIHost';
 import { PageView } from './components/editor/PageView';
 import { SelectionToolbar } from './components/editor/SelectionToolbar';
@@ -33,11 +35,17 @@ export default function App() {
   const peekPageId = useStore((s) => s.peekPageId);
   const theme = useStore((s) => s.settings.theme);
   const [booted, setBooted] = useState(false);
+  const [session, setSession] = useState<Session | null>(currentSession());
+
+  // auth session (gates the workspace)
+  useEffect(() => onAuth(setSession), []);
 
   // boot
   useEffect(() => {
     void (async () => {
       await bootStore();
+      await loadSession();
+      setSession(currentSession());
       const seeded = await ensureSeed();
       const fromHash = pageIdFromHash();
       const last = await kvGet<string>('lastPage');
@@ -113,6 +121,8 @@ export default function App() {
       </div>
     );
   }
+
+  if (!session) return <AuthGate />;
 
   return (
     <div className="app">
