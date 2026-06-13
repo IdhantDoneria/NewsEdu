@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
   if (req.method !== 'POST') return json(res, 405, { error: 'method_not_allowed' });
   // backend dam — throttle login attempts per IP (brute-force guard)
-  if (!guard(req, res, `login:${clientIp(req)}`, { capacity: 8, refillPerSec: 0.2 })) return;
+  if (!(await guard(req, res, `login:${clientIp(req)}`, { capacity: 8, refillPerSec: 0.2 }))) return;
 
   if (!authSecret()) return json(res, 503, { error: 'not_configured', message: 'Cloud auth is not configured. The app uses local accounts until then.' });
 

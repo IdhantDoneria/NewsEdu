@@ -63,4 +63,4 @@ function isPersistent() {
   return !!restConfig();
 }
 
-module.exports = { getUser, putUser, allUsers, isPersistent };
+module.exports = { getUser, putUser, allUsers, isPersistent, command: redis };
