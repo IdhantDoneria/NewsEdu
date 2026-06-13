@@ -16,7 +16,7 @@ import { OptionEditorPopover } from './cells';
 import {
   addProperty, addSelectOption, computeFormula, defaultStatusOptions, deleteProperty,
   duplicateProperty, findProp, findPropByName, formatFormulaResult, patchProperty,
-  patchView,
+  patchView, ROLLUP_AGGS,
 } from './queries';
 import { PROP_TYPES, PropIcon, propTypeMeta } from './propertyMeta';
 
@@ -29,7 +29,7 @@ const NUMBER_FORMATS: { id: NonNullable<PropertyDef['numberFormat']>; label: str
   { id: 'inr', label: 'Indian Rupee' },
 ];
 
-type Screen = 'main' | 'type' | 'format' | 'options' | 'formula' | 'relation';
+type Screen = 'main' | 'type' | 'format' | 'options' | 'formula' | 'relation' | 'rollup';
 
 export function PropertyMenuPopover({ dbId, propId, anchor, onClose, view, allowInsert = false }: {
   dbId: string;
@@ -68,8 +68,11 @@ export function PropertyMenuPopover({ dbId, propId, anchor, onClose, view, allow
     if ((type === 'select' || type === 'multiSelect') && !prop.options) patch.options = [];
     if (type === 'status' && !prop.options?.length) patch.options = defaultStatusOptions();
     if (type === 'formula' && prop.formula === undefined) patch.formula = '';
+    if (type === 'rollup' && !prop.rollup) {
+      patch.rollup = { relationPropId: schema.properties.find((p) => p.type === 'relation')?.id ?? '', targetPropId: '', agg: 'count' };
+    }
     patchProperty(dbId, prop.id, patch);
-    setScreen(type === 'relation' && !prop.relationDatabaseId ? 'relation' : 'main');
+    setScreen(type === 'relation' && !prop.relationDatabaseId ? 'relation' : type === 'rollup' ? 'rollup' : 'main');
   };
 
   const insert = (side: -1 | 1) => {
@@ -128,6 +131,12 @@ export function PropertyMenuPopover({ dbId, propId, anchor, onClose, view, allow
                 <span className="mi-hint">
                   {prop.relationDatabaseId ? (getPage(prop.relationDatabaseId)?.title || 'Untitled') : 'Choose…'}
                 </span>
+              </button>
+            )}
+            {prop.type === 'rollup' && (
+              <button className="menu-item" onClick={() => setScreen('rollup')}>
+                <span className="mi-icon">∑</span>
+                <span className="mi-label">Configure rollup</span>
               </button>
             )}
             {(view || allowInsert || !isTitle) && <div className="menu-sep" />}
@@ -232,7 +241,55 @@ export function PropertyMenuPopover({ dbId, propId, anchor, onClose, view, allow
           onPick={(id) => { patchProperty(dbId, prop.id, { relationDatabaseId: id }); setScreen('main'); }}
         />
       )}
+
+      {screen === 'rollup' && (
+        <RollupEditor dbId={dbId} propId={prop.id} onDone={() => setScreen('main')} />
+      )}
     </Popover>
+  );
+}
+
+// ─── rollup config ───────────────────────────────────────────────────────────
+
+export function RollupEditor({ dbId, propId, onDone }: { dbId: string; propId: string; onDone: () => void }) {
+  useStore((s) => s.pageTick[dbId]);
+  const schema = getPage(dbId)?.dbSchema;
+  const prop = schema ? findProp(schema, propId) : undefined;
+  if (!schema || !prop) return null;
+  const cfg = prop.rollup ?? { relationPropId: '', targetPropId: '', agg: 'count' as const };
+  const relProps = schema.properties.filter((p) => p.type === 'relation' && p.relationDatabaseId);
+  const relProp = relProps.find((p) => p.id === cfg.relationPropId);
+  const targetDb = relProp?.relationDatabaseId ? getPage(relProp.relationDatabaseId) : undefined;
+  const targetProps = targetDb?.dbSchema?.properties ?? [];
+  const set = (patch: Partial<typeof cfg>) => patchProperty(dbId, propId, { rollup: { ...cfg, ...patch } });
+
+  if (!relProps.length) {
+    return <div style={{ padding: 12, fontSize: 13, color: 'var(--text-tertiary)' }}>Add a <b>Relation</b> property first, then a rollup can summarize the related rows.</div>;
+  }
+  return (
+    <div style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div>
+        <div className="menu-title" style={{ paddingLeft: 2 }}>Relation</div>
+        <select className="text-input" value={cfg.relationPropId} onChange={(e) => set({ relationPropId: e.target.value, targetPropId: '' })}>
+          <option value="">Choose…</option>
+          {relProps.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        </select>
+      </div>
+      <div>
+        <div className="menu-title" style={{ paddingLeft: 2 }}>Property</div>
+        <select className="text-input" value={cfg.targetPropId} disabled={!targetProps.length} onChange={(e) => set({ targetPropId: e.target.value })}>
+          <option value="">Choose…</option>
+          {targetProps.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        </select>
+      </div>
+      <div>
+        <div className="menu-title" style={{ paddingLeft: 2 }}>Calculate</div>
+        <select className="text-input" value={cfg.agg} onChange={(e) => set({ agg: e.target.value as typeof cfg.agg })}>
+          {ROLLUP_AGGS.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
+        </select>
+      </div>
+      <button className="btn small primary" style={{ alignSelf: 'flex-end' }} onClick={onDone}>Done</button>
+    </div>
   );
 }
 

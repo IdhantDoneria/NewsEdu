@@ -18,6 +18,7 @@ import {
 } from './editorUtils';
 import { RichText } from './RichText';
 import { SlashMenu } from './SlashMenu';
+import { MentionMenu, type MentionChoice } from './MentionMenu';
 import {
   BookmarkBlock, CodeBlock, EmbedBlock, ImageBlock, MathBlock, TableBlock, TocBlock, VideoBlock,
 } from './blocks';
@@ -36,7 +37,39 @@ export function Block({ block, listIndex = 1, depth = 0 }: { block: BlockDoc; li
   const ctx = useEditor();
   const [slashFor, setSlashFor] = useState<{ x: number; y: number; y2?: number } | null>(null);
   const [menuAnchor, setMenuAnchor] = useState<{ x: number; y: number } | null>(null);
+  const [mentionFor, setMentionFor] = useState<{ x: number; y: number; y2?: number; trigger: string } | null>(null);
+  const mentionRange = useRef<Range | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  const openMention = (trigger: string) => {
+    const sel = window.getSelection();
+    mentionRange.current = sel && sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+    const r = getCaretRect();
+    setMentionFor(r ? { x: r.left, y: r.bottom + 6, y2: r.top - 6, trigger } : { x: 300, y: 300, trigger });
+  };
+
+  const resolveMention = (choice: MentionChoice) => {
+    const el = ctx.refs.get(b.id);
+    const trigger = mentionFor?.trigger ?? '@';
+    setMentionFor(null);
+    if (!el) return;
+    el.focus();
+    const sel = window.getSelection();
+    if (sel && mentionRange.current) { sel.removeAllRanges(); sel.addRange(mentionRange.current); }
+    if (choice.type === 'dismiss') {
+      document.execCommand('insertText', false, trigger); // put the typed character back
+    } else if (choice.type === 'page') {
+      const icon = choice.icon ? `${choice.icon} ` : '';
+      const safe = choice.title.replace(/</g, '&lt;');
+      document.execCommand('insertHTML', false,
+        `<span class="zmention" data-page-id="${choice.pageId}" contenteditable="false">${icon}${safe}</span>&nbsp;`);
+    } else {
+      document.execCommand('insertHTML', false,
+        `<span class="zmention" contenteditable="false">📅 ${choice.text}</span>&nbsp;`);
+    }
+    captureUndo(ctx.pageId, 'mention', false);
+    updateBlockHtml(b.id, el.innerHTML);
+  };
 
   const b = block;
   const meta = TEXTISH(b.type);
@@ -52,6 +85,20 @@ export function Block({ block, listIndex = 1, depth = 0 }: { block: BlockDoc; li
       const r = getCaretRect();
       setSlashFor(r ? { x: r.left, y: r.bottom + 6, y2: r.top - 6 } : { x: 300, y: 300 });
       return;
+    }
+
+    if (e.key === '@' && !mod && window.getSelection()?.isCollapsed) {
+      e.preventDefault();
+      openMention('@');
+      return;
+    }
+    if (e.key === '[' && !mod && window.getSelection()?.isCollapsed) {
+      if (textBeforeCaret(el).endsWith('[')) {   // second bracket → Notion-style [[
+        e.preventDefault();
+        deleteBeforeCaret(1);
+        openMention('[[');
+        return;
+      }
     }
 
     if (e.key === ' ' && !mod) {
@@ -502,6 +549,7 @@ export function Block({ block, listIndex = 1, depth = 0 }: { block: BlockDoc; li
       )}
 
       {slashFor && <SlashMenu block={b} anchor={slashFor} onClose={() => setSlashFor(null)} />}
+      {mentionFor && <MentionMenu anchor={mentionFor} parentPageId={ctx.pageId} onChoose={resolveMention} />}
       {menuAnchor && <BlockMenu block={b} anchor={menuAnchor} onClose={() => setMenuAnchor(null)} />}
     </div>
   );

@@ -241,3 +241,22 @@
   .b-columns > .block-content { flex-direction: column; gap: 4px; }
   .peek { width: 100vw; }
 }
+
+/* ─── Backlinks / linked references ──────────────────────────────────────── */
+.backlinks { margin-top: 36px; border-top: 1px solid var(--divider); padding-top: 12px; }
+.backlinks-head {
+  display: flex; align-items: center; gap: 7px; border: none; background: none; cursor: pointer;
+  color: var(--text-secondary); font-size: 13.5px; font-weight: 560; padding: 4px 2px; border-radius: var(--radius);
+}
+.backlinks-head:hover { color: var(--text); }
+.backlinks-head .bl-chev { transition: transform 0.15s var(--ease); color: var(--text-tertiary); }
+.backlinks-list { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.backlinks-item {
+  display: flex; align-items: flex-start; gap: 8px; border: none; background: none; cursor: pointer;
+  text-align: left; padding: 7px 8px; border-radius: var(--radius); color: var(--text);
+}
+.backlinks-item:hover { background: var(--bg-hover); }
+.backlinks-item .bl-icon { font-size: 15px; flex-shrink: 0; line-height: 1.4; }
+.backlinks-item .bl-body { min-width: 0; }
+.backlinks-item .bl-title { display: block; font-weight: 520; font-size: 14px; border-bottom: 1px solid var(--border-strong); width: fit-content; }
+.backlinks-item .bl-snippet { display: block; font-size: 12.5px; color: var(--text-tertiary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 560px; }

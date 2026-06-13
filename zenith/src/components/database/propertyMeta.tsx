@@ -1,7 +1,7 @@
 // Shared metadata for property types, view types and filter operators.
 import {
   AlignLeft, ArrowUpRight, Calendar, CalendarClock, CalendarDays, CalendarRange,
-  CheckSquare, ChevronDownCircle, CircleDot, GanttChart, Hash, History, Kanban,
+  CheckSquare, ChevronDownCircle, CircleDot, Combine, GanttChart, Hash, History, Kanban,
   Lightbulb, Link, List, LayoutGrid, Mail, Phone, Sigma, Table, Tags, Type,
 } from 'lucide-react';
 import type { ComponentType } from 'react';
@@ -34,6 +34,7 @@ export const PROP_TYPES: PropTypeMeta[] = [
   { type: 'phone', label: 'Phone', icon: Phone, creatable: true },
   { type: 'formula', label: 'Formula', icon: Sigma, creatable: true },
   { type: 'relation', label: 'Relation', icon: ArrowUpRight, creatable: true },
+  { type: 'rollup', label: 'Rollup', icon: Combine, creatable: true },
   { type: 'createdTime', label: 'Created time', icon: CalendarClock, creatable: true },
   { type: 'updatedTime', label: 'Last edited', icon: History, creatable: true },
   { type: 'title', label: 'Title', icon: Type, creatable: false },
@@ -106,6 +107,7 @@ export function opsForType(type: PropertyType): FilterOp[] {
     case 'relation':
       return ['contains', 'notContains', 'isEmpty', 'isNotEmpty'];
     case 'formula':
+    case 'rollup':
       return ['contains', 'notContains', 'is', 'isNot', 'gt', 'lt', 'isEmpty', 'isNotEmpty'];
     default: // title, text, url, email, phone
       return ['contains', 'notContains', 'is', 'isNot', 'isEmpty', 'isNotEmpty'];
@@ -122,7 +124,7 @@ export function opNeedsValue(op: FilterOp): boolean {
 export const DEFAULT_COL_WIDTH: Record<PropertyType, number> = {
   title: 260, text: 190, number: 120, select: 140, multiSelect: 180, status: 140,
   date: 130, checkbox: 90, url: 170, email: 170, phone: 140, formula: 160,
-  relation: 180, createdTime: 165, updatedTime: 165,
+  relation: 180, rollup: 160, createdTime: 165, updatedTime: 165,
 };
 
 export function colWidth(prop: PropertyDef, widths?: Record<string, number>): number {

@@ -11,6 +11,7 @@ import { randomPageIcon } from '../../lib/emoji';
 import { EmojiPicker } from '../ui/EmojiPicker';
 import { Popover } from '../ui/Popover';
 import { BlockList } from './BlockList';
+import { Backlinks } from './Backlinks';
 import { type DropTarget, EditorCtx, type EditorContextValue } from './ctx';
 import { placeCaretAtTextOffset } from './editorUtils';
 import { placeCaretAtStart } from '../../lib/caret';
@@ -226,6 +227,7 @@ export function PageView({ pageId, inPeek = false }: { pageId: string; inPeek?: 
                   }}
                 />
               )}
+              <Backlinks pageId={pageId} />
             </>
           )}
         </div>

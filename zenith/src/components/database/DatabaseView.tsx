@@ -9,10 +9,10 @@ import { downloadFile, safeFileName } from '../../lib/export';
 import { uid } from '../../lib/id';
 import {
   captureUndo, createPage, deletePage, duplicatePage, getPage, getRows,
-  openPeek, updateDbSchema, updatePage, useStore,
+  moveRow, openPeek, updateDbSchema, updatePage, useStore,
 } from '../../lib/store';
 import type {
-  DbSchema, FilterRule, PageDoc, PropertyDef, SortRule, ViewDef, ViewType,
+  Aggregation, DbSchema, FilterRule, PageDoc, PropertyDef, SortRule, ViewDef, ViewType,
 } from '../../lib/types';
 import { type Anchor, anchorFromEl, Popover } from '../ui/Popover';
 import { toast } from '../ui/Toast';
@@ -20,9 +20,9 @@ import { PropCell, TitleCellInput, ValueDisplay } from './cells';
 import { NewPropertyPopover, PropertyMenuPopover } from './PropertyMenu';
 import { OP_LABELS, opNeedsValue, opsForType, PropIcon, VIEW_TYPES, viewTypeMeta } from './propertyMeta';
 import {
-  addView, applyView, buildCSV, deleteView, duplicateView, findProp, groupForBoard,
-  optionById, parseDateValue, patchView, patchViewLayout, sameDay, storedValue, toISODate,
-  visibleProps,
+  addView, applyView, buildCSV, CALC_OPTIONS, computeAggregation, deleteView, duplicateView,
+  findProp, groupForBoard, optionById, parseDateValue, patchView, patchViewLayout, sameDay,
+  storedValue, toISODate, visibleProps,
 } from './queries';
 import './database.css';
 
@@ -448,10 +448,22 @@ function ViewBody(props: ViewProps) {
 function TableView({ db, schema, view, rows, addRow }: ViewProps) {
   const cols = visibleProps(schema, view);
   const titleProp = schema.properties.find((p) => p.type === 'title')!;
+  const allCols = [titleProp, ...cols];
   const [header, setHeader] = useState<{ propId: string; anchor: Anchor } | null>(null);
   const [newProp, setNewProp] = useState<Anchor | null>(null);
   const [focusRow, setFocusRow] = useState<string | null>(null);
   const [rowMenu, setRowMenu] = useState<{ row: PageDoc; anchor: Anchor } | null>(null);
+  const [calcMenu, setCalcMenu] = useState<{ propId: string; anchor: Anchor } | null>(null);
+  const [dragRow, setDragRow] = useState<string | null>(null);
+  const [overRow, setOverRow] = useState<string | null>(null);
+  const calc: Record<string, Aggregation> = view.layout?.calc ?? {};
+  const sorted = (view.sorts ?? []).length > 0;
+
+  const dropOnRow = (targetId: string) => {
+    if (dragRow && dragRow !== targetId) { captureUndo(db.id, 'reorder row', false); moveRow(dragRow, targetId); }
+    setDragRow(null);
+    setOverRow(null);
+  };
 
   return (
     <>
@@ -478,10 +490,24 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} className="db-row">
+              <tr
+                key={row.id}
+                className={`db-row ${overRow === row.id ? 'row-over' : ''}`}
+                onDragOver={(e) => { if (e.dataTransfer.types.includes('zenith/row-move')) { e.preventDefault(); setOverRow(row.id); } }}
+                onDrop={() => dropOnRow(row.id)}
+              >
                 <td>
                   <div className="db-cell-title">
-                    <span style={{ paddingLeft: 4 }}>{row.icon || ''}</span>
+                    {!sorted && (
+                      <span
+                        className="db-row-grip"
+                        draggable
+                        title="Drag to reorder"
+                        onDragStart={(e) => { e.dataTransfer.setData('zenith/row-move', row.id); e.dataTransfer.effectAllowed = 'move'; setDragRow(row.id); }}
+                        onDragEnd={() => { setDragRow(null); setOverRow(null); }}
+                      >⋮⋮</span>
+                    )}
+                    <span>{row.icon || ''}</span>
                     <TitleCellInput row={row} autoFocus={focusRow === row.id} />
                     <button className="db-open-btn" onClick={() => openPeek(row.id)}>⤢ Open</button>
                     <button className="icon-btn small" onClick={(e) => setRowMenu({ row, anchor: anchorFromEl(e.currentTarget) })}><MoreHorizontal size={13} /></button>
@@ -494,6 +520,23 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr className="db-calc-row">
+              {allCols.map((p) => {
+                const agg = calc[p.id];
+                const res = agg ? computeAggregation(rows, p, schema, agg) : null;
+                const label = agg ? CALC_OPTIONS.find((c) => c.id === agg)?.label : null;
+                return (
+                  <td key={p.id} className="db-calc-cell" onClick={(e) => setCalcMenu({ propId: p.id, anchor: anchorFromEl(e.currentTarget) })}>
+                    {res
+                      ? <span className="db-calc-val"><span className="db-calc-label">{label}</span> <b>{res.display || '—'}</b></span>
+                      : <span className="db-calc-hint">Calculate</span>}
+                  </td>
+                );
+              })}
+              <td />
+            </tr>
+          </tfoot>
         </table>
         <div className="db-newrow" onClick={() => setFocusRow(addRow())}>
           <Plus size={15} /> New row
@@ -504,7 +547,40 @@ function TableView({ db, schema, view, rows, addRow }: ViewProps) {
       {header && <PropertyMenuPopover dbId={db.id} propId={header.propId} view={view} allowInsert anchor={header.anchor} onClose={() => setHeader(null)} />}
       {newProp && <NewPropertyPopover dbId={db.id} anchor={newProp} onClose={() => setNewProp(null)} />}
       {rowMenu && <RowMenu db={db} row={rowMenu.row} anchor={rowMenu.anchor} onClose={() => setRowMenu(null)} />}
+      {calcMenu && (
+        <CalcMenu
+          current={calc[calcMenu.propId]}
+          anchor={calcMenu.anchor}
+          onPick={(agg) => {
+            const next = { ...calc };
+            if (agg) next[calcMenu.propId] = agg; else delete next[calcMenu.propId];
+            patchViewLayout(db.id, view.id, { calc: next });
+            setCalcMenu(null);
+          }}
+          onClose={() => setCalcMenu(null)}
+        />
+      )}
     </>
+  );
+}
+
+function CalcMenu({ current, anchor, onPick, onClose }: {
+  current?: Aggregation; anchor: Anchor; onPick: (agg: Aggregation | null) => void; onClose: () => void;
+}) {
+  return (
+    <Popover anchor={anchor} onClose={onClose} width={200}>
+      <div className="menu" style={{ maxHeight: 340, overflowY: 'auto' }}>
+        <button className="menu-item" onClick={() => onPick(null)}>
+          <span className="mi-label">None</span>{!current && <span className="mi-hint">✓</span>}
+        </button>
+        <div className="menu-sep" />
+        {CALC_OPTIONS.map((c) => (
+          <button key={c.id} className="menu-item" onClick={() => onPick(c.id)}>
+            <span className="mi-label">{c.label}</span>{current === c.id && <span className="mi-hint">✓</span>}
+          </button>
+        ))}
+      </div>
+    </Popover>
   );
 }
 

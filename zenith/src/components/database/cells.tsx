@@ -106,6 +106,12 @@ export function PropCell({ dbId, row, prop, schema, variant = 'table' }: {
           <ValueDisplay row={row} prop={prop} schema={schema} />
         </div>
       );
+    case 'rollup':
+      return (
+        <div className="cell-btn ro" title="Rollup">
+          <span>{displayValue(row, prop, schema) || ''}</span>
+        </div>
+      );
     case 'createdTime':
       return <div className="cell-btn ro">{formatDateTime(row.createdAt)}</div>;
     case 'updatedTime':

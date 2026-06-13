@@ -25,6 +25,8 @@ export interface ZenithState {
   pageTick: Record<string, number>;
   /** bumps when the set/ordering/titles of pages change (sidebar) */
   navTick: number;
+  /** most-recently-opened page ids (most recent first) */
+  recents: string[];
 
   // ui state
   currentPageId: string | null;
@@ -97,6 +99,7 @@ export const useStore = create<ZenithState>(() => ({
   settings: { ...DEFAULT_SETTINGS },
   pageTick: {},
   navTick: 0,
+  recents: [],
   currentPageId: null,
   peekPageId: null,
   sidebarOpen: true,
@@ -125,11 +128,12 @@ function bumpNav(extra: Mut = {}) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function bootStore(): Promise<void> {
-  const [pagesArr, blocksArr, commentsArr, settings] = await Promise.all([
+  const [pagesArr, blocksArr, commentsArr, settings, recents] = await Promise.all([
     db.pages.toArray(),
     db.blocks.toArray(),
     db.comments.toArray(),
     kvGet<Settings>('settings'),
+    kvGet<string[]>('recents'),
   ]);
   const pages: Record<string, PageDoc> = {};
   for (const p of pagesArr) pages[p.id] = p;
@@ -140,6 +144,7 @@ export async function bootStore(): Promise<void> {
   set({
     pages, blocks, comments,
     settings: { ...DEFAULT_SETTINGS, ...(settings ?? {}) },
+    recents: (recents ?? []).filter((id) => pages[id] && !pages[id].deletedAt),
     ready: true,
   });
   storeEvents.emit('ready', undefined);
@@ -231,6 +236,29 @@ export function getComments(pageId: string): CommentDoc[] {
   const comments = get().comments;
   for (const id in comments) if (comments[id].pageId === pageId) out.push(comments[id]);
   return out.sort((a, b) => a.createdAt - b.createdAt);
+}
+
+/** pages that @mention or link to this page ("Linked references") */
+export function getBacklinks(pageId: string): Array<{ page: PageDoc; blockId: string; snippet: string }> {
+  const out: Array<{ page: PageDoc; blockId: string; snippet: string }> = [];
+  const { blocks, pages } = get();
+  const seen = new Set<string>();
+  const needle = `data-page-id="${pageId}"`;
+  for (const id in blocks) {
+    const b = blocks[id];
+    if (b.pageId === pageId) continue;
+    const owner = pages[b.pageId];
+    if (!owner || owner.deletedAt) continue;
+    const isLink = b.type === 'linkPage' && b.props?.pageId === pageId;
+    const isMention = typeof b.html === 'string' && b.html.includes(needle);
+    if (!isLink && !isMention) continue;
+    if (seen.has(b.pageId)) continue;       // one reference per source page
+    seen.add(b.pageId);
+    const div = document.createElement('div');
+    div.innerHTML = b.html || '';
+    out.push({ page: owner, blockId: b.id, snippet: (div.textContent || '').trim().slice(0, 140) });
+  }
+  return out.sort((a, b) => b.page.updatedAt - a.page.updatedAt);
 }
 
 export function isDescendantPage(maybeChild: string, ancestor: string): boolean {
@@ -551,6 +579,21 @@ export function toggleFavorite(id: string): void {
   if (p) updatePage(id, { favorite: !p.favorite });
 }
 
+/** reorder a database row before another row (or to the end when null) */
+export function moveRow(rowId: string, beforeRowId: string | null): void {
+  const row = getPage(rowId);
+  if (!row || !row.databaseId) return;
+  const sibs = getRows(row.databaseId).filter((r) => r.id !== rowId);
+  let order: string;
+  if (beforeRowId) {
+    const i = sibs.findIndex((r) => r.id === beforeRowId);
+    order = orderBetween(sibs[i - 1]?.order ?? null, sibs[i]?.order ?? null);
+  } else {
+    order = orderBetween(sibs[sibs.length - 1]?.order ?? null, null);
+  }
+  updatePage(rowId, { order });
+}
+
 export function duplicatePage(id: string, intoParent?: string | null): string {
   const src = getPage(id);
   if (!src) return id;
@@ -821,13 +864,28 @@ export function updateSettings(patch: Partial<Settings>): void {
 }
 
 export function openPage(id: string | null): void {
-  set({ currentPageId: id, peekPageId: null });
   if (id) {
+    const recents = [id, ...get().recents.filter((r) => r !== id)].slice(0, 12);
+    set({ currentPageId: id, peekPageId: null, recents });
     location.hash = `/p/${id}`;
     void kvSet('lastPage', id);
+    void kvSet('recents', recents);
   } else {
+    set({ currentPageId: null, peekPageId: null });
     location.hash = '/';
   }
+}
+
+export function getRecents(limit = 6): PageDoc[] {
+  const { recents, pages, currentPageId } = get();
+  const out: PageDoc[] = [];
+  for (const id of recents) {
+    if (id === currentPageId) continue;
+    const p = pages[id];
+    if (p && !p.deletedAt && !p.databaseId) out.push(p);
+    if (out.length >= limit) break;
+  }
+  return out;
 }
 
 export const openPeek = (id: string | null) => set({ peekPageId: id });

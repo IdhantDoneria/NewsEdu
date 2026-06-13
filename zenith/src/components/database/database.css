@@ -181,3 +181,19 @@
 .db-linked-chip:hover { background: var(--bg-hover); color: var(--gold); }
 
 .db-empty { padding: 28px; text-align: center; color: var(--text-tertiary); font-size: 13.5px; }
+
+/* row drag handle */
+.db-row-grip { cursor: grab; color: var(--text-tertiary); opacity: 0; font-size: 11px; letter-spacing: -2px; user-select: none; flex-shrink: 0; padding: 0 1px; }
+.db-row:hover .db-row-grip { opacity: 0.7; }
+.db-row-grip:hover { opacity: 1 !important; }
+.db-row-grip:active { cursor: grabbing; }
+.db-row.row-over td { box-shadow: inset 0 2px 0 var(--gold); }
+
+/* column calculation footer */
+.db-calc-row td { background: var(--bg-secondary); border-top: 1px solid var(--border-strong); }
+.db-calc-cell { cursor: pointer; padding: 6px 9px; font-size: 12px; color: var(--text-secondary); min-height: 30px; }
+.db-calc-cell:hover { background: var(--bg-hover); }
+.db-calc-hint { color: var(--text-tertiary); opacity: 0; }
+.db-calc-cell:hover .db-calc-hint { opacity: 1; }
+.db-calc-label { color: var(--text-tertiary); }
+.db-calc-val b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }

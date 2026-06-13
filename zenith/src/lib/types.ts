@@ -40,9 +40,21 @@ export interface Block {
 export type PropertyType =
   | 'title' | 'text' | 'number' | 'select' | 'multiSelect' | 'status'
   | 'date' | 'checkbox' | 'url' | 'email' | 'phone'
-  | 'formula' | 'relation' | 'createdTime' | 'updatedTime';
+  | 'formula' | 'relation' | 'rollup' | 'createdTime' | 'updatedTime';
 
 export interface SelectOption { id: string; name: string; color: string }
+
+/** how a rollup / column-calculation reduces a set of values */
+export type Aggregation =
+  | 'show' | 'count' | 'countValues' | 'countUnique' | 'countEmpty' | 'countNotEmpty'
+  | 'percentEmpty' | 'percentNotEmpty' | 'sum' | 'average' | 'median' | 'min' | 'max'
+  | 'range' | 'earliest' | 'latest' | 'checked' | 'unchecked' | 'percentChecked';
+
+export interface RollupConfig {
+  relationPropId: string;            // a relation property on THIS database
+  targetPropId: string;             // a property on the related database
+  agg: Aggregation;
+}
 
 export interface PropertyDef {
   id: string;
@@ -52,6 +64,7 @@ export interface PropertyDef {
   formula?: string;                  // formula expression
   numberFormat?: 'plain' | 'commas' | 'percent' | 'usd' | 'eur' | 'inr';
   relationDatabaseId?: string;       // relation target
+  rollup?: RollupConfig;             // rollup configuration
 }
 
 export type ViewType = 'table' | 'board' | 'gallery' | 'list' | 'calendar' | 'timeline';

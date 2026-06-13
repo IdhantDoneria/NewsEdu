@@ -5,7 +5,7 @@ import {
 import { LogOut, Settings as SettingsIcon2 } from 'lucide-react';
 import { type DragEvent, useEffect, useState } from 'react';
 import {
-  createPage, deletePage, duplicatePage, getFavorites, getPageList, movePage,
+  createPage, deletePage, duplicatePage, getFavorites, getPageList, getRecents, movePage,
   openPage, setSearchOpen, setSettingsOpen, setSidebarWidth, setTemplatesOpen,
   setTrashOpen, toggleFavorite, toggleSidebar, useStore,
 } from '../../lib/store';
@@ -98,6 +98,8 @@ export function Sidebar() {
           </div>
         )}
 
+        <RecentSection />
+
         <div
           className="sidebar-section"
           onDragOver={(e) => {
@@ -153,6 +155,25 @@ export function Sidebar() {
         }}
       />
     </aside>
+  );
+}
+
+function RecentSection() {
+  useStore((s) => s.recents);
+  useStore((s) => s.currentPageId);
+  useStore((s) => s.navTick);
+  const recents = getRecents(5);
+  if (!recents.length) return null;
+  return (
+    <div className="sidebar-section">
+      <div className="sidebar-section-title">Recent</div>
+      {recents.map((p) => (
+        <div key={'rec' + p.id} className="nav-item" onClick={() => openPage(p.id)}>
+          <span className="nav-icon" style={{ fontSize: 14.5 }}>{p.icon ?? (p.type === 'database' ? '🗂️' : <FileText size={15} />)}</span>
+          <span className="nav-label">{p.title || 'Untitled'}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 

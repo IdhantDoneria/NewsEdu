@@ -56,6 +56,10 @@ export function formulaValue(
       return !!v;
     case 'formula':
       return computeFormula(row, prop, schema, visiting);
+    case 'rollup': {
+      const r = computeRollup(row, prop, schema);
+      return r.value ?? r.display;
+    }
     default:
       return v ?? (prop.type === 'createdTime' || prop.type === 'updatedTime' ? 0 : '');
   }
@@ -76,6 +80,109 @@ export function computeFormula(
   });
   visiting.delete(prop.id);
   return out;
+}
+
+// ─── aggregation (column calculations + rollups) ─────────────────────────────
+
+import type { Aggregation } from '../../lib/types';
+
+export interface AggResult { value: number | string | null; display: string }
+
+export const CALC_OPTIONS: Array<{ id: Aggregation; label: string }> = [
+  { id: 'count', label: 'Count all' },
+  { id: 'countValues', label: 'Count values' },
+  { id: 'countUnique', label: 'Count unique' },
+  { id: 'countEmpty', label: 'Count empty' },
+  { id: 'countNotEmpty', label: 'Count not empty' },
+  { id: 'percentEmpty', label: 'Percent empty' },
+  { id: 'percentNotEmpty', label: 'Percent not empty' },
+  { id: 'sum', label: 'Sum' },
+  { id: 'average', label: 'Average' },
+  { id: 'median', label: 'Median' },
+  { id: 'min', label: 'Min' },
+  { id: 'max', label: 'Max' },
+  { id: 'range', label: 'Range' },
+  { id: 'earliest', label: 'Earliest date' },
+  { id: 'latest', label: 'Latest date' },
+  { id: 'checked', label: 'Checked' },
+  { id: 'unchecked', label: 'Unchecked' },
+  { id: 'percentChecked', label: 'Percent checked' },
+];
+
+export const ROLLUP_AGGS: Array<{ id: Aggregation; label: string }> = [
+  { id: 'show', label: 'Show original' },
+  ...CALC_OPTIONS,
+];
+
+function aggNumbers(rows: PageDoc[], prop: PropertyDef, schema: DbSchema): number[] {
+  const out: number[] = [];
+  for (const r of rows) {
+    const n = comparableNumber(r, prop, schema);
+    if (n !== null) out.push(n);
+  }
+  return out;
+}
+
+/** reduce a set of rows by one of their property's values */
+export function computeAggregation(rows: PageDoc[], prop: PropertyDef, schema: DbSchema, agg: Aggregation): AggResult {
+  const total = rows.length;
+  const empties = rows.filter((r) => isValueEmpty(r, prop, schema)).length;
+  const notEmpty = total - empties;
+  const pct = (n: number) => (total === 0 ? '0%' : `${Math.round((n / total) * 100)}%`);
+  const num = () => aggNumbers(rows, prop, schema);
+  const dates = () => rows.map((r) => parseDateValue(storedValue(r, prop))).filter((d): d is number => d !== null);
+  const numFmt = (n: number) => formatNumber(n, prop.numberFormat);
+
+  const mk = (value: number | string | null, display?: string): AggResult => ({ value, display: display ?? (value === null ? '' : String(value)) });
+
+  switch (agg) {
+    case 'show':
+      return mk(null, rows.map((r) => displayValue(r, prop, schema)).filter(Boolean).join(', '));
+    case 'count': return mk(total, String(total));
+    case 'countValues': return mk(notEmpty, String(notEmpty));
+    case 'countUnique': {
+      const set = new Set(rows.map((r) => displayValue(r, prop, schema)).filter(Boolean));
+      return mk(set.size, String(set.size));
+    }
+    case 'countEmpty': return mk(empties, String(empties));
+    case 'countNotEmpty': return mk(notEmpty, String(notEmpty));
+    case 'percentEmpty': return mk(total ? empties / total : 0, pct(empties));
+    case 'percentNotEmpty': return mk(total ? notEmpty / total : 0, pct(notEmpty));
+    case 'sum': { const n = num(); const s = n.reduce((a, b) => a + b, 0); return mk(s, numFmt(s)); }
+    case 'average': { const n = num(); if (!n.length) return mk(null, '—'); const a = n.reduce((x, y) => x + y, 0) / n.length; return mk(a, numFmt(a)); }
+    case 'median': {
+      const n = num().sort((a, b) => a - b);
+      if (!n.length) return mk(null, '—');
+      const mid = Math.floor(n.length / 2);
+      const m = n.length % 2 ? n[mid] : (n[mid - 1] + n[mid]) / 2;
+      return mk(m, numFmt(m));
+    }
+    case 'min': { const n = num(); if (!n.length) return mk(null, '—'); const m = Math.min(...n); return mk(m, numFmt(m)); }
+    case 'max': { const n = num(); if (!n.length) return mk(null, '—'); const m = Math.max(...n); return mk(m, numFmt(m)); }
+    case 'range': { const n = num(); if (!n.length) return mk(null, '—'); const r = Math.max(...n) - Math.min(...n); return mk(r, numFmt(r)); }
+    case 'earliest': { const d = dates(); if (!d.length) return mk(null, '—'); const e = Math.min(...d); return mk(e, formatDate(e)); }
+    case 'latest': { const d = dates(); if (!d.length) return mk(null, '—'); const e = Math.max(...d); return mk(e, formatDate(e)); }
+    case 'checked': { const c = rows.filter((r) => storedValue(r, prop) === true).length; return mk(c, String(c)); }
+    case 'unchecked': { const c = rows.filter((r) => storedValue(r, prop) !== true).length; return mk(c, String(c)); }
+    case 'percentChecked': { const c = rows.filter((r) => storedValue(r, prop) === true).length; return mk(total ? c / total : 0, pct(c)); }
+    default: return mk(null, '');
+  }
+}
+
+/** evaluate a rollup property for one row */
+export function computeRollup(row: PageDoc, prop: PropertyDef, schema: DbSchema): AggResult {
+  const cfg = prop.rollup;
+  if (!cfg) return { value: null, display: '' };
+  const relProp = findProp(schema, cfg.relationPropId);
+  if (!relProp || relProp.type !== 'relation') return { value: null, display: '⚠ pick a relation' };
+  const ids = storedValue(row, relProp);
+  const relatedRows = (Array.isArray(ids) ? ids : []).map((id) => getPage(id)).filter((p): p is PageDoc => !!p && !p.deletedAt);
+  const targetDb = relProp.relationDatabaseId ? getPage(relProp.relationDatabaseId) : undefined;
+  const targetSchema = targetDb?.dbSchema;
+  if (!targetSchema) return { value: null, display: '' };
+  const targetProp = findProp(targetSchema, cfg.targetPropId);
+  if (!targetProp) return { value: null, display: '⚠ pick a property' };
+  return computeAggregation(relatedRows, targetProp, targetSchema, cfg.agg);
 }
 
 // ─── formatting ──────────────────────────────────────────────────────────────
@@ -154,6 +261,7 @@ export function displayValue(row: PageDoc, prop: PropertyDef, schema: DbSchema):
     case 'formula': return formatFormulaResult(computeFormula(row, prop, schema));
     case 'relation':
       return Array.isArray(v) ? v.map((id) => getPage(id)?.title || 'Untitled').join(', ') : '';
+    case 'rollup': return computeRollup(row, prop, schema).display;
     case 'createdTime': return formatDateTime(row.createdAt);
     case 'updatedTime': return formatDateTime(row.updatedAt);
     default: return v == null ? '' : String(v);
@@ -161,7 +269,9 @@ export function displayValue(row: PageDoc, prop: PropertyDef, schema: DbSchema):
 }
 
 export function isValueEmpty(row: PageDoc, prop: PropertyDef, schema: DbSchema): boolean {
-  const v = prop.type === 'formula' ? computeFormula(row, prop, schema) : storedValue(row, prop);
+  const v = prop.type === 'formula' ? computeFormula(row, prop, schema)
+    : prop.type === 'rollup' ? computeRollup(row, prop, schema).value
+    : storedValue(row, prop);
   if (v == null) return true;
   if (typeof v === 'string') return v.trim() === '';
   if (Array.isArray(v)) return v.length === 0;
@@ -184,6 +294,10 @@ function comparableNumber(row: PageDoc, prop: PropertyDef, schema: DbSchema): nu
       if (typeof v === 'number') return v;
       const n = Number(v);
       return v != null && v !== '' && !Number.isNaN(n) ? n : null;
+    }
+    case 'rollup': {
+      const v = computeRollup(row, prop, schema).value;
+      return typeof v === 'number' ? v : null;
     }
     default: return null;
   }
@@ -278,6 +392,11 @@ function sortKey(row: PageDoc, prop: PropertyDef, schema: DbSchema): number | st
       if (typeof r === 'number') return r;
       if (typeof r === 'boolean') return r ? 1 : 0;
       return String(r).toLowerCase();
+    }
+    case 'rollup': {
+      const r = computeRollup(row, prop, schema).value;
+      if (r == null || r === '') return null;
+      return typeof r === 'number' ? r : String(r).toLowerCase();
     }
     default: {
       const s = displayValue(row, prop, schema).toLowerCase();
@@ -454,6 +573,9 @@ export function addProperty(dbId: string, def: Partial<PropertyDef> & { type: Pr
       formula: def.formula,
       numberFormat: def.numberFormat,
       relationDatabaseId: def.relationDatabaseId,
+      rollup: def.rollup ?? (def.type === 'rollup'
+        ? { relationPropId: s.properties.find((p) => p.type === 'relation')?.id ?? '', targetPropId: '', agg: 'count' as const }
+        : undefined),
     };
     const properties = [...s.properties];
     properties.splice(index === undefined ? properties.length : index, 0, prop);
