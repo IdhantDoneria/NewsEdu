@@ -23,7 +23,7 @@ export interface Account {
 export interface Session {
   email: string;
   name: string;
-  provider: 'local' | 'google' | 'guest';
+  provider: 'local' | 'google' | 'guest' | 'cloud';
   since: number;
 }
 
@@ -205,6 +205,13 @@ export async function signIn(input: { email: string; password: string }): Promis
 /** Adopt an external (Google) identity from the Cloud Sync module as a session. */
 export function adoptGoogleSession(email: string, name?: string): Session {
   const s: Session = { email: normalizeEmail(email), name: name || email.split('@')[0], provider: 'google', since: Date.now() };
+  setSession(s);
+  return s;
+}
+
+/** Adopt a session authenticated by the cloud backend (/api/auth). */
+export function adoptCloudSession(email: string, name?: string): Session {
+  const s: Session = { email: normalizeEmail(email), name: name || email.split('@')[0], provider: 'cloud', since: Date.now() };
   setSession(s);
   return s;
 }

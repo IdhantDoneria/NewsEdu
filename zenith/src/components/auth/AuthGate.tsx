@@ -4,6 +4,9 @@ import {
   AuthError, adoptGoogleSession, continueAsGuest, isValidEmail, passwordStrength,
   signIn, signUp,
 } from '../../lib/auth';
+import {
+  backendStatus, cloudLogin, cloudSignup, NotConfiguredError, type BackendStatus,
+} from '../../lib/cloudAuth';
 import { authDam } from '../../lib/dam';
 import { useStore } from '../../lib/store';
 import { getSyncStatus, signIn as googleSignIn } from '../../lib/sync';
@@ -21,21 +24,32 @@ export function AuthGate() {
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [backend, setBackend] = useState<BackendStatus | null>(null);
   const hasFirebase = useStore((s) => !!s.settings.firebaseConfig);
 
   const strength = passwordStrength(password);
+
+  useEffect(() => { void backendStatus().then(setBackend); }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setBusy(true);
     try {
-      if (mode === 'signup') {
-        if (password !== confirm) throw new AuthError('Passwords do not match.');
-        await signUp({ name, email, password });
-        toast('Welcome to Zenith ✦');
-      } else {
-        await signIn({ email, password });
+      if (mode === 'signup' && password !== confirm) throw new AuthError('Passwords do not match.');
+      const useCloud = backend?.auth === true;
+      try {
+        if (useCloud && mode === 'signup') { await cloudSignup({ name, email, password }); toast('Welcome to Zenith ✦'); }
+        else if (useCloud) { await cloudLogin({ email, password }); }
+        else throw new NotConfiguredError('local');
+      } catch (cloudErr) {
+        // cloud unavailable / not configured → fall back to local-first accounts
+        if (cloudErr instanceof NotConfiguredError || cloudErr instanceof TypeError) {
+          if (mode === 'signup') { await signUp({ name, email, password }); toast('Welcome to Zenith ✦'); }
+          else { await signIn({ email, password }); }
+        } else {
+          throw cloudErr;
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
@@ -154,7 +168,10 @@ export function AuthGate() {
             <a onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}>
               {mode === 'login' ? 'Create one' : 'Log in'}
             </a>
-            {' · '}Accounts are stored securely on this device.
+            {' · '}
+            {backend?.auth
+              ? 'Secured by the Zenith cloud backend.'
+              : 'Accounts are stored securely on this device.'}
           </p>
         </div>
       </main>

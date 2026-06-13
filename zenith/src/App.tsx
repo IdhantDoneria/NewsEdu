@@ -7,6 +7,7 @@ import {
 } from './lib/store';
 import { initSync } from './lib/sync';
 import { currentSession, loadSession, onAuth, type Session } from './lib/auth';
+import { restoreCloudSession } from './lib/cloudAuth';
 import { ensureSeed } from './seed';
 import { AuthGate } from './components/auth/AuthGate';
 import { AIHost } from './components/ai/AIHost';
@@ -45,6 +46,7 @@ export default function App() {
     void (async () => {
       await bootStore();
       await loadSession();
+      if (!currentSession()) await restoreCloudSession();
       setSession(currentSession());
       const seeded = await ensureSeed();
       const fromHash = pageIdFromHash();

@@ -10,6 +10,7 @@ import {
   setTrashOpen, toggleFavorite, toggleSidebar, useStore,
 } from '../../lib/store';
 import { currentSession, onAuth, signOut, type Session } from '../../lib/auth';
+import { cloudLogout } from '../../lib/cloudAuth';
 import { signOut as googleSignOut } from '../../lib/sync';
 import type { PageDoc } from '../../lib/types';
 import { Popover } from '../ui/Popover';
@@ -184,7 +185,8 @@ function AccountChip() {
             </button>
             <button className="menu-item" onClick={() => {
               if (session.provider === 'google') void googleSignOut().catch(() => {});
-              signOut();
+              if (session.provider === 'cloud') void cloudLogout();
+              else signOut();
               setMenu(null);
             }}>
               <span className="mi-icon"><LogOut size={15} /></span>
