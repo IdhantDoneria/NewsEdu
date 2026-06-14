@@ -45,6 +45,74 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Prepare work branch and reconcile queue
+        id: prep
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "midnight-resume[bot]"
+          git config user.email "doneriaidhant@gmail.com"
+
+          # `main` is the canonical task LIST (where you add tasks); the
+          # long-lived `auto/midnight-resume` branch holds the completion ticks
+          # that accumulate across nights. Save main's queue before switching.
+          MAIN_QUEUE="$(mktemp)"
+          cp .claude/pending-work.md "$MAIN_QUEUE"
+
+          # Write the reconcile helper to a temp path so it survives the branch
+          # switch (the branch may predate this script).
+          cat > "$RUNNER_TEMP/reconcile.py" <<'PY'
+          import re, sys
+          main_path, branch_path = sys.argv[1], sys.argv[2]
+          task_re = re.compile(r'^(\s*-\s*)\[([ xX])\]\s?(.*)$')
+          def norm(s):
+              return re.sub(r'\s+', ' ', s).strip().lower()
+          # Completion source: tasks ticked on the branch's current queue.
+          done = set()
+          try:
+              with open(branch_path) as f:
+                  for line in f:
+                      m = task_re.match(line)
+                      if m and m.group(2).lower() == 'x':
+                          done.add(norm(m.group(3)))
+          except FileNotFoundError:
+              pass
+          # Task list, ordering and user prose all come from main.
+          out, remaining = [], 0
+          with open(main_path) as f:
+              for line in f.read().splitlines():
+                  m = task_re.match(line)
+                  if m and norm(m.group(3)) in done:
+                      out.append(m.group(1) + "[x] " + m.group(3))
+                  else:
+                      if m and m.group(2) == ' ':
+                          remaining += 1
+                      out.append(line)
+          with open(branch_path, "w") as f:
+              f.write("\n".join(out) + "\n")
+          print("Reconciled queue: %d remaining, %d already done." % (remaining, len(done)))
+          PY
+
+          # Put the working tree on the work branch: reuse the remote branch so
+          # prior nights' progress and ticks survive, else fork fresh from main.
+          if git ls-remote --exit-code --heads origin auto/midnight-resume >/dev/null 2>&1; then
+            git fetch origin auto/midnight-resume
+            git checkout -B auto/midnight-resume origin/auto/midnight-resume
+          else
+            git checkout -B auto/midnight-resume
+          fi
+
+          # Rebuild the queue from main's task list, carrying over branch ticks.
+          python3 "$RUNNER_TEMP/reconcile.py" "$MAIN_QUEUE" .claude/pending-work.md
+
+          # Commit the reconciled queue onto the branch so the agent starts from
+          # the correct state. It is pushed later with the agent's work; if no
+          # work remains the job exits before pushing, so nothing is persisted.
+          git add .claude/pending-work.md
+          git commit -m "chore: reconcile task queue (carry over done work, add new tasks from main)" \
+            || echo "Queue already in sync — nothing to reconcile."
+
       - name: Gather unfinished work
         id: gather
         env:
@@ -192,8 +260,13 @@ jobs:
             it as 'action needed'.
 
           Rules:
-          - Work on a branch, never commit straight to main. For queue/issue
-            work, create or reuse a branch named \`auto/midnight-resume\`.
+          - You are ALREADY checked out on the \`auto/midnight-resume\` branch,
+            and the queue has been reconciled so only genuinely-unfinished
+            tasks are still unchecked. Do NOT switch branches, hard-reset, or
+            re-tick / un-tick tasks that are already done. Never commit to main.
+            Do the remaining work, tick what you finish, commit, and push to
+            \`auto/midnight-resume\`. (If you check out another PR's branch for
+            source-3 work, switch back before you finish.)
           - After changing code, run the relevant build (root \`npm run build\`,
             or \`npm run build\` inside the sub-app you touched) and lint. Do not
             push changes that break the build — if you cannot get it green, leave
