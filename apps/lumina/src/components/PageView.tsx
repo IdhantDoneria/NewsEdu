@@ -1,7 +1,7 @@
 "use client";
 
 import { breadcrumbOf, childrenOf, Page, pageTitle } from "@/lib/model";
-import { createPage, openPage, updatePage, useWorkspace } from "@/lib/store";
+import { createPage, exportPageMarkdown, openPage, updatePage, useWorkspace } from "@/lib/store";
 import DatabaseView from "./DatabaseView";
 import Editor from "./Editor";
 import IconPicker from "./IconPicker";
@@ -18,7 +18,7 @@ export default function PageView({ page }: { page: Page }) {
     >
       <nav
         aria-label="Breadcrumb"
-        className="mb-10 flex flex-wrap items-center gap-1.5 text-xs text-[var(--fg-faint)]"
+        className="mb-10 flex flex-wrap items-center justify-between gap-1.5 text-xs text-[var(--fg-faint)]"
       >
         {trail.map((p) => (
           <span key={p.id} className="flex items-center gap-1.5">
@@ -35,6 +35,15 @@ export default function PageView({ page }: { page: Page }) {
         <span className="px-1 text-[var(--fg-muted)]">
           {page.icon} {pageTitle(page)}
         </span>
+        <button
+          type="button"
+          onClick={() => exportPageMarkdown(page.id)}
+          aria-label="Export page as Markdown"
+          title="Export as Markdown"
+          className="ml-auto shrink-0 rounded px-2 py-0.5 text-[10px] tracking-wide text-[var(--fg-faint)] transition-colors hover:bg-[var(--bg-sunken)] hover:text-[var(--fg-muted)]"
+        >
+          ↓ .md
+        </button>
       </nav>
 
       <IconPicker

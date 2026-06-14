@@ -133,3 +133,57 @@ export function setBlocks(pageId: string, blocks: Block[]) {
     pages: state.pages.map((p) => (p.id === pageId ? touch({ ...p, blocks }) : p)),
   });
 }
+
+export function exportWorkspaceJSON(): void {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `lumina-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function importWorkspaceJSON(json: string): void {
+  try {
+    const parsed = JSON.parse(json) as Workspace;
+    if (parsed && Array.isArray(parsed.pages)) {
+      setState(parsed);
+    }
+  } catch {
+    throw new Error("Invalid Lumina backup file.");
+  }
+}
+
+/** Export a single page as plain Markdown. */
+export function exportPageMarkdown(pageId: string): void {
+  const page = pageById(state, pageId);
+  if (!page) return;
+
+  const lines: string[] = [`# ${page.title || "Untitled"}`, ""];
+  for (const b of page.blocks) {
+    switch (b.type) {
+      case "h1": lines.push(`# ${b.text}`, ""); break;
+      case "h2": lines.push(`## ${b.text}`, ""); break;
+      case "h3": lines.push(`### ${b.text}`, ""); break;
+      case "bulleted": lines.push(`- ${b.text}`); break;
+      case "numbered": lines.push(`1. ${b.text}`); break;
+      case "todo": lines.push(`- [${b.checked ? "x" : " "}] ${b.text}`); break;
+      case "quote": lines.push(`> ${b.text}`, ""); break;
+      case "callout": lines.push(`> **Note:** ${b.text}`, ""); break;
+      case "code": lines.push("```" + (b.language ?? ""), b.text, "```", ""); break;
+      case "divider": lines.push("---", ""); break;
+      case "image": lines.push(`![${b.text || "image"}](${b.url ?? ""})`, ""); break;
+      case "toggle": lines.push(`**${b.text}**`, b.body ? `  ${b.body}` : "", ""); break;
+      default: if (b.text) lines.push(b.text, "");
+    }
+  }
+
+  const blob = new Blob([lines.join("\n")], { type: "text/markdown" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${(page.title || "untitled").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}

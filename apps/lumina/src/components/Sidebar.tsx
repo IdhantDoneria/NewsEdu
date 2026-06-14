@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { childrenOf, Page, pageTitle, Workspace } from "@/lib/model";
-import { createPage, deletePage, openPage, useWorkspace } from "@/lib/store";
+import { createPage, deletePage, exportWorkspaceJSON, importWorkspaceJSON, openPage, useWorkspace } from "@/lib/store";
 import ThemeToggle from "./ThemeToggle";
 
 function PageNode({
@@ -96,7 +96,25 @@ function PageNode({
 export default function Sidebar({ onSearch }: { onSearch: () => void }) {
   const ws = useWorkspace();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [importError, setImportError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const roots = childrenOf(ws, null);
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        importWorkspaceJSON(reader.result as string);
+        setImportError(null);
+      } catch {
+        setImportError("Could not read backup — file may be corrupted.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
 
   const toggle = (id: string) =>
     setExpanded((prev) => {
@@ -163,6 +181,32 @@ export default function Sidebar({ onSearch }: { onSearch: () => void }) {
         >
           ▦ New database
         </button>
+        <div className="mt-1 border-t border-[var(--line)] pt-1">
+          <button
+            type="button"
+            onClick={exportWorkspaceJSON}
+            className="w-full rounded-md px-2 py-1.5 text-left text-xs text-[var(--fg-faint)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--fg-muted)]"
+          >
+            ↓ Export backup
+          </button>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="w-full rounded-md px-2 py-1.5 text-left text-xs text-[var(--fg-faint)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--fg-muted)]"
+          >
+            ↑ Import backup
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={handleImport}
+          />
+          {importError && (
+            <p className="px-2 py-1 text-[10px] text-red-400">{importError}</p>
+          )}
+        </div>
       </div>
     </aside>
   );
