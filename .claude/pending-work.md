@@ -14,10 +14,6 @@ relevant file. The more specific the task, the better the overnight result.
 > left, and anything that needs you (see `.claude/automation/README.md`).
 
 
-- [ ] Complete the DSPR website generation from claude code, by acting as a senior developer of website building and looking over the current progress, assigning agents for the work left, and developing the entire website.
-- [ ] In the DSPR website, if the website generation is complete then try to code for react based animations that make the website genuinely very immersive, just do not overdo anything, everything should be made very intricately. The website experience should truly be very energetic, and seem like the best PR team out there.
-- [ ] Develop the perfect sales script to mail to the head of DSPR team Digisha Shah — what is broken in their current website, and how my solution is better. Use high level psychology to trigger the outcome in my favor so, I end up closing the deal.
-- [ ] Using opus 4.8 max, develop the most real life fable 5 skill which is installable that makes opus behave like it in terms of thinking pattern. Make sure to research online about the capabilities of fable 5 and then take a lot of time to build the perfect skill or a repo (whichever is the best) to best align with fable 5. basically, I want fable 5 capabilities in opus 4.8 so work to get it.
 <!-- Add tasks below using the "- [ ] ..." checkbox format. Examples (the ">"
      prefix is only so these samples aren't picked up as real tasks — your real
      tasks should start with "- [ ]"):
