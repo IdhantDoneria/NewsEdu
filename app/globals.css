@@ -27,6 +27,11 @@
   --accent-soft: rgba(31, 92, 69, 0.08);
 }
 
+[data-edition='markets'] {
+  --accent: #2e59a8; /* market blue — markets */
+  --accent-soft: rgba(46, 89, 168, 0.08);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -134,7 +139,7 @@ body {
   position: absolute;
   top: 2px;
   bottom: 2px;
-  width: calc(50% - 2px);
+  width: calc(33.333% - 2px);
   border-radius: 999px;
   background: var(--accent);
   transition: transform 0.45s cubic-bezier(0.7, -0.2, 0.25, 1.2), background 0.45s ease;
@@ -143,6 +148,10 @@ body {
 
 .edition-toggle[data-active='finance'] .thumb {
   transform: translateX(calc(100% + 2px));
+}
+
+.edition-toggle[data-active='markets'] .thumb {
+  transform: translateX(calc(200% + 2px));
 }
 
 .edition-toggle button {

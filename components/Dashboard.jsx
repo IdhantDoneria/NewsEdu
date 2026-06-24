@@ -2,9 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import MarketsOverview from './MarketsOverview';
+
 const EDITION_LABELS = {
   geopolitics: 'Geopolitics',
   finance: 'Finance',
+  markets: 'Markets',
 };
 
 const REFRESH_MS = 5 * 60 * 1000;
@@ -106,6 +109,12 @@ export default function Dashboard() {
   const leadTilt = useTilt(2.5);
 
   const load = useCallback(async (ed, force = false) => {
+    if (ed === 'markets') {
+      setData(null);
+      setLoading(false);
+      setRefreshing(false);
+      return;
+    }
     setError(null);
     try {
       const url = `/api/news?edition=${ed}${force ? '&refresh=1' : ''}`;
@@ -181,12 +190,14 @@ export default function Dashboard() {
           <p className="tagline">
             {edition === 'finance'
               ? 'Fundings · Markets · Capital Flows'
+              : edition === 'markets'
+              ? 'Global Stock Markets · Equities · Indices'
               : 'Statecraft · Conflict · Diplomacy'}{' '}
-            — ranked by the Meridian Score
+            {edition !== 'markets' && '— ranked by the Meridian Score'}
           </p>
         </header>
 
-        {tickerItems.length > 0 && (
+        {edition !== 'markets' && tickerItems.length > 0 && (
           <div className="ticker">
             <span className="ticker-label">Latest Wire</span>
             <div className="ticker-track">
@@ -203,46 +214,50 @@ export default function Dashboard() {
 
         <div className="section-head">
           <h2>{EDITION_LABELS[edition]} Edition</h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span className="meta">
-              {loading
-                ? 'Consulting the wire…'
-                : `${articles.length} briefs · ${liveFeeds} live sources · refreshed ${
-                    data ? timeAgo(data.generatedAt) : '—'
-                  }`}
-            </span>
-            <button
-              className="refresh-btn"
-              onClick={forceRefresh}
-              disabled={refreshing || loading}
-              aria-label="Force refresh news"
-              title="Pull the latest from all sources now"
-            >
-              <svg
-                className={`refresh-icon${refreshing ? ' spinning' : ''}`}
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+          {edition !== 'markets' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span className="meta">
+                {loading
+                  ? 'Consulting the wire…'
+                  : `${articles.length} briefs · ${liveFeeds} live sources · refreshed ${
+                      data ? timeAgo(data.generatedAt) : '—'
+                    }`}
+              </span>
+              <button
+                className="refresh-btn"
+                onClick={forceRefresh}
+                disabled={refreshing || loading}
+                aria-label="Force refresh news"
+                title="Pull the latest from all sources now"
               >
-                <path d="M21 2v6h-6" />
-                <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-                <path d="M3 22v-6h6" />
-                <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
-              </svg>
-              {refreshing ? 'Pulling wire…' : 'Refresh now'}
-            </button>
-          </div>
+                <svg
+                  className={`refresh-icon${refreshing ? ' spinning' : ''}`}
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 2v6h-6" />
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+                  <path d="M3 22v-6h6" />
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+                </svg>
+                {refreshing ? 'Pulling wire…' : 'Refresh now'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="stage">
           <div className={`stage-inner${flipping ? ' flipping' : ''}`}>
-            {loading ? (
+            {edition === 'markets' ? (
+              <MarketsOverview />
+            ) : loading ? (
               <div className="state-box">
                 <div className="press" />
                 Setting the type…
