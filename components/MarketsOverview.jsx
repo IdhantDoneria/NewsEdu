@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 
 const MARKETS = [
-  'US', 'China', 'Japan', 'India', 'UK', 'France', 'Canada', 'Germany'
+  'US', 'China', 'Japan', 'India', 'UK', 'France', 'Canada', 'Germany',
+  'Taiwan', 'South Korea', 'Saudi Arabia', 'Switzerland', 'Australia'
 ];
 
 export default function MarketsOverview() {
