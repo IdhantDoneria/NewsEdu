@@ -227,7 +227,7 @@ jobs:
           export CLAUDE_CODE_OAUTH_TOKEN="$(printf '%s' "$CLAUDE_CODE_OAUTH_TOKEN" | tr -d '[:space:]')"
           set +e
           claude --dangerously-skip-permissions \
-            --model claude-sonnet-4-6 \
+            --model claude-opus-4-8 \
             --max-turns 60 \
             -p "You are running unattended, overnight, in CI. Your job is to pick up
           development that was left unfinished and push it forward safely, then
