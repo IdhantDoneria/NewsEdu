@@ -1,0 +1,7 @@
+Overnight automation test — 2026-07-02T00:00:00Z
+
+This file was created by the midnight-resume agent to verify that overnight
+automation is functioning correctly. If you see this file, the nightly run
+completed successfully and the agent was able to write files and commit.
+
+Branch: auto/midnight-resume
