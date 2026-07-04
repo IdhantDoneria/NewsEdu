@@ -14,10 +14,10 @@ name: Midnight resume (continue unfinished work)
 # repo secret named CLAUDE_CODE_OAUTH_TOKEN (Settings → Secrets → Actions).
 
 on:
-  schedule:
-    # 21:30 UTC = 03:00 IST — comfortably after the midnight reset has landed.
-    # GitHub cron is always UTC. Adjust if your reset time differs.
-    - cron: "30 21 * * *"
+  # schedule:
+  #   # 21:30 UTC = 03:00 IST — comfortably after the midnight reset has landed.
+  #   # GitHub cron is always UTC. Adjust if your reset time differs.
+  #   - cron: "30 21 * * *"
   workflow_dispatch:
     # Lets you trigger a run by hand from the Actions tab to test it.
     inputs:
