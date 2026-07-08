@@ -19,7 +19,9 @@ Production mode:
 npm run build && npm start
 ```
 
-No API keys, no database, no environment variables required.
+**Optional:** Set environment variables in `.env.local` for enhanced features:
+- `GEMINI_API_KEY` – AI-powered market summaries in Markets overview (free tier available)
+- `FINNHUB_API_KEY` – Enhanced market news in Finance edition
 
 ## Deploying to Vercel
 
@@ -33,7 +35,35 @@ vercel --prod      # production deploy
 
 Or click: [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FIdhantDoneria%2FNewsEdu)
 
-Optional: set `FINNHUB_API_KEY` in Vercel → Project → Settings → Environment Variables to merge [Finnhub's](https://finnhub.io) free-tier market wire into the Finance edition.
+**Optional API Keys:**
+
+1. **Gemini API Key** (for AI market summaries)
+   - Get free key at: https://aistudio.google.com/apikey
+   - Set `GEMINI_API_KEY` in Vercel → Project → Settings → Environment Variables
+   - Enables AI-powered summaries in the Markets overview page
+
+2. **Finnhub API Key** (for enhanced market news)
+   - Get free key at: https://finnhub.io
+   - Set `FINNHUB_API_KEY` in Vercel → Project → Settings → Environment Variables
+   - Merges [Finnhub's](https://finnhub.io) free-tier market wire into the Finance edition
+
+Both are optional — the app works with zero API keys.
+
+## Markets Overview (AI-Powered)
+
+The **Markets** tab (top right toggle) provides AI-generated summaries of global stock markets:
+
+- **13 markets:** US, China, Japan, India, UK, France, Canada, Germany, Taiwan, South Korea, Saudi Arabia, Switzerland, Australia
+- **AI Summaries:** When `GEMINI_API_KEY` is set, Gemini 2.5 Flash generates 2-paragraph financial analysis summaries
+- **Latest News:** Fetches top 10 articles for each market from Google News
+- **Market Selector:** Dropdown to switch between markets in real-time
+
+**How it works:**
+1. Fetch top news headlines for the selected market from Google News RSS
+2. If Gemini API key is configured, send headlines to Gemini for financial analysis
+3. Display AI summary + ranked news list with publication metadata
+
+No API key? The page still works — you'll see the latest news without AI summaries.
 
 ## News refresh cadence
 
@@ -83,13 +113,16 @@ Designed first in Canva ([view](https://www.canva.com/d/gFXk9iwoJ3Temwq) / [edit
 
 ```
 app/
-  api/news/route.js   # fetch feeds → score → corroborate → rank (5-min cache, force-refresh support)
-  globals.css         # broadsheet design system + 3D effects
+  api/
+    news/route.js       # fetch feeds → score → corroborate → rank (5-min cache, force-refresh)
+    markets/route.js    # fetch Google News → Gemini AI summary → JSON response
+  globals.css           # broadsheet design system + 3D effects
   layout.js, page.js
 components/
-  Dashboard.jsx       # toggle, ticker, force-refresh button, lead story, ranked rail, ledger grid
+  Dashboard.jsx         # edition toggle (geopolitics/finance/markets)
+  MarketsOverview.jsx   # market selector + AI summary + news list (uses /api/markets)
 lib/
-  feeds.js            # source registry with trust/authority weights
-  rss.js              # RSS 2.0 / Atom / RDF parser (fast-xml-parser)
-  score.js            # the Meridian Score algorithm
+  feeds.js              # source registry with trust/authority weights
+  rss.js                # RSS 2.0 / Atom / RDF parser (fast-xml-parser)
+  score.js              # the Meridian Score algorithm
 ```

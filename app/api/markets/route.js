@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
-import { GoogleGenAI } from '@google/genai';
+import { generateMarketSummary } from '@/lib/gemini';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -43,25 +43,19 @@ export async function GET(request) {
     // 2. Summarize using Gemini if API key is present
     let summary = '';
     const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    if (geminiKey && topArticles.length > 0) {
-      try {
-        const ai = new GoogleGenAI({ apiKey: geminiKey });
-        
-        const prompt = `You are a financial analyst. Provide a brief, highly accurate 2-paragraph summary of the recent developments in the ${marketKey} stock market based on the following news headlines. Focus on key movers, economic data, and overall sentiment.\n\nHeadlines:\n` + topArticles.map(a => `- ${a.title}`).join('\n');
-        
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-        });
-        summary = response.text;
-      } catch (aiError) {
-        console.error('Gemini API Error:', aiError);
-        summary = 'AI summary is currently unavailable due to an error generating the content.';
-      }
-    } else if (!geminiKey) {
-       summary = 'AI summary requires a Gemini API key in the environment variables (GEMINI_API_KEY).';
+
+    if (!geminiKey) {
+      summary = 'AI summary requires a Gemini API key. Set GEMINI_API_KEY in environment variables. Get your free key at: https://aistudio.google.com/apikey';
+    } else if (topArticles.length === 0) {
+      summary = 'No recent news found to summarize.';
     } else {
-       summary = 'No recent news found to summarize.';
+      try {
+        const headlines = topArticles.map(a => a.title);
+        summary = await generateMarketSummary(marketKey, headlines);
+      } catch (aiError) {
+        console.error('Gemini API Error:', aiError.message || aiError);
+        summary = `AI summary unavailable: ${aiError.message || 'Unknown error'}. Verify your GEMINI_API_KEY is valid at https://aistudio.google.com/apikey`;
+      }
     }
 
     return NextResponse.json({
