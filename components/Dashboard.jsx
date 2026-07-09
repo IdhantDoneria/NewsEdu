@@ -21,6 +21,13 @@ function timeAgo(ts) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+function absoluteTime(ts) {
+  return new Date(ts).toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
 function todayLine() {
   return new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -28,6 +35,12 @@ function todayLine() {
     month: 'long',
     day: 'numeric',
   });
+}
+
+function scoreTier(score) {
+  if (score >= 80) return 'high';
+  if (score >= 60) return 'mid';
+  return 'low';
 }
 
 function useTilt(maxDeg = 4) {
@@ -55,35 +68,98 @@ function useTilt(maxDeg = 4) {
   return { onMouseMove, onMouseLeave };
 }
 
-function ScoreDial({ score, small = false, label }) {
+function ScoreDial({ score, small = false, label, metrics, corroboration }) {
+  let desc = `Meridian Score: ${score} out of 100.`;
+  if (metrics) {
+    desc += ` Headline integrity ${Math.round(metrics.headlineIntegrity)} of 40, source trust ${Math.round(metrics.sourceTrust)} of 30, freshness ${Math.round(metrics.freshness)} of 30.`;
+    if (corroboration) {
+      desc +=
+        corroboration > 0
+          ? ` Plus ${corroboration} for independent corroboration.`
+          : ` Minus ${Math.abs(corroboration)} as a near-duplicate.`;
+    }
+  }
   return (
     <span
       className={`dial${small ? ' small' : ''}`}
       style={{ '--pct': `${score}%` }}
-      title={`Meridian Score: ${score}/100`}
+      role="img"
+      aria-label={desc}
+      title={desc}
     >
-      <b>{score}</b>
-      {label && <small>{label}</small>}
+      <b aria-hidden="true">{score}</b>
+      {label && <small aria-hidden="true">{label}</small>}
     </span>
   );
 }
 
-function MetricStrip({ metrics }) {
+function ScoreLegend() {
+  return (
+    <details className="score-legend">
+      <summary>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="11" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        How scores work
+      </summary>
+      <div className="score-legend-panel" role="note">
+        <p>Every brief is scored 0–100 from four transparent metrics:</p>
+        <ul>
+          <li><b>Headline Integrity</b> · 0–40 pts — attribution &amp; facts vs. clickbait</li>
+          <li><b>Source Trust</b> · 0–30 pts — outlet reliability + topical authority</li>
+          <li><b>Freshness</b> · 0–30 pts — decays from publish time</li>
+          <li><b>Corroboration</b> · −12…+8 pts — independent confirmation vs. duplicates</li>
+        </ul>
+        <a href="#methodology">Read the full methodology ↓</a>
+      </div>
+    </details>
+  );
+}
+
+function MetricStrip({ metrics, corroboration }) {
   const items = [
-    { key: 'headlineIntegrity', label: 'Headline', max: 40 },
-    { key: 'sourceTrust', label: 'Trust', max: 30 },
-    { key: 'freshness', label: 'Fresh', max: 30 },
+    { key: 'headlineIntegrity', label: 'Headline', max: 40, cls: 'm-headline' },
+    { key: 'sourceTrust', label: 'Trust', max: 30, cls: 'm-trust' },
+    { key: 'freshness', label: 'Fresh', max: 30, cls: 'm-fresh' },
   ];
   return (
-    <div className="metric-strip" aria-hidden="true">
-      {items.map(({ key, label, max }) => (
-        <span className="metric" key={key} title={`${label}: ${metrics[key]}/${max} pts`}>
-          <label>{label}</label>
-          <span className="bar">
-            <i style={{ width: `${Math.min(100, (metrics[key] / max) * 100)}%` }} />
-          </span>
+    <div className="metric-strip">
+      {items.map(({ key, label, max, cls }) => {
+        const val = Math.round(metrics[key] * 10) / 10;
+        const pct = Math.min(100, Math.max(0, (val / max) * 100));
+        return (
+          <div className={`metric ${cls}`} key={key}>
+            <div className="metric-head">
+              <label>{label}</label>
+              <span className="metric-val">
+                {Math.round(val)}
+                <small>/{max}</small>
+              </span>
+            </div>
+            <span
+              className="bar"
+              role="img"
+              aria-label={`${label}: ${Math.round(val)} of ${max} points`}
+            >
+              <i style={{ width: `${pct}%` }} />
+            </span>
+          </div>
+        );
+      })}
+      {!!corroboration && (
+        <span
+          className={`corrob-pill ${corroboration > 0 ? 'good' : 'bad'}`}
+          title={
+            corroboration > 0
+              ? 'A second independent outlet confirmed this story'
+              : 'Near-duplicate of an earlier, higher-ranked story'
+          }
+        >
+          {corroboration > 0 ? `+${corroboration} corroborated` : `${corroboration} duplicate`}
         </span>
-      ))}
+      )}
     </div>
   );
 }
@@ -92,9 +168,81 @@ function Byline({ article }) {
   return (
     <div className="byline">
       <span className="src">{article.sourceName}</span>
-      <span>·</span>
-      <span>{timeAgo(article.publishedAt)}</span>
+      <span aria-hidden="true">·</span>
+      <time dateTime={new Date(article.publishedAt).toISOString()} title={absoluteTime(article.publishedAt)}>
+        {timeAgo(article.publishedAt)}
+      </time>
     </div>
+  );
+}
+
+function LeadCard({ article, tiltProps }) {
+  const [imgError, setImgError] = useState(false);
+  const hasImage = Boolean(article.image) && !imgError;
+
+  return (
+    <a
+      className={`lead-card${hasImage ? '' : ' no-image'}`}
+      href={article.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      {...tiltProps}
+    >
+      {hasImage ? (
+        <div className="lead-media">
+          <img
+            src={article.image}
+            alt=""
+            loading="eager"
+            fetchPriority="high"
+            onError={() => setImgError(true)}
+          />
+        </div>
+      ) : (
+        <span className="lead-quote" aria-hidden="true">
+          “
+        </span>
+      )}
+      <div className="lead-body">
+        <div className="lead-kicker">Lead Brief</div>
+        <h3>{article.title}</h3>
+        {article.summary && <p className="summary">{article.summary}</p>}
+        <div className="lead-foot">
+          <div>
+            <Byline article={article} />
+            <div style={{ maxWidth: 320, marginTop: 12 }}>
+              <MetricStrip metrics={article.metrics} corroboration={article.corroboration} />
+            </div>
+          </div>
+          <ScoreDial
+            score={article.score}
+            label="Meridian Score"
+            metrics={article.metrics}
+            corroboration={article.corroboration}
+          />
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function SourcesStatus({ feeds, liveCount }) {
+  if (!feeds || feeds.length === 0) return null;
+  return (
+    <details className="sources-pop">
+      <summary>
+        {liveCount}/{feeds.length} sources live
+      </summary>
+      <ul className="sources-list">
+        {feeds.map((f) => (
+          <li key={f.source}>
+            <span className={`dot ${f.ok ? 'ok' : 'down'}`} aria-hidden="true" />
+            <span>{f.source}</span>
+            <span className="src-count">{f.ok ? `${f.items} items` : 'unreachable'}</span>
+          </li>
+        ))}
+      </ul>
+    </details>
   );
 }
 
@@ -159,6 +307,7 @@ export default function Dashboard() {
   const rest = articles.slice(6, 30);
   const tickerItems = articles.slice(0, 10);
   const liveFeeds = data?.feeds?.filter((f) => f.ok).length ?? 0;
+  const halfLife = edition === 'finance' ? 8 : 18;
 
   return (
     <div data-edition={edition}>
@@ -200,34 +349,38 @@ export default function Dashboard() {
         {edition !== 'markets' && tickerItems.length > 0 && (
           <div className="ticker">
             <span className="ticker-label">Latest Wire</span>
-            <div className="ticker-track">
-              {[...tickerItems, ...tickerItems].map((a, i) => (
-                <span className="ticker-item" key={`${a.id}-${i}`}>
-                  <span className="diamond">◆</span>
-                  <b>{a.sourceName}</b>
-                  {a.title}
-                </span>
-              ))}
+            <div className="ticker-edge" aria-hidden="true">
+              <div className="ticker-track">
+                {[...tickerItems, ...tickerItems].map((a, i) => (
+                  <span className="ticker-item" key={`${a.id}-${i}`}>
+                    <span className="diamond" aria-hidden="true">◆</span>
+                    <b>{a.sourceName}</b>
+                    {a.title}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
         <div className="section-head">
-          <h2>{EDITION_LABELS[edition]} Edition</h2>
+          <h2>
+            <span className="edition-word">{EDITION_LABELS[edition]}</span> Edition
+          </h2>
           {edition !== 'markets' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <span className="meta">
+            <div className="section-head-right">
+              <ScoreLegend />
+              <span className="meta" aria-live="polite">
                 {loading
                   ? 'Consulting the wire…'
-                  : `${articles.length} briefs · ${liveFeeds} live sources · refreshed ${
-                      data ? timeAgo(data.generatedAt) : '—'
-                    }`}
+                  : `${articles.length} briefs · refreshed ${data ? timeAgo(data.generatedAt) : '—'}`}
               </span>
+              <SourcesStatus feeds={data?.feeds} liveCount={liveFeeds} />
               <button
-                className="refresh-btn"
+                className="refresh-btn icon-only"
                 onClick={forceRefresh}
                 disabled={refreshing || loading}
-                aria-label="Force refresh news"
+                aria-label={refreshing ? 'Refreshing…' : 'Refresh now'}
                 title="Pull the latest from all sources now"
               >
                 <svg
@@ -247,7 +400,6 @@ export default function Dashboard() {
                   <path d="M3 22v-6h6" />
                   <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
                 </svg>
-                {refreshing ? 'Pulling wire…' : 'Refresh now'}
               </button>
             </div>
           )}
@@ -274,56 +426,32 @@ export default function Dashboard() {
               <>
                 <div className="front-page">
                   <div className="lead-column">
-                    {lead && (
-                      <a
-                        className="lead-card"
-                        href={lead.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        {...leadTilt}
-                      >
-                        <div className="lead-kicker">Lead Brief</div>
-                        <h3>{lead.title}</h3>
-                        {lead.summary && <p className="summary">{lead.summary}</p>}
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: 16,
-                          }}
-                        >
-                          <div>
-                            <Byline article={lead} />
-                            <div style={{ maxWidth: 280, marginTop: 12 }}>
-                              <MetricStrip metrics={lead.metrics} />
-                            </div>
-                          </div>
-                          <ScoreDial score={lead.score} label="Meridian Score" />
-                        </div>
-                      </a>
-                    )}
+                    {lead && <LeadCard article={lead} tiltProps={leadTilt} />}
                   </div>
 
-                  <div className="rail-column">
+                  <ol className="rail-column">
                     {rail.map((a, i) => (
-                      <a
-                        className="rail-item"
-                        key={a.id}
-                        href={a.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        {...tilt}
-                      >
-                        <span className="rail-rank">{String(i + 2).padStart(2, '0')}</span>
-                        <span>
-                          <h4>{a.title}</h4>
-                          <Byline article={a} />
-                        </span>
-                        <ScoreDial score={a.score} small />
-                      </a>
+                      <li key={a.id}>
+                        <a
+                          className="rail-item"
+                          href={a.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          data-tier={scoreTier(a.score)}
+                          {...tilt}
+                        >
+                          <span className="rail-rank" aria-hidden="true">
+                            {String(i + 2).padStart(2, '0')}
+                          </span>
+                          <span>
+                            <h4>{a.title}</h4>
+                            <Byline article={a} />
+                          </span>
+                          <ScoreDial score={a.score} small metrics={a.metrics} corroboration={a.corroboration} />
+                        </a>
+                      </li>
                     ))}
-                  </div>
+                  </ol>
                 </div>
 
                 {rest.length > 0 && (
@@ -332,30 +460,32 @@ export default function Dashboard() {
                       <h2>The Full Ledger</h2>
                       <span className="meta">scores below {data.noiseFloor} are cut as noise</span>
                     </div>
-                    <div className="card-grid">
+                    <ol className="card-grid">
                       {rest.map((a) => (
-                        <a
-                          className="news-card"
-                          key={a.id}
-                          href={a.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          {...tilt}
-                        >
-                          <div className="card-top">
-                            <Byline article={a} />
-                            <ScoreDial score={a.score} small />
-                          </div>
-                          <h4>{a.title}</h4>
-                          {a.summary && <p className="summary">{a.summary}</p>}
-                          <MetricStrip metrics={a.metrics} />
-                        </a>
+                        <li key={a.id}>
+                          <a
+                            className="news-card"
+                            href={a.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-tier={scoreTier(a.score)}
+                            {...tilt}
+                          >
+                            <div className="card-top">
+                              <Byline article={a} />
+                              <ScoreDial score={a.score} small metrics={a.metrics} corroboration={a.corroboration} />
+                            </div>
+                            <h4>{a.title}</h4>
+                            {a.summary && <p className="summary">{a.summary}</p>}
+                            <MetricStrip metrics={a.metrics} corroboration={a.corroboration} />
+                          </a>
+                        </li>
                       ))}
-                    </div>
+                    </ol>
                   </>
                 )}
 
-                <section className="methodology">
+                <section className="methodology" id="methodology">
                   <h3>How the Meridian Score is set</h3>
                   <div className="methodology-grid">
                     <div>
@@ -377,9 +507,10 @@ export default function Dashboard() {
                     <div>
                       <h5>Freshness · 30 pts</h5>
                       <p>
-                        Exponential half-life decay from publication: 8 hours for finance,
-                        18 for geopolitics. Old news fades; it is never artificially
-                        revived.
+                        Exponential half-life decay from publication: this{' '}
+                        <b>{EDITION_LABELS[edition].toLowerCase()} edition uses a {halfLife}-hour half-life</b>{' '}
+                        (8h for finance, 18h for geopolitics — finance news goes stale faster). Old
+                        news fades; it is never artificially revived.
                       </p>
                     </div>
                     <div>
