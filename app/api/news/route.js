@@ -33,6 +33,7 @@ async function finnhubArticles() {
         link: it.url,
         summary: it.summary,
         publishedAt: it.datetime * 1000,
+        image: it.image || null,
       },
       source: { name: 'Finnhub Wire', trust: 14, authority: 8 },
     }));
