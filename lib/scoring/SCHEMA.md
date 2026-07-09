@@ -21,14 +21,15 @@ future analytics store) can rely on these fields.
 | `sourceName`           | string  | Outlet display name.                                                                           |
 | `source`               | object  | `{ name, trust (0-20), authority (0-10) }` — used by the L1 baselines.                         |
 | `edition`              | string  | `"geopolitics"` or `"finance"`.                                                                |
-| `metrics`              | object  | Legacy Meridian metric breakdown: `{ headlineIntegrity, sourceTrust, freshness }`.             |
+| `metrics`              | object  | **Legacy, superseded.** Old 4-metric Meridian breakdown `{ headlineIntegrity, sourceTrust, freshness }`. Kept for observability only — do not render as the explanation for `score`. |
 | `ageHours`             | number  | Hours since publication when scored.                                                           |
-| `corroboration`        | number  | −12..+8 from cross-source de-duplication.                                                      |
-| `scoreNotes`           | array   | Human-readable breakdown of penalty/bonus flags.                                               |
+| `corroboration`        | number  | **Legacy, superseded.** −12..+8 from the old cross-source de-duplication pass.                 |
+| `scoreNotes`           | array   | **Legacy, superseded.** Human-readable notes from the old headline-integrity metric.            |
 | **`geopoliticalScore`** | integer | 0-100, from the 10-layer geopolitics pipeline. Present on every article regardless of edition. |
 | **`financialScore`**    | integer | 0-100, from the 10-layer finance pipeline. Present on every article regardless of edition.     |
 | **`finalCurationScore`** | integer | 0-100, the edition-appropriate score used for sort / filter.                                  |
-| `meridianScore`        | integer | 0-100, legacy Meridian metric total (headline + trust + freshness + corroboration).            |
+| **`scoreBreakdown`**    | array   | The edition-relevant pipeline's signed per-layer contributions: `[{ key, label, delta }, ...]`. `delta` values (pre-clamp) are what the UI renders as the score's explanation — this is the only breakdown guaranteed to match `finalCurationScore`. |
+| `meridianScore`        | integer | 0-100, legacy Meridian metric total. Kept for observability only — no longer the ranking basis. |
 | `score`                | integer | Alias of `finalCurationScore` — kept so existing UI bindings keep working.                     |
 
 ## Frontend contract
@@ -40,8 +41,10 @@ future analytics store) can rely on these fields.
   already been dropped server-side; clients can apply additional thresholds
   against `finalCurationScore` if needed.
 - **Presentation.** The UI displays `score` (which equals `finalCurationScore`)
-  as the headline number and `metrics` as the breakdown bars — the legacy
-  Meridian metrics remain a useful "why" alongside the new pipeline totals.
+  as the headline number and `scoreBreakdown` as the explanation — a signed
+  "receipt" of exactly which layers pushed the score up or down. Do not
+  resurrect `metrics`/`corroboration` in new UI: they describe a different,
+  retired algorithm and summing them will not equal `score`.
 
 ## Migration note (if a real database is added later)
 

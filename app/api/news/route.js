@@ -15,6 +15,17 @@ export const dynamic = 'force-dynamic';
 const MAX_AGE_HOURS = 72;
 const MAX_ARTICLES = 60;
 
+// Turns a raw fetch/parse error into a short, UI-safe phrase — never leaks
+// the underlying feed URL or a raw stack trace to the client.
+function summarizeFeedFailure(err) {
+  const msg = err?.message || String(err || '');
+  const httpMatch = msg.match(/^HTTP (\d+)/);
+  if (httpMatch) return `HTTP ${httpMatch[1]}`;
+  if (err?.name === 'TimeoutError' || /timeout|aborted/i.test(msg)) return 'timed out';
+  if (/ENOTFOUND|EAI_AGAIN|getaddrinfo/i.test(msg)) return 'DNS lookup failed';
+  return 'unreachable';
+}
+
 // Per-edition in-memory cache so a burst of clients doesn't hammer the feeds.
 const cache = new Map(); // edition -> { at, payload }
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -70,7 +81,14 @@ export async function GET(request) {
       pool.push(...result.value);
       feedStatus.push({ source: sources[i].name, ok: true, items: result.value.length });
     } else {
-      feedStatus.push({ source: sources[i].name, ok: false, items: 0 });
+      // Surface *why* a source is down (HTTP status, timeout, parse error)
+      // instead of a bare "unreachable" — the sources popover shows this.
+      feedStatus.push({
+        source: sources[i].name,
+        ok: false,
+        items: 0,
+        reason: summarizeFeedFailure(result.reason),
+      });
     }
   });
 
@@ -96,23 +114,29 @@ export async function GET(request) {
   // the whole batch. Each article is scored through both algorithms so the
   // response carries geopoliticalScore, financialScore, and finalCurationScore
   // (the edition-appropriate one) — the frontend can sort/filter on any of
-  // them. Because scoring is CPU-bound but wrapped in Promise.all, we yield
-  // between microtasks and don't block the response.
+  // them. scoreBreakdown carries the edition-relevant pipeline's signed
+  // per-layer contributions — this is what the UI renders as the score's
+  // explanation, so the number and its breakdown can never disagree. Because
+  // scoring is CPU-bound but wrapped in Promise.all, we yield between
+  // microtasks and don't block the response.
   const pipelineScores = await scoreArticlesAsync(articles, edition);
   articles = articles.map((a, i) => {
     const scores = pipelineScores[i] || {
       geopoliticalScore: 0,
       financialScore: 0,
       finalCurationScore: 0,
+      scoreBreakdown: [],
     };
     return {
       ...a,
       geopoliticalScore: scores.geopoliticalScore,
       financialScore: scores.financialScore,
       finalCurationScore: scores.finalCurationScore,
-      // Keep the legacy Meridian totalScore around for observability & the
-      // metric-strip breakdown UI, but the primary "score" the frontend
-      // ranks / renders is now the 10-layer pipeline's finalCurationScore.
+      scoreBreakdown: scores.scoreBreakdown,
+      // Legacy Meridian sub-metrics (headline/trust/freshness/corroboration)
+      // are kept only for observability/debugging — they are a different,
+      // superseded algorithm and must not be presented in the UI as the
+      // explanation for `score`, which is now finalCurationScore.
       meridianScore: totalScore(a),
       score: scores.finalCurationScore,
     };
