@@ -7,6 +7,7 @@ import {
   totalScore,
   NOISE_FLOOR,
 } from '@/lib/score';
+import { scoreArticlesAsync } from '@/lib/scoring/index.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -91,10 +92,35 @@ export async function GET(request) {
   );
   applyCorroboration(articles);
 
+  // Run the two 10-layer pipelines (geopolitics + finance) concurrently over
+  // the whole batch. Each article is scored through both algorithms so the
+  // response carries geopoliticalScore, financialScore, and finalCurationScore
+  // (the edition-appropriate one) — the frontend can sort/filter on any of
+  // them. Because scoring is CPU-bound but wrapped in Promise.all, we yield
+  // between microtasks and don't block the response.
+  const pipelineScores = await scoreArticlesAsync(articles, edition);
+  articles = articles.map((a, i) => {
+    const scores = pipelineScores[i] || {
+      geopoliticalScore: 0,
+      financialScore: 0,
+      finalCurationScore: 0,
+    };
+    return {
+      ...a,
+      geopoliticalScore: scores.geopoliticalScore,
+      financialScore: scores.financialScore,
+      finalCurationScore: scores.finalCurationScore,
+      // Keep the legacy Meridian totalScore around for observability & the
+      // metric-strip breakdown UI, but the primary "score" the frontend
+      // ranks / renders is now the 10-layer pipeline's finalCurationScore.
+      meridianScore: totalScore(a),
+      score: scores.finalCurationScore,
+    };
+  });
+
   articles = articles
-    .map((a) => ({ ...a, score: totalScore(a) }))
-    .filter((a) => a.score >= NOISE_FLOOR) // the clickbait cut
-    .sort((a, b) => b.score - a.score)
+    .filter((a) => a.finalCurationScore >= NOISE_FLOOR) // the clickbait cut
+    .sort((a, b) => b.finalCurationScore - a.finalCurationScore)
     .slice(0, MAX_ARTICLES);
 
   const payload = {
