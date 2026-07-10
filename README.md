@@ -2,6 +2,19 @@
 
 A news intelligence dashboard that surfaces the most trustworthy, timely stories from global RSS wires — ranked by the **Meridian Score**, a transparent 100-point algorithm. Two editions: **Geopolitics** and **Finance**, toggled from the top right.
 
+Beyond the ranked front page, Meridian is a personalized intelligence and knowledge-retention system built on one shared story-intelligence layer:
+
+- **Story Intelligence Pages** (`/story/[id]`) — every ranked article links to its event cluster's full brief: what happened, why it matters, essential background, key actors, stakeholder positions (public claim vs. inferred interest), points of disagreement, key numbers, timeline, and what-could-happen-next scenarios with uncertainty labels. Every statement is classified (**FACT · PARTY CLAIM · ANALYSIS · SCENARIO · UNCERTAINTY**) and facts carry citations back to source articles.
+- **Follow Story & What Changed** (`/following`) — follow a story and, on return, see only *material* developments (policy actions, rulings, escalation/de-escalation, data releases…) since your last visit. Duplicate reporting and low-information rewrites are suppressed.
+- **Personalized Daily Briefing** (`/briefing`) — a finite briefing (Essential Developments, Developing Stories, Understand One Issue, Watch Next), blending ~70% personal relevance with ~30% global significance. Never an infinite feed.
+- **Source Comparison & Framing** — inside each story page: per-outlet headlines, timing, Meridian Scores, primary focus, observable framing-emphasis differences, and figures reported by only one outlet.
+- **Contextual Q&A** — "Ask about this story" answers strictly from the story's own articles and stored intelligence, with validated citations. Insufficient evidence produces an honest refusal, not invention.
+- **Weekly Recall & Knowledge Map** (`/recall`) — understanding-level questions generated from stories you actually read/followed/asked about, paraphrase-tolerant grading with explanations, and causal chains connecting developments.
+
+**Privacy model:** there are no accounts and no server-side user data. Interests, follows, visit snapshots, reading history and recall performance live in your browser's localStorage and are sent only transiently inside the requests that need them. This preserves the product's "No tracking" positioning.
+
+**AI model:** intelligence generation, framing narratives, Q&A and recall grading use Gemini 2.5 Flash when `GEMINI_API_KEY` is set, with strict JSON schemas, server-side validation (fabricated citations are stripped; ungrounded "facts" are demoted to analysis) and caching per cluster version. Without a key, every feature still works in a deterministic extractive mode.
+
 **UI design (Canva):** [view](https://www.canva.com/d/gFXk9iwoJ3Temwq) · [edit](https://www.canva.com/d/jPzlvn-58viI3IQ)
 
 ---
@@ -114,15 +127,37 @@ Designed first in Canva ([view](https://www.canva.com/d/gFXk9iwoJ3Temwq) / [edit
 ```
 app/
   api/
-    news/route.js       # fetch feeds → score → corroborate → rank (5-min cache, force-refresh)
+    news/route.js       # thin wrapper over lib/ingest.js (payload unchanged + clusterId)
     markets/route.js    # fetch Google News → Gemini AI summary → JSON response
-  globals.css           # broadsheet design system + 3D effects
+    intel/route.js      # story-cluster list per edition
+    intel/[id]/         # story intelligence payload + /ask (scoped Q&A)
+    intel/metrics/      # AI/caching observability counters
+    briefing/route.js   # personalized finite daily briefing (POST, stateless)
+    changes/route.js    # material-change detection vs client snapshots (POST)
+    recall/route.js     # recall questions + knowledge map; /evaluate grades answers
+  briefing/ following/ recall/ story/[id]/   # product pages
+  globals.css           # broadsheet design system + 3D effects + intelligence UI
   layout.js, page.js
 components/
-  Dashboard.jsx         # edition toggle (geopolitics/finance/markets)
-  MarketsOverview.jsx   # market selector + AI summary + news list (uses /api/markets)
+  Dashboard.jsx         # front page (edition toggle, what-changed strip, intel links)
+  StoryPage.jsx         # story intelligence page (follow, comparison, Q&A)
+  Briefing.jsx / Following.jsx / Recall.jsx
+  intel/                # shared chrome + classification badges
 lib/
+  ingest.js             # shared fetch → score → corroborate → rank → cluster pipeline
   feeds.js              # source registry with trust/authority weights
   rss.js                # RSS 2.0 / Atom / RDF parser (fast-xml-parser)
   score.js              # the Meridian Score algorithm
+  scoring/              # 10-layer geopolitics & finance pipelines
+  client/userState.js   # local-first profile (follows, interests, history)
+  intelligence/         # shared intelligence layer:
+    cluster.mjs           # deterministic event clustering (stable IDs)
+    extract.mjs           # Gemini structured intel + deterministic fallback
+    schema.mjs            # validation: classifications, citation stripping
+    changes.mjs           # material-change detection
+    briefing.mjs          # finite briefing composer (70/30 configurable)
+    compare.mjs           # source comparison + framing analysis
+    qa.mjs                # scoped, citation-validated story Q&A
+    recall.mjs            # recall questions, grading, knowledge map
+    entities.mjs topics.mjs store.mjs metrics.mjs ai.mjs
 ```
