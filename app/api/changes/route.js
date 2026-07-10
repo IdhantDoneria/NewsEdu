@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getEditionClusters } from '@/lib/ingest';
 import { detectChanges } from '@/lib/intelligence/changes.mjs';
+import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,12 +15,11 @@ const MAX_SNAPSHOTS = 50;
  * as expired so the UI can say so instead of silently dropping them.
  */
 export async function POST(request) {
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'bad-request' }, { status: 400 });
+  const read = await readJsonBounded(request);
+  if (read.error) {
+    return NextResponse.json({ error: read.error }, { status: read.status });
   }
+  const body = read.body;
 
   const snapshots = (Array.isArray(body?.snapshots) ? body.snapshots : [])
     .filter((s) => s && typeof s.clusterId === 'string')

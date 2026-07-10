@@ -336,3 +336,28 @@ test('numeric tokens merge same-figure duplicate headlines (SK Hynix case)', () 
   const clusters = clusterArticles([a, b], 'finance');
   assert.equal(clusters.length, 1, 'same offering must not form duplicate clusters');
 });
+
+/* ------------------------- Agent G finding regressions ---------------------- */
+
+test('divergent headlines of one event merge (Bayeux / Khamenei cases)', () => {
+  const a = art('Bayeux Tapestry arrives safely in UK after loan from France', { source: 'France 24' });
+  const b = art('Bayeux Tapestry smuggled into Britain for first visit in 1,000 years', { source: 'Al Jazeera', hoursAgo: 1 });
+  assert.equal(clusterArticles([a, b], 'geopolitics').length, 1);
+
+  const c = art("Huge crowds in Mashhad as Iran's late supreme leader is buried", {
+    summary: 'Ali Khamenei was buried at the Imam Reza shrine in Mashhad.',
+  });
+  const d = art('Live: Iran buries Ali Khamenei as thousands gather in Mashhad', {
+    source: 'Al Jazeera', hoursAgo: 1,
+    summary: 'The funeral of Ali Khamenei drew huge crowds in Mashhad.',
+  });
+  assert.equal(clusterArticles([c, d], 'geopolitics').length, 1);
+});
+
+test('briefing dedupes the same event arriving from both editions', () => {
+  const geo = mkCluster('Chip giant SK Hynix raises $26.5bn in mega US share sale', { score: 80 });
+  const fin = { ...mkCluster('SK Hynix raises $26.5 billion in U.S. offering. What to know', { score: 85 }), edition: 'finance' };
+  const briefing = composeBriefing([geo, fin, mkCluster('NATO summit opens amid missile fears', { score: 90 })], new Map(), {});
+  const hynix = briefing.essential.filter((e) => /Hynix/.test(e.title));
+  assert.equal(hynix.length, 1, 'one event must occupy one briefing slot');
+});

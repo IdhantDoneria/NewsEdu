@@ -2,18 +2,18 @@ import { NextResponse } from 'next/server';
 import { findClusterById } from '@/lib/ingest';
 import { getIntelForCluster } from '@/lib/intelligence/extract.mjs';
 import { answerStoryQuestion } from '@/lib/intelligence/qa.mjs';
+import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 /** Contextual Q&A scoped to one story cluster. */
 export async function POST(request, { params }) {
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'bad-request' }, { status: 400 });
+  const read = await readJsonBounded(request, 8 * 1024);
+  if (read.error) {
+    return NextResponse.json({ error: read.error }, { status: read.status });
   }
+  const body = read.body;
 
   const cluster = await findClusterById(params.id, body?.edition);
   if (!cluster) {

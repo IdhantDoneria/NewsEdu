@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 import { generateMarketSummary } from '@/lib/gemini';
 import { fetchIndexSnapshot, MARKET_INDEX } from '@/lib/quotes';
+import { safeHttpUrl } from '@/lib/rss';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -47,12 +48,15 @@ export async function GET(request) {
       const parsed = parser.parse(xml);
       const items = parsed?.rss?.channel?.item || [];
       const articlesArray = Array.isArray(items) ? items : [items];
-      return articlesArray.slice(0, 10).map((item) => ({
-        title: item.title,
-        link: item.link,
-        publishedAt: item.pubDate,
-        source: item.source?.['#text'] || item.source || 'Google News',
-      }));
+      return articlesArray
+        .slice(0, 10)
+        .map((item) => ({
+          title: item.title,
+          link: safeHttpUrl(typeof item.link === 'string' ? item.link : item.link?.['#text']),
+          publishedAt: item.pubDate,
+          source: item.source?.['#text'] || item.source || 'Google News',
+        }))
+        .filter((a) => a.title && a.link);
     })(),
     fetchIndexSnapshot(marketKey),
   ]);

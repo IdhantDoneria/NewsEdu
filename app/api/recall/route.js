@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getEditionClusters } from '@/lib/ingest';
 import { getIntelForCluster } from '@/lib/intelligence/extract.mjs';
 import { generateRecallQuestions, buildKnowledgeMap } from '@/lib/intelligence/recall.mjs';
+import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,12 +16,11 @@ const MAX_HISTORY = 20;
  * the same stored intelligence objects that power story pages.
  */
 export async function POST(request) {
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'bad-request' }, { status: 400 });
+  const read = await readJsonBounded(request);
+  if (read.error) {
+    return NextResponse.json({ error: read.error }, { status: read.status });
   }
+  const body = read.body;
 
   const history = (Array.isArray(body?.history) ? body.history : [])
     .filter((h) => h && typeof h.clusterId === 'string')

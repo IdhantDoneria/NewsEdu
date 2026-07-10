@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getEditionClusters } from '@/lib/ingest';
 import { getIntelForCluster } from '@/lib/intelligence/extract.mjs';
 import { composeBriefing } from '@/lib/intelligence/briefing.mjs';
+import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,12 +18,11 @@ const INTEL_BUDGET = 6;
  * snapshots) — no user data is stored server-side.
  */
 export async function POST(request) {
-  let body = {};
-  try {
-    body = await request.json();
-  } catch {
-    // empty profile is a valid new-user state
+  const read = await readJsonBounded(request);
+  if (read.error === 'payload-too-large') {
+    return NextResponse.json({ error: read.error }, { status: read.status });
   }
+  const body = read.body || {}; // malformed JSON degrades to the new-user state
 
   const profile = {
     interests: (Array.isArray(body?.interests) ? body.interests : [])
