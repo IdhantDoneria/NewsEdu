@@ -6,7 +6,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { extractEntities, extractEventTerms, extractKeyNumbers, canonical } from '../lib/intelligence/entities.mjs';
+import { extractEntities, extractEventTerms, extractKeyNumbers, canonical, displayCase } from '../lib/intelligence/entities.mjs';
 import { clusterArticles, clusterVersion } from '../lib/intelligence/cluster.mjs';
 import { validateIntel } from '../lib/intelligence/schema.mjs';
 import { buildFallbackIntel } from '../lib/intelligence/extract.mjs';
@@ -360,4 +360,85 @@ test('briefing dedupes the same event arriving from both editions', () => {
   const briefing = composeBriefing([geo, fin, mkCluster('NATO summit opens amid missile fears', { score: 90 })], new Map(), {});
   const hynix = briefing.essential.filter((e) => /Hynix/.test(e.title));
   assert.equal(hynix.length, 1, 'one event must occupy one briefing slot');
+});
+
+/* ---------------------- discovery-agent finding regressions ----------------- */
+
+test('key-actor extraction skips Title Case garbage but keeps real proper nouns', () => {
+  const titleCase = extractEntities('Edvisorly Raises Series A To Fix The Messy College Transfer Process With AI');
+  const junk = titleCase.map((e) => e.canonical);
+  assert.ok(!junk.includes('to fix the'), 'title-case filler must not become an entity');
+  assert.ok(!junk.includes('process with ai'), 'title-case filler must not become an entity');
+
+  const sentenceCase = extractEntities("Huge crowds in Mashhad as Iran's late supreme leader is buried at the Imam Reza shrine");
+  const names = sentenceCase.map((e) => e.canonical);
+  assert.ok(names.includes('iran'));
+  assert.ok(names.includes('mashhad'));
+});
+
+test('displayCase title-cases without mangling possessives', () => {
+  assert.equal(displayCase('iran'), 'Iran');
+  assert.equal(displayCase("iran's"), "Iran's");
+  assert.equal(displayCase('united states'), 'United States');
+});
+
+test('fallback intel synthesizes a grounded-analysis why-it-matters and feeds the knowledge map', () => {
+  const a = art('EU imposes new sanctions on Belarus after border crackdown', {
+    summary: 'The sanctions target officials linked to the crackdown.',
+  });
+  const [cluster] = clusterArticles([a], 'geopolitics');
+  const intel = buildFallbackIntel(cluster);
+  assert.ok(intel.whyItMatters.length > 0);
+  assert.equal(intel.whyItMatters[0].classification, 'ANALYSIS');
+  assert.equal(intel.whyItMatters[0].citations.length, 0, 'templated inference must not claim a citation');
+
+  const chains = buildKnowledgeMap([{ cluster, intelRecord: { intel }, kind: 'read' }]);
+  assert.ok(chains.length > 0, 'a populated whyItMatters must unlock a knowledge-map chain');
+});
+
+test('changes.mjs names actual new actors instead of generic filler', () => {
+  const seen = art('Regional talks continue over shipping lane access');
+  const material = art('Egypt and Panama both join the shipping lane negotiations', {
+    source: 'France 24', hoursAgo: 0.5,
+  });
+  const cluster = {
+    id: 'cnew', title: seen.title, edition: 'geopolitics',
+    articles: [seen, material], articleIds: [seen.id, material.id], latestAt: NOW,
+  };
+  const res = detectChanges(cluster, { articleIds: [seen.id], lastSeenAt: NOW - 2 * 36e5 });
+  if (res.changes.length > 0) {
+    assert.doesNotMatch(res.changes[0].why, /^New actors have entered the story\.$/, 'why must name the actor, not use the generic placeholder verbatim without names');
+  }
+});
+
+test('source comparison never lists the same outlet as both emphasizing and absent for one dimension', () => {
+  const a = art('Markets react as economic sanctions hit oil exports', {
+    source: 'Al Jazeera',
+    summary: 'Investors weighed inflation and price pressure on energy markets.',
+  });
+  const b = art('Local team wins football match after sanctions announcement mentioned in passing', {
+    source: 'Al Jazeera', hoursAgo: 1,
+    summary: 'A short unrelated sports recap with no economic detail.',
+  });
+  const c = art('Civilians face hardship as aid groups warn of shortages', { source: 'BBC World', hoursAgo: 2 });
+  const cluster = {
+    id: 'ccmp2', edition: 'geopolitics', title: a.title,
+    articles: [a, b, c], articleIds: [a.id, b.id, c.id],
+    sources: ['Al Jazeera', 'BBC World'], size: 3,
+    earliestAt: c.publishedAt, latestAt: a.publishedAt,
+  };
+  const cmp = compareSources(cluster);
+  for (const e of cmp.emphasis) {
+    const overlap = e.emphasizedBy.filter((s) => e.absentFrom.includes(s));
+    assert.equal(overlap.length, 0, `source appears on both sides of "${e.dimension}"`);
+  }
+});
+
+test('title/summary concatenation cannot fuse a proper noun across the boundary', () => {
+  const a = art('East Asia braces for destructive typhoon as landslides kill 15 in Philippines', {
+    summary: 'Heading for Taiwan and south-eastern China, the storm is forecast to intensify.',
+  });
+  const [cluster] = clusterArticles([a], 'geopolitics');
+  const names = cluster.entities;
+  assert.ok(!names.includes('philippines heading'), 'title-ending and summary-starting words must not fuse into one entity');
 });

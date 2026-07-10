@@ -198,7 +198,7 @@ export default function Briefing() {
                       </Link>
                       {item.summary && <p className="summary">{item.summary}</p>}
                       <span className="meta">
-                        {item.sources.length} sources · open the full intelligence page for
+                        {item.sources.length} {item.sources.length === 1 ? 'source' : 'sources'} · open the full intelligence page for
                         actors, timeline and scenarios
                       </span>
                     </div>
