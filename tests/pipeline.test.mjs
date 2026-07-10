@@ -56,6 +56,31 @@ test('scoreArticleAsync degrades gracefully for a bad input', async () => {
   assert.equal(s.geopoliticalScore, 0);
   assert.equal(s.financialScore, 0);
   assert.equal(s.finalCurationScore, 0);
+  assert.deepEqual(s.scoreBreakdown, []);
+});
+
+test('scoreBreakdown layers sum (pre-clamp) to a value consistent with finalCurationScore', async () => {
+  const s = await scoreArticleAsync(sampleGeo, 'geopolitics');
+  assert.ok(Array.isArray(s.scoreBreakdown) && s.scoreBreakdown.length === 9);
+  for (const layer of s.scoreBreakdown) {
+    assert.ok(typeof layer.key === 'string' && layer.key.length > 0);
+    assert.ok(typeof layer.label === 'string' && layer.label.length > 0);
+    assert.ok(typeof layer.delta === 'number');
+  }
+  const rawSum = s.scoreBreakdown.reduce((acc, l) => acc + l.delta, 0);
+  // finalCurationScore is the clamped/rounded version of rawSum — they must
+  // agree unless clamping kicked in (rawSum outside [0,100]).
+  if (rawSum >= 0 && rawSum <= 100) {
+    assert.ok(Math.abs(Math.round(rawSum) - s.finalCurationScore) <= 1);
+  }
+});
+
+test('scoreBreakdown reflects the finance pipeline when edition is finance', async () => {
+  const s = await scoreArticleAsync(sampleFin, 'finance');
+  const keys = s.scoreBreakdown.map((l) => l.key);
+  assert.ok(keys.includes('sourceAuthority'));
+  assert.ok(keys.includes('tickers'));
+  assert.ok(!keys.includes('sourceCredibility')); // that's the geo pipeline's L1 key
 });
 
 test('scoreArticlesAsync yields to microtasks — batches do not block', async () => {

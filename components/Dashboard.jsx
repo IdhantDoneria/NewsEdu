@@ -39,10 +39,32 @@ function todayLine() {
   });
 }
 
-function scoreTier(score) {
-  if (score >= 80) return 'high';
-  if (score >= 60) return 'mid';
+// Tier thresholds are computed relative to the *current* batch's own score
+// distribution (top / middle / bottom third), not fixed absolute cutoffs.
+// The 10-layer pipelines routinely produce a batch where every visible score
+// sits in a narrow band (e.g. 90-97) — fixed thresholds would paint every
+// card the same color and erase the ranking signal. Percentile-relative
+// bands guarantee visible differentiation regardless of where a given day's
+// raw scores land.
+function computeTierThresholds(articles) {
+  if (!articles || articles.length === 0) return { high: 101, mid: 101 };
+  const scores = articles.map((a) => a.score).sort((a, b) => b - a);
+  const high = scores[Math.floor(scores.length / 3)] ?? scores[scores.length - 1];
+  const mid = scores[Math.floor((scores.length * 2) / 3)] ?? scores[scores.length - 1];
+  return { high, mid };
+}
+
+function scoreTier(score, thresholds) {
+  if (score >= thresholds.high) return 'high';
+  if (score >= thresholds.mid) return 'mid';
   return 'low';
+}
+
+// A source's failure reason, normalised to a short phrase safe to show
+// directly in the UI (no raw URLs, no stack traces).
+function feedFailureReason(f) {
+  if (f.ok) return '';
+  return f.reason || 'unreachable';
 }
 
 function useTilt(maxDeg = 4) {
@@ -70,17 +92,20 @@ function useTilt(maxDeg = 4) {
   return { onMouseMove, onMouseLeave };
 }
 
-function ScoreDial({ score, small = false, label, metrics, corroboration }) {
-  let desc = `Meridian Score: ${score} out of 100.`;
-  if (metrics) {
-    desc += ` Headline integrity ${Math.round(metrics.headlineIntegrity)} of 40, source trust ${Math.round(metrics.sourceTrust)} of 30, freshness ${Math.round(metrics.freshness)} of 30.`;
-    if (corroboration) {
-      desc +=
-        corroboration > 0
-          ? ` Plus ${corroboration} for independent corroboration.`
-          : ` Minus ${Math.abs(corroboration)} as a near-duplicate.`;
-    }
+// Builds an accessible description straight from the same signed layers the
+// UI renders — the dial's aria-label and the visible receipt can never say
+// two different things about how a score was produced.
+function describeScore(score, breakdown) {
+  let desc = `Score: ${score} out of 100.`;
+  const active = (breakdown || []).filter((l) => Math.abs(l.delta) >= 0.5);
+  if (active.length) {
+    desc += ' ' + active.map((l) => `${l.label} ${l.delta > 0 ? '+' : ''}${l.delta}`).join(', ') + '.';
   }
+  return desc;
+}
+
+function ScoreDial({ score, small = false, label, breakdown }) {
+  const desc = describeScore(score, breakdown);
   return (
     <span
       className={`dial${small ? ' small' : ''}`}
@@ -95,7 +120,29 @@ function ScoreDial({ score, small = false, label, metrics, corroboration }) {
   );
 }
 
-function ScoreLegend() {
+const EDITION_LAYER_SUMMARY = {
+  geopolitics: [
+    'Source credibility — outlet baseline from a curated trust database',
+    'Verified facts & entities — named countries, orgs, leaders, statistics',
+    'Age decay — −0.5 pts per hour since publication',
+    'Subjective language — penalised (shocking, devastating…)',
+    'Information density, outlet authority & event relevance — bonuses',
+    'Cross-border impact — minor bonus for trade/commodity relevance',
+    'Clickbait & headline/body mismatch — penalised',
+  ],
+  finance: [
+    'Source authority — regulators & exchanges outrank general media',
+    'Tickers & instruments — $AAPL, (NASDAQ:MSFT), commodities, FX pairs',
+    'Quantitative data density — hard figures per word',
+    'Volatility language — penalised (plunge, meltdown, panic…)',
+    'Regulatory filings (10-K, SEC…) — flat bonus',
+    'Macro relevance, institutional flow & valuation depth — bonuses',
+    'Speculation & pump-and-dump language — penalised',
+  ],
+};
+
+function ScoreLegend({ edition }) {
+  const layers = EDITION_LAYER_SUMMARY[edition] || EDITION_LAYER_SUMMARY.geopolitics;
   return (
     <details className="score-legend">
       <summary>
@@ -107,62 +154,50 @@ function ScoreLegend() {
         How scores work
       </summary>
       <div className="score-legend-panel" role="note">
-        <p>Every brief is scored 0–100 from four transparent metrics:</p>
+        <p>
+          Every brief runs through a dedicated 10-layer model for this edition,
+          starting from a source baseline and adjusted layer by layer down to
+          a final 0–100 integer:
+        </p>
         <ul>
-          <li><b>Headline Integrity</b> · 0–40 pts — attribution &amp; facts vs. clickbait</li>
-          <li><b>Source Trust</b> · 0–30 pts — outlet reliability + topical authority</li>
-          <li><b>Freshness</b> · 0–30 pts — decays from publish time</li>
-          <li><b>Corroboration</b> · −12…+8 pts — independent confirmation vs. duplicates</li>
+          {layers.map((l) => (
+            <li key={l}>{l}</li>
+          ))}
         </ul>
+        <p className="legend-note">
+          Tap any score to see the exact layers that produced it — the number
+          shown under each headline is a receipt, not a black box.
+        </p>
         <a href="#methodology">Read the full methodology ↓</a>
       </div>
     </details>
   );
 }
 
-function MetricStrip({ metrics, corroboration }) {
-  const items = [
-    { key: 'headlineIntegrity', label: 'Headline', max: 40, cls: 'm-headline' },
-    { key: 'sourceTrust', label: 'Trust', max: 30, cls: 'm-trust' },
-    { key: 'freshness', label: 'Fresh', max: 30, cls: 'm-fresh' },
-  ];
+// The signed "receipt" of layer contributions that summed (pre-clamp) to
+// the displayed score. Replaces the old 4-metric bar strip, which described
+// a different, retired algorithm and could show numbers that didn't add up
+// to the headline score.
+function ScoreBreakdown({ breakdown, compact = false }) {
+  if (!breakdown || breakdown.length === 0) return null;
+  const active = breakdown.filter((l) => Math.abs(l.delta) >= 0.5);
+  const shown = compact ? active.slice(0, 4) : active;
+  if (shown.length === 0) return null;
   return (
-    <div className="metric-strip">
-      {items.map(({ key, label, max, cls }) => {
-        const val = Math.round(metrics[key] * 10) / 10;
-        const pct = Math.min(100, Math.max(0, (val / max) * 100));
-        return (
-          <div className={`metric ${cls}`} key={key}>
-            <div className="metric-head">
-              <label>{label}</label>
-              <span className="metric-val">
-                {Math.round(val)}
-                <small>/{max}</small>
-              </span>
-            </div>
-            <span
-              className="bar"
-              role="img"
-              aria-label={`${label}: ${Math.round(val)} of ${max} points`}
-            >
-              <i style={{ width: `${pct}%` }} />
-            </span>
-          </div>
-        );
-      })}
-      {!!corroboration && (
-        <span
-          className={`corrob-pill ${corroboration > 0 ? 'good' : 'bad'}`}
-          title={
-            corroboration > 0
-              ? 'A second independent outlet confirmed this story'
-              : 'Near-duplicate of an earlier, higher-ranked story'
-          }
+    <ul className="score-receipt">
+      {shown.map((l) => (
+        <li
+          key={l.key}
+          className={l.delta > 0 ? 'is-bonus' : l.delta < 0 ? 'is-penalty' : 'is-neutral'}
         >
-          {corroboration > 0 ? `+${corroboration} corroborated` : `${corroboration} duplicate`}
-        </span>
-      )}
-    </div>
+          <span className="receipt-label">{l.label}</span>
+          <span className="receipt-delta">
+            {l.delta > 0 ? '+' : ''}
+            {l.delta}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -179,49 +214,65 @@ function Byline({ article }) {
 }
 
 function LeadCard({ article, tiltProps }) {
-  const [imgError, setImgError] = useState(false);
-  const hasImage = Boolean(article.image) && !imgError;
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
+  const imgRef = useRef(null);
+
+  // Reset per-article so switching editions / refreshing doesn't carry over
+  // a stale loaded/failed state onto a different image.
+  useEffect(() => {
+    setImgLoaded(false);
+    setImgFailed(false);
+    if (!article.image) return undefined;
+    // Watchdog: some news CDNs hotlink-block by hanging the request rather
+    // than returning a clean 4xx, so the <img> onError handler never fires
+    // and the reserved image area sits blank indefinitely. If the image
+    // hasn't resolved in 5s, treat it as failed so the quote-mark fallback
+    // (always rendered underneath) stays visible instead of dead space.
+    const t = setTimeout(() => {
+      const el = imgRef.current;
+      if (!el || !el.complete || el.naturalWidth === 0) setImgFailed(true);
+    }, 5000);
+    return () => clearTimeout(t);
+  }, [article.id, article.image]);
+
+  const showImage = Boolean(article.image) && !imgFailed;
 
   return (
     <a
-      className={`lead-card${hasImage ? '' : ' no-image'}`}
+      className="lead-card"
       href={article.link}
       target="_blank"
       rel="noopener noreferrer"
       {...tiltProps}
     >
-      {hasImage ? (
-        <div className="lead-media">
+      <div className={`lead-media${imgLoaded ? ' is-loaded' : ''}`}>
+        <span className="lead-quote" aria-hidden="true">
+          “
+        </span>
+        {showImage && (
           <img
+            ref={imgRef}
             src={article.image}
             alt=""
             loading="eager"
             fetchPriority="high"
-            onError={() => setImgError(true)}
+            referrerPolicy="no-referrer"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgFailed(true)}
           />
-        </div>
-      ) : (
-        <span className="lead-quote" aria-hidden="true">
-          “
-        </span>
-      )}
+        )}
+      </div>
       <div className="lead-body">
         <div className="lead-kicker">Lead Brief</div>
         <h3>{article.title}</h3>
         {article.summary && <p className="summary">{article.summary}</p>}
         <div className="lead-foot">
-          <div>
+          <div className="lead-foot-left">
             <Byline article={article} />
-            <div style={{ maxWidth: 320, marginTop: 12 }}>
-              <MetricStrip metrics={article.metrics} corroboration={article.corroboration} />
-            </div>
+            <ScoreBreakdown breakdown={article.scoreBreakdown} />
           </div>
-          <ScoreDial
-            score={article.score}
-            label="Meridian Score"
-            metrics={article.metrics}
-            corroboration={article.corroboration}
-          />
+          <ScoreDial score={article.score} label="Score" breakdown={article.scoreBreakdown} />
         </div>
       </div>
     </a>
@@ -300,7 +351,7 @@ function SourcesStatus({ feeds, liveCount }) {
           <li key={f.source}>
             <span className={`dot ${f.ok ? 'ok' : 'down'}`} aria-hidden="true" />
             <span>{f.source}</span>
-            <span className="src-count">{f.ok ? `${f.items} items` : 'unreachable'}</span>
+            <span className="src-count">{f.ok ? `${f.items} items` : feedFailureReason(f)}</span>
           </li>
         ))}
       </ul>
@@ -367,9 +418,13 @@ export default function Dashboard() {
   const lead = articles[0];
   const rail = articles.slice(1, 6);
   const rest = articles.slice(6, 30);
-  const tickerItems = articles.slice(0, 10);
+  // The ticker is a "wire" of stories NOT already shown prominently in the
+  // lead + rail two inches below it — repeating the same 6 headlines twice
+  // on one screen is noise, not a second read of the news.
+  const featuredIds = new Set([lead, ...rail].filter(Boolean).map((a) => a.id));
+  const tickerItems = articles.filter((a) => !featuredIds.has(a.id)).slice(0, 10);
   const liveFeeds = data?.feeds?.filter((f) => f.ok).length ?? 0;
-  const halfLife = edition === 'finance' ? 8 : 18;
+  const tierThresholds = computeTierThresholds(articles);
 
   return (
     <div data-edition={edition}>
@@ -437,7 +492,7 @@ export default function Dashboard() {
           </h2>
           {edition !== 'markets' && (
             <div className="section-head-right">
-              <ScoreLegend />
+              <ScoreLegend edition={edition} />
               <span className="meta" aria-live="polite">
                 {loading
                   ? 'Consulting the wire…'
@@ -506,7 +561,7 @@ export default function Dashboard() {
                           href={a.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          data-tier={scoreTier(a.score)}
+                          data-tier={scoreTier(a.score, tierThresholds)}
                           {...tilt}
                         >
                           <span className="rail-rank" aria-hidden="true">
@@ -516,7 +571,7 @@ export default function Dashboard() {
                             <h4>{a.title}</h4>
                             <Byline article={a} />
                           </span>
-                          <ScoreDial score={a.score} small metrics={a.metrics} corroboration={a.corroboration} />
+                          <ScoreDial score={a.score} small breakdown={a.scoreBreakdown} />
                         </a>
                         <IntelLink article={a} edition={edition} />
                       </li>
@@ -538,16 +593,16 @@ export default function Dashboard() {
                             href={a.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            data-tier={scoreTier(a.score)}
+                            data-tier={scoreTier(a.score, tierThresholds)}
                             {...tilt}
                           >
                             <div className="card-top">
                               <Byline article={a} />
-                              <ScoreDial score={a.score} small metrics={a.metrics} corroboration={a.corroboration} />
+                              <ScoreDial score={a.score} small breakdown={a.scoreBreakdown} />
                             </div>
                             <h4>{a.title}</h4>
                             {a.summary && <p className="summary">{a.summary}</p>}
-                            <MetricStrip metrics={a.metrics} corroboration={a.corroboration} />
+                            <ScoreBreakdown breakdown={a.scoreBreakdown} compact />
                           </a>
                           <IntelLink article={a} edition={edition} />
                         </li>
@@ -557,42 +612,59 @@ export default function Dashboard() {
                 )}
 
                 <section className="methodology" id="methodology">
-                  <h3>How the Meridian Score is set</h3>
+                  <h3>How the {EDITION_LABELS[edition]} score is set</h3>
+                  <p className="methodology-intro">
+                    Every brief runs through a dedicated 10-layer pipeline for this
+                    edition. Each layer inspects one property of the article — the
+                    outlet, the language, the facts it contains — and adds or
+                    subtracts points from a running total, which is finally clamped
+                    to a 0–100 integer. Tap any score on the page to see the exact
+                    layers that produced it.
+                  </p>
                   <div className="methodology-grid">
-                    <div>
-                      <h5>Headline Integrity · 40 pts</h5>
-                      <p>
-                        Attributed actions and concrete figures earn points; curiosity-gap
-                        phrasing, listicles, question-mark headlines and all-caps shouting
-                        lose them. Clickbait rarely survives.
-                      </p>
-                    </div>
-                    <div>
-                      <h5>Source Trust · 30 pts</h5>
-                      <p>
-                        Each outlet carries a baseline reliability score plus a topical
-                        authority bonus — a markets desk testifies on stocks, a world desk
-                        on statecraft.
-                      </p>
-                    </div>
-                    <div>
-                      <h5>Freshness · 30 pts</h5>
-                      <p>
-                        Exponential half-life decay from publication: this{' '}
-                        <b>{EDITION_LABELS[edition].toLowerCase()} edition uses a {halfLife}-hour half-life</b>{' '}
-                        (8h for finance, 18h for geopolitics — finance news goes stale faster). Old
-                        news fades; it is never artificially revived.
-                      </p>
-                    </div>
-                    <div>
-                      <h5>Corroboration · ±</h5>
-                      <p>
-                        A story confirmed by a second independent outlet earns a bonus;
-                        near-duplicate retellings are docked so one event cannot flood the
-                        page. Anything under {data.noiseFloor} points is cut.
-                      </p>
-                    </div>
+                    {edition === 'finance' ? (
+                      <>
+                        <div>
+                          <h5>Source authority</h5>
+                          <p>Regulators and exchange filings outrank wire services, which outrank general finance media.</p>
+                        </div>
+                        <div>
+                          <h5>Tickers &amp; data density</h5>
+                          <p>Named instruments ($AAPL, NASDAQ:MSFT, commodities, FX pairs) and hard figures per word both earn points.</p>
+                        </div>
+                        <div>
+                          <h5>Regulatory &amp; macro signal</h5>
+                          <p>SEC/10-K filings, institutional flow, and Fed/CPI/GDP relevance earn flat or scaled bonuses.</p>
+                        </div>
+                        <div>
+                          <h5>Volatility &amp; speculation</h5>
+                          <p>Panic language ("meltdown," "plunge") and pump-and-dump phrasing are penalised directly.</p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <h5>Source credibility</h5>
+                          <p>A curated trust database baselines each outlet; unlisted sources fall back to their editorial trust rating.</p>
+                        </div>
+                        <div>
+                          <h5>Facts &amp; density</h5>
+                          <p>Named countries, organisations, leaders and statistics earn points scaled by how much of the article they make up.</p>
+                        </div>
+                        <div>
+                          <h5>Age decay</h5>
+                          <p>−0.5 points per hour since publication — old news fades; it is never artificially revived.</p>
+                        </div>
+                        <div>
+                          <h5>Subjectivity &amp; clickbait</h5>
+                          <p>Emotive language and headline/body mismatches are penalised directly from the running total.</p>
+                        </div>
+                      </>
+                    )}
                   </div>
+                  <p className="methodology-footnote">
+                    Anything under {data.noiseFloor} points is cut before publication — that is the noise floor.
+                  </p>
                 </section>
               </>
             )}
