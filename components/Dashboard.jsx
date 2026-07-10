@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 
 import MarketsOverview from './MarketsOverview';
+import { getFollows, changesPayload } from '@/lib/client/userState';
 
 const EDITION_LABELS = {
   geopolitics: 'Geopolitics',
@@ -226,6 +228,66 @@ function LeadCard({ article, tiltProps }) {
   );
 }
 
+/**
+ * Compact home strip: material developments across followed stories since the
+ * user's last visit. Renders nothing for users who follow nothing.
+ */
+function WhatChangedStrip() {
+  const [summary, setSummary] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (getFollows().length === 0) return;
+      try {
+        const res = await fetch('/api/changes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(changesPayload()),
+        });
+        const json = await res.json();
+        if (cancelled) return;
+        const results = json.results || [];
+        const changed = results.filter((r) => !r.expired && r.changes.length > 0);
+        const total = changed.reduce((n, r) => n + r.changes.length, 0);
+        setSummary({ storyCount: changed.length, total, top: changed[0] || null });
+      } catch {
+        /* the strip is optional */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!summary || summary.total === 0) return null;
+  return (
+    <Link href="/following" className="what-changed-strip">
+      <span className="wc-label">Since you left</span>
+      <span className="wc-text">
+        {summary.total} material development{summary.total === 1 ? '' : 's'} across{' '}
+        {summary.storyCount} followed {summary.storyCount === 1 ? 'story' : 'stories'}
+        {summary.top?.changes?.[0] ? ` — latest: ${summary.top.changes[summary.top.changes.length - 1].what}` : ''}
+      </span>
+      <span className="wc-cta">Review →</span>
+    </Link>
+  );
+}
+
+/** Link into a story's intelligence page (sits beside external card links). */
+function IntelLink({ article, edition }) {
+  if (!article?.clusterId) return null;
+  return (
+    <Link
+      className="intel-link"
+      href={`/story/${article.clusterId}?edition=${edition}`}
+      title="Open the full intelligence brief: actors, timeline, scenarios, source comparison, Q&A"
+    >
+      Full intelligence →
+    </Link>
+  );
+}
+
 function SourcesStatus({ feeds, liveCount }) {
   if (!feeds || feeds.length === 0) return null;
   return (
@@ -314,7 +376,11 @@ export default function Dashboard() {
       <div className="shell">
         <div className="topbar">
           <span>{todayLine()}</span>
-          <span style={{ display: 'none' }} />
+          <nav className="intel-nav" aria-label="Meridian sections">
+            <Link href="/briefing">Your Briefing</Link>
+            <Link href="/following">Following</Link>
+            <Link href="/recall">Recall</Link>
+          </nav>
           <nav
             className="edition-toggle"
             data-active={edition}
@@ -345,6 +411,8 @@ export default function Dashboard() {
             {edition !== 'markets' && '— ranked by the Meridian Score'}
           </p>
         </header>
+
+        {edition !== 'markets' && <WhatChangedStrip />}
 
         {edition !== 'markets' && tickerItems.length > 0 && (
           <div className="ticker">
@@ -427,6 +495,7 @@ export default function Dashboard() {
                 <div className="front-page">
                   <div className="lead-column">
                     {lead && <LeadCard article={lead} tiltProps={leadTilt} />}
+                    {lead && <IntelLink article={lead} edition={edition} />}
                   </div>
 
                   <ol className="rail-column">
@@ -449,6 +518,7 @@ export default function Dashboard() {
                           </span>
                           <ScoreDial score={a.score} small metrics={a.metrics} corroboration={a.corroboration} />
                         </a>
+                        <IntelLink article={a} edition={edition} />
                       </li>
                     ))}
                   </ol>
@@ -479,6 +549,7 @@ export default function Dashboard() {
                             {a.summary && <p className="summary">{a.summary}</p>}
                             <MetricStrip metrics={a.metrics} corroboration={a.corroboration} />
                           </a>
+                          <IntelLink article={a} edition={edition} />
                         </li>
                       ))}
                     </ol>
