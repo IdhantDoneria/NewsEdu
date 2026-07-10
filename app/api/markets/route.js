@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 import { generateMarketSummary } from '@/lib/gemini';
 import { fetchIndexSnapshot, MARKET_INDEX } from '@/lib/quotes';
+import { safeHttpUrl } from '@/lib/rss';
 import { normalizeHeadline, stripTrailingSource } from '@/lib/text.mjs';
 
 export const runtime = 'nodejs';
@@ -48,14 +49,18 @@ export async function GET(request) {
       const parsed = parser.parse(xml);
       const items = parsed?.rss?.channel?.item || [];
       const articlesArray = Array.isArray(items) ? items : [items];
-      return articlesArray.slice(0, 10).map((item) => {
-        const source = item.source?.['#text'] || item.source || 'Google News';
-        // Google News titles arrive as "Headline - Source Name" — the byline
-        // rendered directly under each headline already shows the source,
-        // so the suffix is pure redundancy if left in.
-        const title = normalizeHeadline(stripTrailingSource(item.title, source));
-        return { title, link: item.link, publishedAt: item.pubDate, source };
-      });
+      return articlesArray
+        .slice(0, 10)
+        .map((item) => {
+          const source = item.source?.['#text'] || item.source || 'Google News';
+          // Google News titles arrive as "Headline - Source Name" — the byline
+          // rendered directly under each headline already shows the source,
+          // so the suffix is pure redundancy if left in.
+          const title = normalizeHeadline(stripTrailingSource(item.title, source));
+          const link = safeHttpUrl(typeof item.link === 'string' ? item.link : item.link?.['#text']);
+          return { title, link, publishedAt: item.pubDate, source };
+        })
+        .filter((a) => a.title && a.link);
     })(),
     fetchIndexSnapshot(marketKey),
   ]);

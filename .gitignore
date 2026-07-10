@@ -5,3 +5,6 @@ node_modules/
 
 # Generated each run by the midnight-resume workflow
 .claude/automation/work-context.md
+
+# runtime intelligence cache (local durability only)
+.data/
