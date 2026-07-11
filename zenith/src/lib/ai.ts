@@ -1,12 +1,13 @@
-// ─── Zenith AI — provider client with streaming (Gemini / OpenAI-compatible) ──
+// ─── Zenith AI — thin client for the server-side Gemini proxy ────────────────
 //
-// streamCompletion() reads the active provider from settings, streams tokens via
-// onToken(fullTextSoFar) and resolves with the final text. Aborting the signal
-// resolves with whatever was streamed so far (it never throws on user-stop).
-// All failures are mapped to friendly AIError messages — never raw.
+// The workspace owner configures GEMINI_API_KEY once, on the server. Every
+// visitor's requests are streamed through /api/ai — no key ever reaches the
+// browser, and there is nothing for a user to configure. streamCompletion()
+// streams tokens via onToken(fullTextSoFar) and resolves with the final text.
+// Aborting the signal resolves with whatever was streamed so far (it never
+// throws on user-stop). Failures are mapped to friendly AIError messages.
 
 import { useStore } from './store';
-import type { Settings } from './types';
 
 export interface StreamOptions {
   system?: string;
@@ -17,7 +18,10 @@ export interface StreamOptions {
 }
 
 /** User-displayable AI failure. streamCompletion never throws anything else. */
-export class AIError extends Error {}
+export class AIError extends Error {
+  /** true when the workspace owner hasn't set an API key yet — not a user-fixable problem */
+  notConfigured?: boolean;
+}
 
 export const GEMINI_MODELS: readonly string[] = [
   'gemini-2.0-flash',
@@ -26,47 +30,25 @@ export const GEMINI_MODELS: readonly string[] = [
   'gemini-1.5-pro',
 ];
 export const DEFAULT_GEMINI_MODEL = 'gemini-2.0-flash';
-export const DEFAULT_OPENAI_MODEL = 'gpt-4o-mini';
-export const GEMINI_KEY_URL = 'https://aistudio.google.com/apikey';
 
-// ─── key / model resolution ──────────────────────────────────────────────────
-
-function envGeminiKey(): string | undefined {
-  try {
-    return (import.meta as any).env?.VITE_GEMINI_API_KEY as string | undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function resolveGeminiKey(s: Settings): string {
-  return (s.geminiKey || envGeminiKey() || '').trim();
-}
-
-export function hasAIKey(): boolean {
-  const s = useStore.getState().settings;
-  return s.aiProvider === 'openai' ? !!(s.openaiKey ?? '').trim() : !!resolveGeminiKey(s);
-}
-
-/** model name currently in use, for status messages */
 export function aiModelLabel(): string {
   const s = useStore.getState().settings;
-  return s.aiProvider === 'openai'
-    ? (s.openaiModel ?? '').trim() || DEFAULT_OPENAI_MODEL
-    : (s.geminiModel ?? '').trim() || DEFAULT_GEMINI_MODEL;
+  return (s.aiModel ?? '').trim() || DEFAULT_GEMINI_MODEL;
 }
 
 // ─── error mapping ───────────────────────────────────────────────────────────
 
 function friendly(status: number, detail = ''): AIError {
-  if (status === 400 || status === 401 || status === 403) {
-    return new AIError('Check your API key — the provider rejected this request.');
-  }
-  if (status === 404) {
-    return new AIError('Model not found — check the model name (and base URL) in AI settings.');
+  if (status === 503) {
+    const err = new AIError("Zenith AI isn't set up yet — ask the workspace owner to add an API key.");
+    err.notConfigured = true;
+    return err;
   }
   if (status === 429) {
-    return new AIError('Rate limited — free tier quota; try again in a minute.');
+    return new AIError('Zenith AI is getting a lot of requests right now — try again in a minute.');
+  }
+  if (status === 404) {
+    return new AIError('Model not found — try a different model in Settings → Zenith AI.');
   }
   if (status >= 500) {
     return new AIError('The AI service is having a moment — try again shortly.');
@@ -81,7 +63,7 @@ async function httpError(res: Response): Promise<AIError> {
     const text = await res.text();
     try {
       const j = JSON.parse(text);
-      detail = String(j?.error?.message ?? j?.message ?? '');
+      detail = String(j?.message ?? j?.error?.message ?? '');
     } catch {
       detail = text.slice(0, 200);
     }
@@ -92,13 +74,13 @@ async function httpError(res: Response): Promise<AIError> {
 function toFriendly(err: unknown): AIError {
   if (err instanceof AIError) return err;
   if (err instanceof TypeError) {
-    return new AIError("Couldn't reach the AI service — you appear to be offline. Check your connection.");
+    return new AIError("Couldn't reach Zenith AI — you appear to be offline. Check your connection.");
   }
   if (err instanceof Error && err.name === 'AbortError') return new AIError('Stopped.');
   return new AIError(err instanceof Error ? `AI request failed — ${err.message}` : 'AI request failed.');
 }
 
-// ─── SSE reader (both providers send `data: {json}` lines) ───────────────────
+// ─── SSE reader (`data: {json}` lines, proxied straight through from Gemini) ─
 
 async function readSSE(res: Response, onData: (json: any) => void): Promise<void> {
   const handleLine = (raw: string) => {
@@ -147,26 +129,13 @@ async function readSSE(res: Response, onData: (json: any) => void): Promise<void
   }
 }
 
-// ─── providers ───────────────────────────────────────────────────────────────
+// ─── the proxy call ──────────────────────────────────────────────────────────
 
-async function streamGemini(s: Settings, opts: StreamOptions, acc: { text: string }): Promise<void> {
-  const key = resolveGeminiKey(s);
-  if (!key) throw new AIError('No Gemini API key configured — add one in Settings → Zenith AI.');
-  const model = (((s.geminiModel ?? '').trim()) || DEFAULT_GEMINI_MODEL).replace(/^models\//, '');
-  const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}` +
-    `:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`;
-
-  const body: Record<string, unknown> = {
-    contents: [{ role: 'user', parts: [{ text: opts.prompt }] }],
-    generationConfig: { temperature: 0.7 },
-  };
-  if (opts.system) body.systemInstruction = { parts: [{ text: opts.system }] };
-
-  const res = await fetch(url, {
+async function streamServer(opts: StreamOptions, model: string, acc: { text: string }): Promise<void> {
+  const res = await fetch('/api/ai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ system: opts.system, prompt: opts.prompt, model }),
     signal: opts.signal,
   });
   if (!res.ok) throw await httpError(res);
@@ -184,47 +153,18 @@ async function streamGemini(s: Settings, opts: StreamOptions, acc: { text: strin
   });
 }
 
-async function streamOpenAI(s: Settings, opts: StreamOptions, acc: { text: string }): Promise<void> {
-  const key = (s.openaiKey ?? '').trim();
-  if (!key) throw new AIError('No API key configured — add one in Settings → Zenith AI.');
-  const base = ((s.openaiBase ?? '').trim() || 'https://api.openai.com/v1').replace(/\/+$/, '');
-  const model = (s.openaiModel ?? '').trim() || DEFAULT_OPENAI_MODEL;
-
-  const messages: Array<{ role: string; content: string }> = [];
-  if (opts.system) messages.push({ role: 'system', content: opts.system });
-  messages.push({ role: 'user', content: opts.prompt });
-
-  const res = await fetch(`${base}/chat/completions`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
-    body: JSON.stringify({ model, messages, stream: true, temperature: 0.7 }),
-    signal: opts.signal,
-  });
-  if (!res.ok) throw await httpError(res);
-
-  await readSSE(res, (json) => {
-    if (json?.error) throw friendly(Number(json.error.code) || 0, String(json.error.message ?? ''));
-    const delta = json?.choices?.[0]?.delta?.content ?? json?.choices?.[0]?.text;
-    if (typeof delta === 'string' && delta) {
-      acc.text += delta;
-      opts.onToken(acc.text);
-    }
-  });
-}
-
 // ─── public API ──────────────────────────────────────────────────────────────
 
 /**
- * Stream a completion from the configured provider.
+ * Stream a completion from Zenith's AI proxy.
  * Resolves with the final text; if the signal aborts mid-stream, resolves with
  * the partial text instead of throwing. Other failures throw friendly AIErrors.
  */
 export async function streamCompletion(opts: StreamOptions): Promise<string> {
-  const s = useStore.getState().settings;
+  const model = aiModelLabel();
   const acc = { text: '' };
   try {
-    if (s.aiProvider === 'openai') await streamOpenAI(s, opts, acc);
-    else await streamGemini(s, opts, acc);
+    await streamServer(opts, model, acc);
   } catch (err) {
     if (opts.signal.aborted) return acc.text; // user pressed Stop — keep partial
     throw toFriendly(err);
@@ -235,11 +175,10 @@ export async function streamCompletion(opts: StreamOptions): Promise<string> {
   return acc.text;
 }
 
-/** Fire a tiny prompt to verify key + model. 10s timeout. Never throws. */
+/** Fire a tiny prompt to verify the server's AI is reachable. 15s timeout. Never throws. */
 export async function testConnection(): Promise<{ ok: boolean; message: string }> {
-  if (!hasAIKey()) return { ok: false, message: 'Add an API key first.' };
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 10_000);
+  const timer = setTimeout(() => ctrl.abort(), 15_000);
   try {
     const text = await streamCompletion({
       prompt: 'Reply with exactly one word: ready',
@@ -247,7 +186,7 @@ export async function testConnection(): Promise<{ ok: boolean; message: string }
       onToken: () => {},
     });
     if (!text.trim()) {
-      return { ok: false, message: 'Timed out after 10s — check your network, key and model.' };
+      return { ok: false, message: 'Timed out after 15s — try again in a moment.' };
     }
     return { ok: true, message: `Connected — ${aiModelLabel()} responded.` };
   } catch (e) {

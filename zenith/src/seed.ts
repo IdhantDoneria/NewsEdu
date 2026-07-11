@@ -68,7 +68,7 @@ export async function ensureSeed(): Promise<string | null> {
 
   const s3 = h('h2', 'Zenith AI', { toggleable: true, collapsed: true });
   h('paragraph', 'Select any text — or type <code>/ai</code> — to draft, summarise, translate, or continue your thought.', {}, s3);
-  h('callout', 'Bring your own <b>free Gemini key</b>: Settings → <b>Zenith AI</b>. It stays on your device.', { icon: '🗝️', bg: 'purple' }, s3);
+  h('callout', 'Zenith AI works out of the box — no key, no setup. Just start writing.', { icon: '✨', bg: 'purple' }, s3);
 
   const s4 = h('h2', 'Cloud sync', { toggleable: true, collapsed: true });
   h('paragraph', 'Zenith is local-first; the cloud is optional. Paste a Firebase config under Settings → <b>Cloud sync</b> and your workspace mirrors across devices.', {}, s4);

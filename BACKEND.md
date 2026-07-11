@@ -20,6 +20,8 @@ the built-in local-first accounts — so the site keeps working at every stage.
 | `/api/auth/logout` | POST | Clear the session cookie |
 | `/api/unsubscribe` | GET | One-click unsubscribe from campaigns (`?e=&t=`) |
 | `/api/cron/daily-digest` | GET | **Cron only** — emails the daily campaign to all subscribed users |
+| `/api/ai` | POST | Zenith AI — proxies Gemini with the workspace's own key; streams SSE, or runs a Composio tool-calling round with `{useTools:true}` |
+| `/api/composio?action=…` | GET/POST | Connected-apps: `config`, `connections`, `connect`, `disconnect`, `tools`, `execute` — see [`COMPOSIO.md`](./COMPOSIO.md) |
 
 ## Security
 
@@ -73,6 +75,28 @@ Runs every day at 14:00 UTC. Optionally lock the endpoint:
 CRON_SECRET = <random string>     # Vercel sends it as the cron Authorization header
 ```
 
+### 5. Zenith AI — Google Gemini (required for AI features)
+Zenith AI has no "bring your own key" option — the app calls `/api/ai`, which
+proxies Google's Gemini API using **your** key. Visitors never see or need one.
+```
+GEMINI_API_KEY = AIza…
+```
+Get a free key at **[aistudio.google.com/apikey](https://aistudio.google.com/apikey)**
+(Google AI Studio's free tier is generous and needs no credit card). Until this
+is set, `/api/ai` returns a clear "not configured" message and the AI menu
+surfaces it inline instead of failing silently (`/api/health` → `"ai":false`).
+The endpoint is dam-guarded per signed-in user (and per IP for guests) so one
+visitor can't exhaust your quota.
+
+### 6. Connected apps — Composio (optional; lets AI act on Gmail, Calendar, Slack, etc.)
+```
+COMPOSIO_API_KEY = <your Composio API key>
+```
+Full setup (per-toolkit auth configs, which toolkits need your own OAuth app)
+is in **[`COMPOSIO.md`](./COMPOSIO.md)**. Without this key the "Manage tasks
+with connected apps" AI action and the Settings → Connections tab both stay
+gracefully disabled (`/api/health` → `"composio":false`).
+
 ## The campaign
 
 [`api/_lib/email.js`](./api/_lib/email.js) holds the brand-styled, email-safe
@@ -87,5 +111,5 @@ Every email carries a working **unsubscribe** link.
 ## Verify after deploy
 ```bash
 curl https://<your-deployment>/api/health
-# → {"ok":true,"auth":true,"store":"persistent","email":true,...}
+# → {"ok":true,"auth":true,"store":"persistent","email":true,"ai":true,"composio":true,...}
 ```

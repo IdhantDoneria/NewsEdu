@@ -12,6 +12,8 @@ module.exports = async (req, res) => {
     auth: !!authSecret(),                 // cloud signup/login available
     store: isPersistent() ? 'persistent' : 'ephemeral',
     email: emailConfigured(),             // daily campaigns can send
+    ai: !!process.env.GEMINI_API_KEY,     // Zenith AI available (server-side key)
+    composio: !!process.env.COMPOSIO_API_KEY, // connected-apps / task management available
     time: new Date().toISOString(),
   });
 };

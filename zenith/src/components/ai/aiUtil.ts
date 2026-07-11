@@ -162,6 +162,8 @@ export function buildPrompt(actionId: string, req: AIRequest, custom = ''): { sy
       return { system, prompt: base + 'Create a well-structured outline for this page: "## " section headings, each with 2–4 concise bullets.' };
     case 'actions':
       return { system, prompt: base + 'Extract every action item, commitment or follow-up as a markdown todo list ("- [ ] item"). If none exist, propose sensible next steps the same way.' };
+    case 'tasks':
+      return { system, prompt: base + (custom || 'Look at this page and use the connected apps to help with whatever needs doing — send a message, create an event, file an issue, add a task, whichever fits best.') };
     default:
       return { system, prompt: base + (custom || kind) };
   }

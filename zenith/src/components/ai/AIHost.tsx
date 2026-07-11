@@ -2,12 +2,12 @@
 import {
   ArrowLeft, Check, ClipboardCopy, CornerDownLeft, Languages, ListChecks,
   ListTree, PenLine, RotateCcw, Send, Smile, Sparkles, SpellCheck2, StopCircle,
-  Trash2, Wand2, X,
+  Trash2, Wand2, X, Zap,
 } from 'lucide-react';
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { hasAIKey, streamCompletion, GEMINI_KEY_URL } from '../../lib/ai';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { streamCompletion } from '../../lib/ai';
+import { confirmAction, runWithTools, type ProposedAction } from '../../lib/composio';
 import { aiBus, type AIRequest } from '../../lib/bus';
-import { setSettingsOpen } from '../../lib/store';
 import { Popover } from '../ui/Popover';
 import { toast } from '../ui/Toast';
 import {
@@ -40,6 +40,7 @@ const PAGE_ACTIONS: Action[] = [
   { id: 'brainstorm', label: 'Brainstorm ideas', icon: ICON(Sparkles) },
   { id: 'outline', label: 'Create an outline', icon: ICON(ListTree) },
   { id: 'actions', label: 'Find action items', icon: ICON(ListChecks) },
+  { id: 'tasks', label: 'Manage tasks with connected apps', icon: ICON(Zap) },
 ];
 
 export function AIHost() {
@@ -58,19 +59,33 @@ function AIPanel({ req, onClose }: { req: AIRequest; onClose: () => void }) {
   const [custom, setCustom] = useState('');
   const [text, setText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [proposedAction, setProposedAction] = useState<ProposedAction | null>(null);
+  const [confirming, setConfirming] = useState(false);
   const [lastAction, setLastAction] = useState<{ id: string; custom: string } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-
-  const noKey = useMemo(() => !hasAIKey(), []);
 
   const run = async (actionId: string, customText = '') => {
     setStage('streaming');
     setText('');
     setError(null);
+    setProposedAction(null);
     setLastAction({ id: actionId, custom: customText });
+    const { system, prompt } = buildPrompt(actionId, req, customText);
+
+    if (actionId === 'tasks') {
+      try {
+        const out = await runWithTools(prompt, system);
+        if (out.proposedAction) setProposedAction(out.proposedAction);
+        else setText(out.text ?? '');
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Something went wrong.');
+      }
+      setStage('result');
+      return;
+    }
+
     const ctrl = new AbortController();
     abortRef.current = ctrl;
-    const { system, prompt } = buildPrompt(actionId, req, customText);
     try {
       const out = await streamCompletion({ system, prompt, signal: ctrl.signal, onToken: (full) => setText(full) });
       setText(out);
@@ -78,6 +93,21 @@ function AIPanel({ req, onClose }: { req: AIRequest; onClose: () => void }) {
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.');
       setStage('result');
+    }
+  };
+
+  const runConfirmed = async () => {
+    if (!proposedAction) return;
+    setConfirming(true);
+    try {
+      const r = await confirmAction(proposedAction.tool, proposedAction.args);
+      setProposedAction(null);
+      setText(r.successful ? 'Done — that ran successfully.' : `Didn't go through: ${r.error ?? 'unknown error'}`);
+    } catch (e) {
+      setProposedAction(null);
+      setError(e instanceof Error ? e.message : 'Could not run that action.');
+    } finally {
+      setConfirming(false);
     }
   };
 
@@ -99,29 +129,6 @@ function AIPanel({ req, onClose }: { req: AIRequest; onClose: () => void }) {
     onClose();
   };
   const copy = () => { navigator.clipboard.writeText(text); toast('Copied to clipboard'); };
-
-  // ── no-key zero state ──
-  if (noKey) {
-    return (
-      <Popover anchor={req.anchor} onClose={onClose} width={360}>
-        <div style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 650, fontSize: 15 }}>
-            <Sparkles size={16} style={{ color: 'var(--gold)' }} /> Zenith AI
-          </div>
-          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6, margin: '10px 0 14px' }}>
-            Bring your own <b>free</b> key — a Google Gemini key takes about 30 seconds and costs nothing.
-            It is stored only in this browser.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <a className="btn gold" href={GEMINI_KEY_URL} target="_blank" rel="noreferrer" style={{ justifyContent: 'center' }}>
-              Create a free Gemini key ↗
-            </a>
-            <button className="btn" onClick={() => { onClose(); setSettingsOpen('ai'); }}>Open AI settings</button>
-          </div>
-        </div>
-      </Popover>
-    );
-  }
 
   return (
     <Popover anchor={req.anchor} onClose={onClose} width={420}>
@@ -183,14 +190,32 @@ function AIPanel({ req, onClose }: { req: AIRequest; onClose: () => void }) {
           <div className="ai-head" style={{ padding: 0, marginBottom: 10 }}>
             <Sparkles size={15} style={{ color: 'var(--gold)' }} /> Zenith AI
           </div>
-          {error ? (
-            <div style={{ color: 'var(--red)', fontSize: 13.5, lineHeight: 1.5 }}>{error}</div>
+
+          {proposedAction ? (
+            <>
+              <p style={{ fontSize: 13.5, lineHeight: 1.6, margin: '0 0 12px' }}>
+                Zenith AI wants to <b>{proposedAction.description}</b>. This changes something outside
+                Zenith — run it?
+              </p>
+              <div className="ai-actions">
+                <button className="btn gold small" disabled={confirming} onClick={runConfirmed}>
+                  {confirming ? 'Running…' : 'Run'}
+                </button>
+                <button className="btn small" onClick={onClose}>Cancel</button>
+              </div>
+            </>
+          ) : error ? (
+            <>
+              <div style={{ color: 'var(--red)', fontSize: 13.5, lineHeight: 1.5 }}>{error}</div>
+              <div className="ai-actions">
+                <button className="btn small" onClick={() => lastAction && run(lastAction.id, lastAction.custom)}><RotateCcw size={14} /> Try again</button>
+                <button className="btn small" onClick={onClose}><Trash2 size={14} /> Discard</button>
+              </div>
+            </>
           ) : (
-            <div className="ai-output">{text}</div>
-          )}
-          <div className="ai-actions">
-            {!error && (
-              <>
+            <>
+              <div className="ai-output">{text}</div>
+              <div className="ai-actions">
                 {req.selection
                   ? <button className="btn gold small" onClick={doReplaceSelection}><Check size={14} /> Replace selection</button>
                   : <button className="btn gold small" onClick={doInsert}><CornerDownLeft size={14} /> Insert below</button>}
@@ -198,11 +223,11 @@ function AIPanel({ req, onClose }: { req: AIRequest; onClose: () => void }) {
                   ? <button className="btn small" onClick={doInsert}>Insert below</button>
                   : req.blockId && <button className="btn small" onClick={doReplaceBlock}>Replace block</button>}
                 <button className="btn small" onClick={copy}><ClipboardCopy size={14} /> Copy</button>
-              </>
-            )}
-            <button className="btn small" onClick={() => lastAction && run(lastAction.id, lastAction.custom)}><RotateCcw size={14} /> Try again</button>
-            <button className="btn small" onClick={onClose}><Trash2 size={14} /> Discard</button>
-          </div>
+                <button className="btn small" onClick={() => lastAction && run(lastAction.id, lastAction.custom)}><RotateCcw size={14} /> Try again</button>
+                <button className="btn small" onClick={onClose}><Trash2 size={14} /> Discard</button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </Popover>

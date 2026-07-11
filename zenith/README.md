@@ -13,8 +13,10 @@ one beautifully minimal workspace that compounds your output.
 
 Zenith is a luxury-grade, Notion-class personal workspace. It is **local-first**
 (your data lives in your browser's IndexedDB, instantly responsive, fully offline),
-with optional **Google sign-in cloud sync** to your own Firebase project and a
-**bring-your-own-key AI assistant** powered by Google Gemini's free tier.
+with optional **Google sign-in cloud sync** to your own Firebase project, an
+**AI assistant** powered by Google Gemini, and optional **connected apps** (Gmail,
+Calendar, Slack, Linear, Notion, GitHub, Todoist) via Composio so the AI can act
+on real tasks, not just write text.
 
 ## ✨ Everything inside
 
@@ -24,7 +26,8 @@ with optional **Google sign-in cloud sync** to your own Firebase project and a
 | **Slash menu** | Type `/` for everything; markdown shortcuts as you type (`#`, `-`, `[]`, `>`, ` ``` `, `---`, `**bold**`, `` `code` ``…) |
 | **Databases** | Full collections with **Table · Board · Gallery · List · Calendar · Timeline** views, filters (and/or), multi-sorts, grouping, hidden properties, inline or full-page, linked views |
 | **Properties** | Title, text, number (formats), select, multi-select, status, date, checkbox, URL, email, phone, **formulas**, **relations**, created/edited time |
-| **Zenith AI** | Continue writing, summarize, improve, fix grammar, translate, change tone, brainstorm, outline, action items, custom prompts — streaming, with your free [Gemini key](https://aistudio.google.com/apikey) (or any OpenAI-compatible endpoint) |
+| **Zenith AI** | Continue writing, summarize, improve, fix grammar, translate, change tone, brainstorm, outline, action items, custom prompts — streaming, powered by the workspace's own Gemini key (server-side, nothing for visitors to configure) |
+| **Connected apps** | Composio-backed: AI can look things up and take action in Gmail, Google Calendar, Slack, Linear, Notion, GitHub and Todoist — reads run immediately, anything that changes something outside Zenith asks for confirmation first |
 | **Organization** | Infinite page nesting, drag-and-drop everywhere (blocks, columns, sidebar tree), favorites, full-text search (`⌘K`), templates gallery, trash with restore |
 | **Pages** | Emoji icons, gradient/image covers, serif & mono fonts, small text, full width, page lock, word count |
 | **History** | Automatic version snapshots with preview & one-click restore; full undo/redo (`⌘Z`) |
@@ -41,13 +44,19 @@ npm run dev      # → http://localhost:5180
 npm run build    # type-checks + builds to dist/
 ```
 
-## 🤖 Enable Zenith AI (30 seconds, free)
+## 🤖 Zenith AI — one key, set once, works for everyone
 
-1. Visit **[aistudio.google.com/apikey](https://aistudio.google.com/apikey)** → *Create API key* (free tier, no card).
-2. In Zenith: **Settings → Zenith AI** → paste the key. Done — select text or type `/ai`.
+There's no "bring your own key" — the app calls a server-side proxy
+(`/api/ai`) using **your** Gemini key, so every visitor just gets a working AI
+assistant with nothing to configure. Deploying your own copy? Set
+`GEMINI_API_KEY` — see [`BACKEND.md`](./BACKEND.md).
 
-The key is stored only in your browser; requests go directly from your browser to Google.
-You can also ship a default key at build time with `VITE_GEMINI_API_KEY`.
+## 🔌 Connected apps (optional, Composio)
+
+Let Zenith AI act on real tools for a signed-in user — "what's on my calendar
+tomorrow", "email the team a summary of this page", "file a Linear issue for
+this." Reads run immediately; anything that changes something outside Zenith
+always asks for confirmation first. Setup: [`COMPOSIO.md`](./COMPOSIO.md).
 
 ## ☁️ Enable cloud sync (your own free Firebase, ~2 minutes)
 
@@ -61,23 +70,16 @@ multi-device, last-write-wins, local-first. Suggested security rules are shown i
 
 ## ▲ Deploy on Vercel
 
-Zenith is a static SPA — `vite build` → `dist/`, with `vercel.json` already included.
+The frontend is a static SPA (`vite build` → `dist/`) with a serverless
+backend in [`/api`](./api); `vercel.json` at the repo root wires both up.
 
 ```bash
-npx vercel deploy --prod   # from this directory
+npx vercel deploy --prod   # from the repo root
 ```
 
-…or import the repo in the Vercel dashboard (framework: Vite, root: `zenith/`).
-
-## 🗂 Extract into its own repository
-
-Zenith is fully self-contained in this folder:
-
-```bash
-git subtree split --prefix=zenith -b zenith-standalone
-# push that branch to a fresh repo, or simply:
-npx degit <this-repo>/zenith zenith && cd zenith && git init && git add -A && git commit -m "Zenith 1.0"
-```
+…or just import the repo in the Vercel dashboard — zero extra config needed.
+See [`BACKEND.md`](./BACKEND.md) and [`COMPOSIO.md`](./COMPOSIO.md) for the
+environment variables that turn on cloud accounts, AI, email and connected apps.
 
 ## 🏛 Architecture
 

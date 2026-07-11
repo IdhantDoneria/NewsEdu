@@ -1,20 +1,20 @@
-import { Cloud, CreditCard, Database, Info, Keyboard, Moon, Palette, PenLine, Sparkles, X } from 'lucide-react';
+import { Cloud, Database, Info, Keyboard, Link2, Moon, Palette, PenLine, Sparkles, X } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import { setSettingsOpen, setShortcutsOpen, updateSettings, useStore } from '../../lib/store';
 import { Modal } from '../ui/Modal';
 import { AISettingsSection } from '../ai/AISettings';
+import { ConnectionsSettingsSection } from '../composio/ConnectionsSettings';
 import { DataSettingsSection } from './DataSettings';
 import { SyncSettingsSection } from './SyncSettings';
-import { BillingSettingsSection } from '../billing/PricingModal';
 
-type TabId = 'appearance' | 'editor' | 'ai' | 'sync' | 'plan' | 'data' | 'about';
+type TabId = 'appearance' | 'editor' | 'ai' | 'connections' | 'sync' | 'data' | 'about';
 
 const TABS: Array<{ id: TabId; label: string; icon: ReactNode }> = [
   { id: 'appearance', label: 'Appearance', icon: <Palette size={15} /> },
   { id: 'editor', label: 'Editor', icon: <PenLine size={15} /> },
   { id: 'ai', label: 'Zenith AI', icon: <Sparkles size={15} /> },
+  { id: 'connections', label: 'Connections', icon: <Link2 size={15} /> },
   { id: 'sync', label: 'Cloud sync', icon: <Cloud size={15} /> },
-  { id: 'plan', label: 'Plan & billing', icon: <CreditCard size={15} /> },
   { id: 'data', label: 'Data & backups', icon: <Database size={15} /> },
   { id: 'about', label: 'About', icon: <Info size={15} /> },
 ];
@@ -79,8 +79,8 @@ export function SettingsModal() {
             </>
           )}
           {tab === 'ai' && <AISettingsSection />}
+          {tab === 'connections' && <ConnectionsSettingsSection />}
           {tab === 'sync' && <SyncSettingsSection />}
-          {tab === 'plan' && <BillingSettingsSection />}
           {tab === 'data' && <DataSettingsSection />}
           {tab === 'about' && (
             <div style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: 520 }}>

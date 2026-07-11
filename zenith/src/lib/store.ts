@@ -38,7 +38,6 @@ export interface ZenithState {
   trashOpen: boolean;
   templatesOpen: boolean;
   shortcutsOpen: boolean;
-  pricingOpen: boolean;
   historyFor: string | null;          // pageId whose version history panel is open
   commentsFor: string | null;         // pageId whose comments panel is open
 }
@@ -110,7 +109,6 @@ export const useStore = create<ZenithState>(() => ({
   trashOpen: false,
   templatesOpen: false,
   shortcutsOpen: false,
-  pricingOpen: false,
   historyFor: null,
   commentsFor: null,
 }));
@@ -898,7 +896,6 @@ export const setSettingsOpen = (v: boolean | string) => set({ settingsOpen: v })
 export const setTrashOpen = (v: boolean) => set({ trashOpen: v });
 export const setTemplatesOpen = (v: boolean) => set({ templatesOpen: v });
 export const setShortcutsOpen = (v: boolean) => set({ shortcutsOpen: v });
-export const setPricingOpen = (v: boolean) => set({ pricingOpen: v });
 export const setHistoryFor = (pageId: string | null) => set({ historyFor: pageId });
 export const setCommentsFor = (pageId: string | null) => set({ commentsFor: pageId });
 

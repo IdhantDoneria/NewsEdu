@@ -154,13 +154,8 @@ export interface Snapshot {
 export interface Settings {
   theme: 'light' | 'dark' | 'system';
   spellcheck: boolean;
-  /** AI */
-  aiProvider: 'gemini' | 'openai';
-  geminiKey?: string;
-  geminiModel: string;
-  openaiBase?: string;
-  openaiKey?: string;
-  openaiModel?: string;
+  /** AI: model preference only — the API key lives server-side, never in Settings */
+  aiModel?: string;
   /** Cloud sync (Firebase web config JSON pasted by user) */
   firebaseConfig?: string;
   syncEnabled?: boolean;
@@ -172,8 +167,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
   spellcheck: true,
-  aiProvider: 'gemini',
-  geminiModel: 'gemini-2.0-flash',
+  aiModel: 'gemini-2.0-flash',
 };
 
 // ─── Misc shared ─────────────────────────────────────────────────────────────
