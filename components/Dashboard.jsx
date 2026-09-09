@@ -587,25 +587,24 @@ export default function Dashboard() {
                     </div>
                     <ol className="card-grid">
                       {rest.map((a) => (
-                        <li key={a.id}>
-                          <a
-                            className="news-card"
-                            href={a.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            data-tier={scoreTier(a.score, tierThresholds)}
-                            {...tilt}
-                          >
-                            <div className="card-top">
-                              <Byline article={a} />
-                              <ScoreDial score={a.score} small breakdown={a.scoreBreakdown} />
-                            </div>
-                            <h4>{a.title}</h4>
-                            {a.summary && <p className="summary">{a.summary}</p>}
-                            <ScoreBreakdown breakdown={a.scoreBreakdown} compact />
-                          </a>
+                        <a
+                          key={a.id}
+                          className="news-card"
+                          href={a.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          data-tier={scoreTier(a.score, tierThresholds)}
+                          {...tilt}
+                        >
+                          <div className="card-top">
+                            <Byline article={a} />
+                            <ScoreDial score={a.score} small breakdown={a.scoreBreakdown} />
+                          </div>
+                          <h4>{a.title}</h4>
+                          {a.summary && <p className="summary">{a.summary}</p>}
+                          <ScoreBreakdown breakdown={a.scoreBreakdown} compact />
                           <IntelLink article={a} edition={edition} />
-                        </li>
+                        </a>
                       ))}
                     </ol>
                   </>

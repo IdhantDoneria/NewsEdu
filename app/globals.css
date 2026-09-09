@@ -843,10 +843,6 @@ summary:focus-visible,
   list-style: none;
 }
 
-.card-grid > li {
-  display: contents;
-}
-
 .news-card {
   position: relative;
   display: flex;
@@ -912,6 +908,10 @@ summary:focus-visible,
 
 .news-card .byline {
   margin-top: auto;
+}
+
+.news-card .intel-link {
+  margin-top: 8px;
 }
 
 /* ------------------------ Score receipt (breakdown) -------------------- */
