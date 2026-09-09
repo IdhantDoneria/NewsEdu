@@ -838,9 +838,7 @@ summary:focus-visible,
 .card-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
+  gap: 12px;
   margin-top: 18px;
   list-style: none;
 }
@@ -854,13 +852,15 @@ summary:focus-visible,
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: var(--paper);
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
   padding: var(--sp-5);
   text-decoration: none;
   color: inherit;
   transform-style: preserve-3d;
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
   border-top: 3px solid transparent;
+  border-radius: 3px;
 }
 
 .news-card[data-tier='high'] {
@@ -1132,6 +1132,7 @@ summary:focus-visible,
   }
   .card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
   .methodology-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1145,6 +1146,7 @@ summary:focus-visible,
   .card-grid,
   .methodology-grid {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
   .topbar {
     flex-wrap: wrap;
