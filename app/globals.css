@@ -2245,3 +2245,20 @@ a.chat-cite:hover { background: var(--accent); color: var(--paper-raised); }
 @media (max-width: 640px) {
   .rank-panel { position: fixed; left: 12px; right: 12px; top: auto; bottom: 12px; width: auto; }
 }
+
+/* installable app */
+.offline-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 6px 12px; text-align: center; background: var(--ink); color: var(--paper-raised); font: 600 0.74rem var(--sans); }
+.install-chip { position: fixed; left: 20px; bottom: 20px; z-index: 100; display: inline-flex; border: 1px solid var(--rule-dark); background: var(--paper-raised); box-shadow: 0 6px 18px rgba(24,21,17,0.22); font-family: var(--sans); }
+.install-chip button { padding: 9px 14px; background: none; border: 0; cursor: pointer; font: 600 0.8rem var(--sans); color: var(--ink); }
+.install-chip button:first-child:hover { background: var(--ink); color: var(--paper-raised); }
+.install-chip button + button { padding: 9px 10px; color: var(--ink-faint); border-left: 1px solid var(--rule); }
+@media (max-width: 640px) { .install-chip { left: 12px; bottom: 12px; } }
+@media print { .install-chip, .offline-bar { display: none; } }
+
+/* read aloud */
+.listen-bar { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; font-family: var(--sans); }
+.listen-bar button { padding: 7px 14px; background: var(--ink); color: var(--paper-raised); border: 1px solid var(--rule-dark); font: 600 0.78rem var(--sans); cursor: pointer; }
+.listen-bar button:hover { background: var(--accent); }
+.listen-bar select { padding: 6px 8px; border: 1px solid var(--rule); background: var(--paper-raised); font: 0.76rem var(--sans); color: var(--ink); }
+.offline-note { margin: 0 0 10px; padding: 6px 10px; border-left: 2px solid var(--gold); background: rgba(168,133,46,0.1); }
+.chat-rate .chat-listen { width: auto; padding: 0 7px; font-size: 0.8rem; margin-left: auto; }

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import PageChrome from './intel/PageChrome';
 import ClassBadge from './intel/ClassBadge';
 import { TOPICS } from '@/lib/intelligence/topics.mjs';
+import { speakable, useSpeech } from '@/lib/client/speech';
 import {
   loadProfile,
   toggleInterest,
@@ -19,6 +20,88 @@ function timeAgo(ts) {
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h ago`;
   return `${Math.floor(hrs / 24)}d ago`;
+}
+
+const LAST_KEY = 'meridian.briefing.last.v1';
+
+function saveLastBriefing(briefing) {
+  try {
+    window.localStorage.setItem(LAST_KEY, JSON.stringify({ at: Date.now(), briefing }));
+  } catch {
+    /* storage full or blocked: no offline copy */
+  }
+}
+
+function loadLastBriefing() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(LAST_KEY) || 'null');
+    return saved?.briefing?.essential ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+/** The briefing as a spoken script: section by section, finite and in order. */
+function briefingScript(briefing) {
+  const lines = [`Your Meridian briefing for ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}.`];
+  const section = (title, items) => {
+    if (!items?.length) return;
+    lines.push(`${title}.`);
+    items.forEach((it, i) => {
+      lines.push(
+        `${i + 1}. ${speakable(it.title)}. ${speakable(it.summary || '')} ${it.whyItMatters ? `Why it matters: ${speakable(it.whyItMatters)}` : ''}`
+      );
+    });
+  };
+  section('Essential developments', briefing.essential);
+  section('Developing stories', briefing.developing);
+  section('Understand one issue', briefing.understand);
+  if (briefing.watch?.length) {
+    lines.push('Watch next.');
+    briefing.watch.forEach((w) => lines.push(`${speakable(w.title)}. ${speakable(w.text || '')}`));
+  }
+  return lines;
+}
+
+const RATES = [
+  { value: 0.9, label: 'Slow' },
+  { value: 1, label: 'Normal' },
+  { value: 1.2, label: 'Fast' },
+];
+
+function ListenBar({ briefing }) {
+  const speech = useSpeech();
+  const [rate, setRate] = useState(1);
+  if (!speech.supported) return null;
+  const idle = speech.state === 'idle';
+  return (
+    <div className="listen-bar" role="group" aria-label="Read the briefing aloud">
+      {idle ? (
+        <button type="button" onClick={() => speech.speak(briefingScript(briefing), { rate })}>
+          ▶ Listen to this briefing
+        </button>
+      ) : (
+        <>
+          <button type="button" onClick={speech.state === 'paused' ? speech.resume : speech.pause}>
+            {speech.state === 'paused' ? '▶ Resume' : '❚❚ Pause'}
+          </button>
+          <button type="button" onClick={speech.stop}>
+            ■ Stop
+          </button>
+        </>
+      )}
+      <label>
+        <span className="sr-only">Speaking speed</span>
+        <select value={rate} onChange={(e) => setRate(Number(e.target.value))} disabled={!idle} aria-label="Speaking speed">
+          {RATES.map((r) => (
+            <option key={r.value} value={r.value}>
+              {r.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
+  );
 }
 
 function InterestPicker({ interests, onToggle, compact }) {
@@ -79,10 +162,12 @@ export default function Briefing() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hydrated, setHydrated] = useState(false);
+  const [offlineCopy, setOfflineCopy] = useState(null); // { at } when showing a saved copy
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setOfflineCopy(null);
     try {
       const res = await fetch('/api/briefing', {
         method: 'POST',
@@ -92,6 +177,7 @@ export default function Briefing() {
       if (!res.ok) throw new Error(`API ${res.status}`);
       const json = await res.json();
       setBriefing(json);
+      saveLastBriefing(json);
       // Briefed stories count as consumed for Weekly Recall.
       for (const item of (json.essential || []).slice(0, 3)) {
         recordHistory({
@@ -102,7 +188,14 @@ export default function Briefing() {
         });
       }
     } catch (err) {
-      setError(err.message);
+      // Offline or the wire is down: fall back to the last briefing saved here.
+      const saved = loadLastBriefing();
+      if (saved) {
+        setBriefing(saved.briefing);
+        setOfflineCopy({ at: saved.at });
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -142,6 +235,13 @@ export default function Briefing() {
           )}
         </div>
       )}
+
+      {offlineCopy && (
+        <p className="meta offline-note" role="status">
+          Couldn&apos;t reach the wire. Showing the briefing saved {timeAgo(offlineCopy.at)}.
+        </p>
+      )}
+      {briefing && !loading && briefing.essential?.length > 0 && <ListenBar briefing={briefing} />}
 
       {loading ? (
         <div className="state-box">

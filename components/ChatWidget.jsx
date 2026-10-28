@@ -7,6 +7,7 @@ import { mergeMemory, sanitizeUpdates, selectForRequest } from '@/lib/intelligen
 import { loadLearn, loadMemory, saveLearn, saveMemory } from '@/lib/client/chatMemory';
 import { filterChips, loadRatings, setRating } from '@/lib/client/chatFeedback';
 import { followStory, isFollowing, unfollowStory } from '@/lib/client/userState';
+import { speakable, useSpeech } from '@/lib/client/speech';
 
 const STORE_KEY = 'meridian.chat.v1';
 const MAX_STORED = 40;
@@ -218,7 +219,7 @@ function ThumbIcon({ down }) {
   );
 }
 
-function Message({ msg, index, focus, onFocus, onRate, onRegenerate }) {
+function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, speaking, onSpeak }) {
   if (msg.role === 'user') {
     return <div className="chat-msg chat-user">{msg.text}</div>;
   }
@@ -279,6 +280,17 @@ function Message({ msg, index, focus, onFocus, onRate, onRegenerate }) {
           >
             <ThumbIcon down />
           </button>
+          {speech?.supported && (
+            <button
+              type="button"
+              className="chat-listen"
+              aria-pressed={speaking}
+              aria-label={speaking ? 'Stop reading aloud' : 'Read this answer aloud'}
+              onClick={() => onSpeak(index)}
+            >
+              {speaking ? 'Stop' : 'Listen'}
+            </button>
+          )}
           {msg.rating === 'down' && (
             <button type="button" className="chat-regen" onClick={() => onRegenerate(index)}>
               Try again
@@ -304,6 +316,8 @@ export default function ChatWidget() {
   const [view, setView] = useState('chat'); // 'chat' | 'memory'
   const [ratings, setRatings] = useState({});
   const [focus, setFocus] = useState(null); // { clusterId, title } story the chat is pinned to
+  const speech = useSpeech();
+  const [speakingIdx, setSpeakingIdx] = useState(null);
   const logRef = useRef(null);
   const inputRef = useRef(null);
   const launcherRef = useRef(null);
@@ -458,7 +472,18 @@ export default function ChatWidget() {
     if (question) send(question, { fresh: true, from: index - 1 });
   };
 
+  const toggleSpeak = (index) => {
+    if (speakingIdx === index && speech.state !== 'idle') {
+      speech.stop();
+      setSpeakingIdx(null);
+    } else {
+      speech.speak([speakable(messages[index]?.text)]);
+      setSpeakingIdx(index);
+    }
+  };
+
   const clear = () => {
+    speech.stop();
     abortRef.current?.abort();
     setFocus(null);
     setMessages([]);
@@ -653,6 +678,9 @@ export default function ChatWidget() {
                   onFocus={setFocus}
                   onRate={rate}
                   onRegenerate={regenerate}
+                  speech={speech}
+                  speaking={speakingIdx === i && speech.state !== 'idle'}
+                  onSpeak={toggleSpeak}
                 />
               ))}
               {busy && <Thinking />}

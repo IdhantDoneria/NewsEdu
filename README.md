@@ -13,6 +13,8 @@ Beyond the ranked front page, Meridian is a personalized intelligence and knowle
 - **Search** (`/search`) — full-text search across both editions' current stories (`tariff steel`, `"red sea"`, `oil -sports`) with edition, topic, source and age filters. Saved searches show how many matches are new since you last opened them.
 - **Watchlist** — add tickers or topics (`AAPL`, `oil`, `Fed`); matching stories get a ★ tag on the front page and you can filter to just those.
 - **Tune ranking** — sliders (Meridian Score, freshness, source trust, wide coverage, watchlist match) and presets that re-order the front page locally. The Meridian Score on each card is unchanged.
+- **Installable app & offline** — a web manifest, icons and a service worker make the site installable (Install app chip, or your browser's install option). Pages and story lists you opened recently, and the last briefing, open offline.
+- **Read aloud** — "Listen to this briefing" on `/briefing` and a Listen button on chat answers use the browser's built-in speech engine (speed selectable).
 - **Weekly Recall & Knowledge Map** (`/recall`) — understanding-level questions generated from stories you actually read/followed/asked about, paraphrase-tolerant grading with explanations, and causal chains connecting developments.
 
 **Personal state:** there are no accounts. Interests, follows, visit snapshots, reading history, recall performance and chat memory are kept in your browser's localStorage and are sent along with the requests that need them (briefing, changes, recall, chat).
