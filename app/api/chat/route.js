@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getEditionBrief } from '@/lib/ingest';
 import { answerChat } from '@/lib/intelligence/chat.mjs';
 import { readJsonBounded } from '@/lib/intelligence/http.mjs';
+import { cacheKey, withCache } from '@/lib/intelligence/chatcache.mjs';
+import { cleanIncomingMemory } from '@/lib/intelligence/memory.mjs';
 import { hasGeminiKey } from '@/lib/intelligence/ai.mjs';
 import { hasOpenRouterKey } from '@/lib/intelligence/openrouter.mjs';
 
@@ -58,7 +60,7 @@ export async function POST(request) {
     typeof body.storyId === 'string' && /^[\w-]{1,64}$/.test(body.storyId) ? body.storyId : undefined;
 
   const brief = await getEditionBrief(edition);
-  const result = await answerChat({
+  const request_ = {
     articles: brief.articles,
     edition,
     message: body.message,
@@ -66,7 +68,31 @@ export async function POST(request) {
     focusClusterId,
     memory: body.memory,
     learn: body.learn === true,
+  };
+
+  // Only single-turn questions are cached: a follow-up depends on the thread.
+  const singleTurn = !Array.isArray(body.history) || body.history.length === 0;
+  if (!singleTurn) {
+    const result = await answerChat(request_);
+    return NextResponse.json({ ...result, edition, articleCount: brief.articles.length, cached: false });
+  }
+
+  const key = cacheKey({
+    edition,
+    question: body.message,
+    focusClusterId,
+    memory: cleanIncomingMemory(body.memory),
+    learn: request_.learn,
+    briefVersion: brief.generatedAt,
+  });
+  const { value, cached } = await withCache(key, () => answerChat(request_), {
+    fresh: body.fresh === true,
+    // Never pin a fallback produced during an outage.
+    cacheable: (v) => v.provider === 'gemini' || v.provider === 'openrouter',
   });
 
-  return NextResponse.json({ ...result, edition, articleCount: brief.articles.length });
+  // memoryUpdates belong to the reader who triggered the model call, never
+  // to whoever the cached answer is replayed to.
+  const result = cached ? { ...value, memoryUpdates: { add: [], drop: [] } } : value;
+  return NextResponse.json({ ...result, edition, articleCount: brief.articles.length, cached });
 }
