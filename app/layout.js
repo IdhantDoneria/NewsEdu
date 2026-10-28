@@ -1,10 +1,18 @@
 import './globals.css';
 import ChatWidget from '@/components/ChatWidget';
+import PwaRegister from '@/components/PwaRegister';
+
+export const viewport = {
+  themeColor: '#181511',
+};
 
 export const metadata = {
   title: 'The Meridian Brief — Geopolitics & Finance, Ranked',
   description:
     'A news intelligence dashboard that ranks geopolitics and finance coverage with a transparent point-based scoring algorithm.',
+  applicationName: 'The Meridian Brief',
+  appleWebApp: { capable: true, title: 'Meridian', statusBarStyle: 'black-translucent' },
+  icons: { apple: '/apple-touch-icon.png' },
 };
 
 export default function RootLayout({ children }) {
@@ -21,6 +29,7 @@ export default function RootLayout({ children }) {
       <body>
         {children}
         <ChatWidget />
+        <PwaRegister />
       </body>
     </html>
   );
