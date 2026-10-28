@@ -9,6 +9,7 @@ Beyond the ranked front page, Meridian is a personalized intelligence and knowle
 - **Personalized Daily Briefing** (`/briefing`) — a finite briefing (Essential Developments, Developing Stories, Understand One Issue, Watch Next), blending ~70% personal relevance with ~30% global significance. Never an infinite feed.
 - **Source Comparison & Framing** — inside each story page: per-outlet headlines, timing, Meridian Scores, primary focus, observable framing-emphasis differences, and figures reported by only one outlet.
 - **Contextual Q&A** — "Ask about this story" answers strictly from the story's own articles and stored intelligence, with validated citations. Insufficient evidence produces an honest refusal, not invention.
+- **Ask the Brief (site-wide chat)** — a floating chat in the bottom-right corner of every page, expandable to a large panel. Answers are drawn from the current edition's ranked articles (and prefer the story you're viewing), with citations validated server-side; general background is flagged. Prebuilt, context-aware question chips per edition/story. Without `GEMINI_API_KEY` it falls back to cited headlines/passages. Chat history stays in `sessionStorage`.
 - **Weekly Recall & Knowledge Map** (`/recall`) — understanding-level questions generated from stories you actually read/followed/asked about, paraphrase-tolerant grading with explanations, and causal chains connecting developments.
 
 **Privacy model:** there are no accounts and no server-side user data. Interests, follows, visit snapshots, reading history and recall performance live in your browser's localStorage and are sent only transiently inside the requests that need them. This preserves the product's "No tracking" positioning.
@@ -131,6 +132,7 @@ app/
     markets/route.js    # fetch Google News → Gemini AI summary → JSON response
     intel/route.js      # story-cluster list per edition
     intel/[id]/         # story intelligence payload + /ask (scoped Q&A)
+    chat/               # site-wide news chat (POST)
     intel/metrics/      # AI/caching observability counters
     briefing/route.js   # personalized finite daily briefing (POST, stateless)
     changes/route.js    # material-change detection vs client snapshots (POST)

@@ -1,4 +1,5 @@
 import './globals.css';
+import ChatWidget from '@/components/ChatWidget';
 
 export const metadata = {
   title: 'The Meridian Brief — Geopolitics & Finance, Ranked',
@@ -17,7 +18,10 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ChatWidget />
+      </body>
     </html>
   );
 }
