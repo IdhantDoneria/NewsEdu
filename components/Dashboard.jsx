@@ -1,9 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
 import MarketsOverview from './MarketsOverview';
+import { RankingPanel, WatchlistBar, WatchTags } from './PersonalTools';
+import { DEFAULT_WEIGHTS, matchWatchlist, rankArticles } from '@/lib/personal/ranking.mjs';
+import { loadWatchlist, loadWeights, saveWatchlist, saveWeights } from '@/lib/client/personalStore';
 import { getFollows, changesPayload } from '@/lib/client/userState';
 
 const EDITION_LABELS = {
@@ -201,7 +204,7 @@ function ScoreBreakdown({ breakdown, compact = false }) {
   );
 }
 
-function Byline({ article }) {
+function Byline({ article, terms }) {
   return (
     <div className="byline">
       <span className="src">{article.sourceName}</span>
@@ -209,11 +212,12 @@ function Byline({ article }) {
       <time dateTime={new Date(article.publishedAt).toISOString()} title={absoluteTime(article.publishedAt)}>
         {timeAgo(article.publishedAt)}
       </time>
+      {terms?.length > 0 && <WatchTags article={article} terms={terms} />}
     </div>
   );
 }
 
-function LeadCard({ article, tiltProps }) {
+function LeadCard({ article, tiltProps, terms }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
   const imgRef = useRef(null);
@@ -269,7 +273,7 @@ function LeadCard({ article, tiltProps }) {
         {article.summary && <p className="summary">{article.summary}</p>}
         <div className="lead-foot">
           <div className="lead-foot-left">
-            <Byline article={article} />
+            <Byline article={article} terms={terms} />
             <ScoreBreakdown breakdown={article.scoreBreakdown} />
           </div>
           <ScoreDial score={article.score} label="Score" breakdown={article.scoreBreakdown} />
@@ -368,6 +372,31 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const tilt = useTilt(4);
   const leadTilt = useTilt(2.5);
+  const [weights, setWeights] = useState(DEFAULT_WEIGHTS);
+  const [terms, setTerms] = useState([]);
+  const [onlyWatch, setOnlyWatch] = useState(false);
+
+  useEffect(() => {
+    setWeights(loadWeights());
+    const w = loadWatchlist();
+    setTerms(w.terms);
+    setOnlyWatch(w.only);
+  }, []);
+
+  const changeWeights = (next) => {
+    setWeights(next);
+    saveWeights(next);
+  };
+  const changeTerms = (next) => {
+    setTerms(next);
+    const only = next.length === 0 ? false : onlyWatch;
+    setOnlyWatch(only);
+    saveWatchlist({ terms: next, only });
+  };
+  const changeOnly = (only) => {
+    setOnlyWatch(only);
+    saveWatchlist({ terms, only });
+  };
 
   const load = useCallback(async (ed, force = false) => {
     if (ed === 'markets') {
@@ -414,7 +443,16 @@ export default function Dashboard() {
     }, 380);
   };
 
-  const articles = data?.articles ?? [];
+  const rawArticles = data?.articles ?? [];
+  const ranked = useMemo(
+    () => rankArticles(rawArticles, weights, { terms }),
+    [rawArticles, weights, terms]
+  );
+  const watchMatches = useMemo(
+    () => (terms.length ? ranked.filter((a) => matchWatchlist(a, terms).length > 0) : []),
+    [ranked, terms]
+  );
+  const articles = onlyWatch && terms.length ? watchMatches : ranked;
   const lead = articles[0];
   const rail = articles.slice(1, 6);
   const rest = articles.slice(6, 30);
@@ -433,6 +471,7 @@ export default function Dashboard() {
           <span>{todayLine()}</span>
           <nav className="intel-nav" aria-label="Meridian sections">
             <Link href="/briefing">Your Briefing</Link>
+            <Link href="/search">Search</Link>
             <Link href="/following">Following</Link>
             <Link href="/recall">Recall</Link>
           </nav>
@@ -493,6 +532,7 @@ export default function Dashboard() {
           {edition !== 'markets' && (
             <div className="section-head-right">
               <ScoreLegend edition={edition} />
+              <RankingPanel weights={weights} onChange={changeWeights} />
               <span className="meta" aria-live="polite">
                 {loading
                   ? 'Consulting the wire…'
@@ -528,6 +568,16 @@ export default function Dashboard() {
           )}
         </div>
 
+        {edition !== 'markets' && (
+          <WatchlistBar
+            terms={terms}
+            onChange={changeTerms}
+            only={onlyWatch}
+            onToggleOnly={changeOnly}
+            matchCount={watchMatches.length}
+          />
+        )}
+
         <div className="stage">
           <div className={`stage-inner${flipping ? ' flipping' : ''}`}>
             {edition === 'markets' ? (
@@ -543,13 +593,15 @@ export default function Dashboard() {
               </div>
             ) : articles.length === 0 ? (
               <div className="state-box">
-                No briefs cleared the noise floor. Check back shortly.
+                {onlyWatch
+                  ? 'No current stories match your watchlist. Add more terms or switch the filter off.'
+                  : 'No briefs cleared the noise floor. Check back shortly.'}
               </div>
             ) : (
               <>
                 <div className="front-page">
                   <div className="lead-column">
-                    {lead && <LeadCard article={lead} tiltProps={leadTilt} />}
+                    {lead && <LeadCard article={lead} tiltProps={leadTilt} terms={terms} />}
                     {lead && <IntelLink article={lead} edition={edition} />}
                   </div>
 
@@ -569,7 +621,7 @@ export default function Dashboard() {
                           </span>
                           <span>
                             <h4>{a.title}</h4>
-                            <Byline article={a} />
+                            <Byline article={a} terms={terms} />
                           </span>
                           <ScoreDial score={a.score} small breakdown={a.scoreBreakdown} />
                         </a>
@@ -597,7 +649,7 @@ export default function Dashboard() {
                           {...tilt}
                         >
                           <div className="card-top">
-                            <Byline article={a} />
+                            <Byline article={a} terms={terms} />
                             <ScoreDial score={a.score} small breakdown={a.scoreBreakdown} />
                           </div>
                           <h4>{a.title}</h4>
