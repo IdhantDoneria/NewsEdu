@@ -133,3 +133,111 @@ test('a generic word plus a topic stays a topical question', async () => {
   assert.doesNotMatch(res.answer, /Top-ranked coverage/);
   assert.match(res.answer, /strike/i);
 });
+
+/* ------------------------------ OpenRouter path ---------------------------- */
+
+function mockOpenRouter(handler) {
+  const real = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    if (!String(url).includes('openrouter.ai')) return real(url, init);
+    return handler(JSON.parse(init.body), init);
+  };
+  return () => { globalThis.fetch = real; };
+}
+const orReply = (obj) => ({ ok: true, status: 200, json: async () => ({ choices: [{ message: { content: JSON.stringify(obj) } }] }) });
+
+test('OpenRouter answers when no Gemini key is set, with validated citations and memory', async () => {
+  process.env.OPENROUTER_API_KEY = 'test-key';
+  let sent;
+  const restore = mockOpenRouter((body, init) => {
+    sent = { body, auth: init.headers.Authorization };
+    return orReply({
+      answer: 'Rates were held [S1][S99].',
+      usedBackgroundKnowledge: false,
+      followUps: ['What about inflation?'],
+      memory: {
+        add: [
+          { text: 'Follows central bank policy', kind: 'interest', importance: 4 },
+          { text: 'Asked one random thing today', kind: 'interest', importance: 1 },
+        ],
+        drop: ['m1', 'nope'],
+      },
+    });
+  });
+  try {
+    const res = await answerChat({
+      articles: POOL, edition: 'finance', message: 'What happened with interest rates?',
+      memory: [{ id: 'm1', text: 'Follows Brazilian politics', kind: 'interest' }], learn: true,
+    });
+    assert.equal(res.provider, 'openrouter');
+    assert.equal(res.answer, 'Rates were held [1].');
+    assert.equal(res.citations.length, 1);
+    assert.deepEqual(res.memoryUpdates.add.map((a) => a.text), ['Follows central bank policy']);
+    assert.deepEqual(res.memoryUpdates.drop, ['m1']);
+    assert.equal(sent.auth, 'Bearer test-key');
+    assert.match(sent.body.messages[0].content, /<memory id="m1"/);
+    assert.match(sent.body.messages[0].content, /Memory learning/);
+  } finally {
+    restore();
+    delete process.env.OPENROUTER_API_KEY;
+  }
+});
+
+test('with learning off, no memory instructions are sent and no updates are returned', async () => {
+  process.env.OPENROUTER_API_KEY = 'test-key';
+  let prompt;
+  const restore = mockOpenRouter((body) => {
+    prompt = body.messages[0].content;
+    return orReply({ answer: 'Fine [S1].', memory: { add: [{ text: 'Follows central banks', importance: 5 }], drop: [] } });
+  });
+  try {
+    const res = await answerChat({ articles: POOL, edition: 'finance', message: 'interest rates?', learn: false });
+    assert.doesNotMatch(prompt, /Memory learning/);
+    assert.deepEqual(res.memoryUpdates, { add: [], drop: [] });
+  } finally {
+    restore();
+    delete process.env.OPENROUTER_API_KEY;
+  }
+});
+
+test('OpenRouter failure falls back to extractive without throwing', async () => {
+  process.env.OPENROUTER_API_KEY = 'test-key';
+  const restore = mockOpenRouter(() => ({ ok: false, status: 500, text: async () => 'boom' }));
+  const realError = console.error;
+  console.error = () => {};
+  try {
+    const res = await answerChat({ articles: POOL, edition: 'finance', message: 'interest rates and inflation' });
+    assert.equal(res.provider, 'fallback');
+    assert.ok(res.notice);
+    assert.ok(res.citations.length >= 1);
+  } finally {
+    console.error = realError;
+    restore();
+    delete process.env.OPENROUTER_API_KEY;
+  }
+});
+
+test('a rate-limited model is skipped on the next call (cooldown), not hammered', async () => {
+  process.env.OPENROUTER_API_KEY = 'test-key';
+  process.env.OPENROUTER_MODEL = 'test/cooldown-model';
+  const calls = [];
+  const restore = mockOpenRouter((body) => {
+    calls.push(body.model);
+    if (body.model === 'test/cooldown-model') return { ok: false, status: 429, text: async () => 'rate limited' };
+    return orReply({ answer: 'Ok [S1].' });
+  });
+  const realError = console.error;
+  console.error = () => {};
+  try {
+    const a = await answerChat({ articles: POOL, edition: 'finance', message: 'interest rates?' });
+    const b = await answerChat({ articles: POOL, edition: 'finance', message: 'interest rates?' });
+    assert.equal(a.provider, 'openrouter');
+    assert.equal(calls.filter((m) => m === 'test/cooldown-model').length, 1);
+    assert.equal(b.provider, 'openrouter');
+  } finally {
+    console.error = realError;
+    restore();
+    delete process.env.OPENROUTER_API_KEY;
+    delete process.env.OPENROUTER_MODEL;
+  }
+});

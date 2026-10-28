@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
+import { mergeMemory, sanitizeUpdates, selectForRequest } from '@/lib/intelligence/memory.mjs';
+import { loadLearn, loadMemory, saveLearn, saveMemory } from '@/lib/client/chatMemory';
+
 const STORE_KEY = 'meridian.chat.v1';
 const MAX_STORED = 40;
 
@@ -122,6 +125,45 @@ function AnswerBody({ text, citations }) {
   );
 }
 
+const THINK_STAGES = [
+  'Searching today’s coverage',
+  'Reading the most relevant articles',
+  'Cross-checking sources',
+  'Drafting your answer',
+];
+
+/** Live status while waiting: cycling stages, a moving wave, and a timer. */
+function Thinking() {
+  const [secs, setSecs] = useState(0);
+  useEffect(() => {
+    const start = Date.now();
+    const id = setInterval(() => setSecs((Date.now() - start) / 1000), 200);
+    return () => clearInterval(id);
+  }, []);
+  const stage = Math.min(Math.floor(secs / 1.8), THINK_STAGES.length - 1);
+  const slow = secs >= 10;
+  return (
+    <div className="chat-msg chat-bot chat-thinking" role="status">
+      <span className="sr-only">The assistant is working on your answer</span>
+      <div className="chat-think-row" aria-hidden="true">
+        <span className="chat-wave">
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className="chat-think-text" key={slow ? 'slow' : stage}>
+          {slow ? 'Taking longer than usual, still working' : THINK_STAGES[stage]}
+          <span className="chat-ellipsis">...</span>
+        </span>
+        <span className="chat-think-time">{Math.floor(secs)}s</span>
+      </div>
+      <span className="chat-think-bar" aria-hidden="true" />
+    </div>
+  );
+}
+
 function Message({ msg }) {
   if (msg.role === 'user') {
     return <div className="chat-msg chat-user">{msg.text}</div>;
@@ -133,6 +175,15 @@ function Message({ msg }) {
         <p className="chat-note">Includes general background, not only today&apos;s reporting.</p>
       )}
       {msg.notice && <p className="chat-note">{msg.notice}</p>}
+      {msg.provider === 'openrouter' && (
+        <p className="chat-note">Answered by a backup model while the main one was unavailable.</p>
+      )}
+      {msg.learned && (msg.learned.added.length > 0 || msg.learned.dropped.length > 0) && (
+        <p className="chat-learned">
+          {msg.learned.added.length > 0 && <>Remembered: {msg.learned.added.join('; ')}. </>}
+          {msg.learned.dropped.length > 0 && <>Forgot: {msg.learned.dropped.join('; ')}.</>}
+        </p>
+      )}
       {msg.citations?.length > 0 && (
         <ol className="chat-sources" aria-label="Sources">
           {msg.citations.map((c) => {
@@ -171,6 +222,9 @@ export default function ChatWidget() {
   const [busy, setBusy] = useState(false);
   const [ctx, setCtx] = useState({ edition: 'geopolitics', storyId: null });
   const [followUps, setFollowUps] = useState([]);
+  const [memory, setMemory] = useState([]);
+  const [learn, setLearn] = useState(true);
+  const [view, setView] = useState('chat'); // 'chat' | 'memory'
   const logRef = useRef(null);
   const inputRef = useRef(null);
   const launcherRef = useRef(null);
@@ -178,6 +232,8 @@ export default function ChatWidget() {
 
   useEffect(() => {
     setMessages(loadStored());
+    setMemory(loadMemory());
+    setLearn(loadLearn());
   }, []);
 
   useEffect(() => {
@@ -228,6 +284,7 @@ export default function ChatWidget() {
       if (q.length < 2 || busy) return;
       const context = readContext(pathname);
       setCtx(context);
+      const sentMemory = selectForRequest(memory);
       const history = messages
         .filter((m) => !m.error)
         .slice(-6)
@@ -249,12 +306,24 @@ export default function ChatWidget() {
             history,
             edition: context.edition,
             storyId: context.storyId,
+            learn,
+            memory: learn ? sentMemory : [],
           }),
           signal: ctrl.signal,
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           throw new Error(data.message || 'Something went wrong. Try again.');
+        }
+        let learned = null;
+        if (learn && data.memoryUpdates) {
+          const updates = sanitizeUpdates(data.memoryUpdates, sentMemory.map((n) => n.id));
+          const merged = mergeMemory(memory, updates);
+          if (merged.added.length || merged.reinforced.length || merged.dropped.length) {
+            setMemory(merged.memory);
+            saveMemory(merged.memory);
+          }
+          learned = { added: merged.added, dropped: merged.dropped };
         }
         setMessages((prev) => [
           ...prev,
@@ -264,6 +333,8 @@ export default function ChatWidget() {
             citations: data.citations || [],
             notice: data.notice,
             usedBackgroundKnowledge: data.usedBackgroundKnowledge,
+            provider: data.provider,
+            learned,
           },
         ]);
         setFollowUps(Array.isArray(data.followUps) ? data.followUps : []);
@@ -277,7 +348,7 @@ export default function ChatWidget() {
         setBusy(false);
       }
     },
-    [busy, messages, pathname]
+    [busy, messages, pathname, memory, learn]
   );
 
   const onSubmit = (e) => {
@@ -297,6 +368,22 @@ export default function ChatWidget() {
     setMessages([]);
     setFollowUps([]);
     setBusy(false);
+  };
+
+  const forget = (id) => {
+    const next = memory.filter((n) => n.id !== id);
+    setMemory(next);
+    saveMemory(next);
+  };
+  const forgetAll = () => {
+    setMemory([]);
+    saveMemory([]);
+  };
+  const toggleLearn = () => {
+    setLearn((v) => {
+      saveLearn(!v);
+      return !v;
+    });
   };
 
   const suggestionKey = ctx.storyId ? 'story' : ctx.edition;
@@ -341,7 +428,25 @@ export default function ChatWidget() {
               <p>{scopeLabel}</p>
             </div>
             <div className="chat-head-actions">
-              {messages.length > 0 && (
+              <button
+                type="button"
+                className={`chat-mem-btn${view === 'memory' ? ' on' : ''}`}
+                onClick={() => setView((v) => (v === 'memory' ? 'chat' : 'memory'))}
+                aria-label={`What the assistant remembers about you (${memory.length})`}
+                aria-pressed={view === 'memory'}
+                title="Memory"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8L18 15z"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                {memory.length > 0 && <b>{memory.length}</b>}
+              </button>
+              {messages.length > 0 && view === 'chat' && (
                 <button type="button" onClick={clear} aria-label="Clear conversation" title="Clear">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path
@@ -390,52 +495,90 @@ export default function ChatWidget() {
             </div>
           </header>
 
-          <div className="chat-log" ref={logRef} role="log" aria-live="polite" aria-busy={busy}>
-            {messages.length === 0 && (
-              <div className="chat-empty">
-                <p>
-                  Ask about the news on this page or anything it touches. Answers are drawn from the
-                  ranked articles and cite their sources.
+          {view === 'memory' ? (
+            <div className="chat-memory">
+              <label className="chat-switch">
+                <input type="checkbox" role="switch" checked={learn} onChange={toggleLearn} />
+                <span aria-hidden="true" />
+                <em>Learn from my chats</em>
+              </label>
+              <p className="chat-mem-help">
+                Durable notes about your interests and preferences help tailor answers. They are
+                stored only in this browser, fade when unused, and are dropped automatically.
+                News facts and personal details are never kept.
+              </p>
+              {memory.length === 0 ? (
+                <p className="chat-mem-empty">
+                  {learn ? 'Nothing remembered yet. Notes appear as you chat.' : 'Learning is off.'}
                 </p>
-              </div>
-            )}
-            {messages.map((m, i) => (
-              <Message key={i} msg={m} />
-            ))}
-            {busy && (
-              <div className="chat-msg chat-bot chat-typing" aria-label="Thinking">
-                <span />
-                <span />
-                <span />
-              </div>
-            )}
-          </div>
-
-          {chips.length > 0 && !busy && (
-            <div className="chat-chips" aria-label="Suggested questions">
-              {chips.map((s) => (
-                <button key={s} type="button" onClick={() => send(s)}>
-                  {s}
+              ) : (
+                <ul className="chat-mem-list">
+                  {memory.map((n) => (
+                    <li key={n.id}>
+                      <span className="chat-mem-kind">{n.kind}</span>
+                      <span className="chat-mem-text">{n.text}</span>
+                      <button type="button" onClick={() => forget(n.id)} aria-label={`Forget: ${n.text}`}>
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="chat-mem-actions">
+                {memory.length > 0 && (
+                  <button type="button" onClick={forgetAll}>
+                    Forget everything
+                  </button>
+                )}
+                <button type="button" onClick={() => setView('chat')}>
+                  Back to chat
                 </button>
-              ))}
+              </div>
             </div>
-          )}
+          ) : (
+            <>
+            <div className="chat-log" ref={logRef} role="log" aria-live="polite" aria-busy={busy}>
+              {messages.length === 0 && (
+                <div className="chat-empty">
+                  <p>
+                    Ask about the news on this page or anything it touches. Answers are drawn from the
+                    ranked articles and cite their sources.
+                  </p>
+                </div>
+              )}
+              {messages.map((m, i) => (
+                <Message key={i} msg={m} />
+              ))}
+              {busy && <Thinking />}
+            </div>
 
-          <form className="chat-form" onSubmit={onSubmit}>
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={onInputKey}
-              placeholder="Ask about the news…"
-              aria-label="Your question"
-              rows={1}
-              maxLength={500}
-            />
-            <button type="submit" disabled={busy || input.trim().length < 2}>
-              Send
-            </button>
-          </form>
+            {chips.length > 0 && !busy && (
+              <div className="chat-chips" aria-label="Suggested questions">
+                {chips.map((s) => (
+                  <button key={s} type="button" onClick={() => send(s)}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <form className="chat-form" onSubmit={onSubmit}>
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={onInputKey}
+                placeholder="Ask about the news…"
+                aria-label="Your question"
+                rows={1}
+                maxLength={500}
+              />
+              <button type="submit" disabled={busy || input.trim().length < 2}>
+                Send
+              </button>
+            </form>
+            </>
+          )}
         </section>
       )}
     </div>
