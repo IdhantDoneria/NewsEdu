@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server';
 import { getEditionBrief } from '@/lib/ingest';
 import { answerChat } from '@/lib/intelligence/chat.mjs';
 import { readJsonBounded } from '@/lib/intelligence/http.mjs';
+import { hasGeminiKey } from '@/lib/intelligence/ai.mjs';
+import { hasOpenRouterKey } from '@/lib/intelligence/openrouter.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 30; // model call + fallback models
+export const maxDuration = 45; // Gemini models, then OpenRouter
 
 // Per-IP sliding window — each request can cost a model call.
 const WINDOW_MS = 60_000;
@@ -22,6 +24,11 @@ function rateLimited(request) {
     for (const [k, v] of hits) if (!v.some((t) => now - t < WINDOW_MS)) hits.delete(k);
   }
   return recent.length > MAX_PER_WINDOW;
+}
+
+/** Which providers are configured (booleans only; never the keys). */
+export async function GET() {
+  return NextResponse.json({ gemini: hasGeminiKey(), openrouter: hasOpenRouterKey() });
 }
 
 /** Site-wide news chat, grounded in the current edition's ranked articles. */
@@ -57,6 +64,8 @@ export async function POST(request) {
     message: body.message,
     history: body.history,
     focusClusterId,
+    memory: body.memory,
+    learn: body.learn === true,
   });
 
   return NextResponse.json({ ...result, edition, articleCount: brief.articles.length });
