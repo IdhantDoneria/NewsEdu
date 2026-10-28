@@ -5,7 +5,7 @@ import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 30; // model call + one retry
+export const maxDuration = 30; // model call + fallback models
 
 // Per-IP sliding window — each request can cost a model call.
 const WINDOW_MS = 60_000;
