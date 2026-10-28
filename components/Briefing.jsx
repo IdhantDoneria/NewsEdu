@@ -26,7 +26,7 @@ function InterestPicker({ interests, onToggle, compact }) {
     <div className={`interest-picker${compact ? ' compact' : ''}`}>
       {!compact && (
         <p className="meta">
-          Pick what you care about. Interests are stored only in this browser and shape ~70% of
+          Pick what you care about. Your interests shape ~70% of
           your briefing — globally significant stories always keep their place.
         </p>
       )}

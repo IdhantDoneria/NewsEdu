@@ -15,7 +15,7 @@ const INTEL_BUDGET = 6;
 /**
  * Personalized Daily Intelligence Briefing.
  * The client POSTs its locally-held profile (interests, follows with
- * snapshots) — no user data is stored server-side.
+ * snapshots).
  */
 export async function POST(request) {
   const read = await readJsonBounded(request);

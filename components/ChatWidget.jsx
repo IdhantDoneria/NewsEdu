@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 
 import { mergeMemory, sanitizeUpdates, selectForRequest } from '@/lib/intelligence/memory.mjs';
 import { loadLearn, loadMemory, saveLearn, saveMemory } from '@/lib/client/chatMemory';
+import { filterChips, loadRatings, setRating } from '@/lib/client/chatFeedback';
+import { followStory, isFollowing, unfollowStory } from '@/lib/client/userState';
 
 const STORE_KEY = 'meridian.chat.v1';
 const MAX_STORED = 40;
@@ -164,7 +166,59 @@ function Thinking() {
   );
 }
 
-function Message({ msg }) {
+/** Deterministic per-story actions (never model-driven): follow, or focus the chat on it. */
+function StoryActions({ c, edition, focus, onFocus }) {
+  const [following, setFollowing] = useState(false);
+  useEffect(() => {
+    setFollowing(isFollowing(c.clusterId));
+  }, [c.clusterId]);
+
+  const toggleFollow = () => {
+    if (following) unfollowStory(c.clusterId);
+    else {
+      followStory({
+        clusterId: c.clusterId,
+        title: c.title,
+        edition,
+        articleIds: c.clusterArticleIds?.length ? c.clusterArticleIds : [c.id],
+      });
+    }
+    setFollowing(!following);
+  };
+  const focused = focus?.clusterId === c.clusterId;
+
+  return (
+    <span className="chat-acts">
+      <a href={c.storyUrl}>Story page</a>
+      <button type="button" aria-pressed={following} onClick={toggleFollow}>
+        {following ? 'Following ✓' : 'Follow'}
+      </button>
+      <button
+        type="button"
+        aria-pressed={focused}
+        onClick={() => onFocus(focused ? null : { clusterId: c.clusterId, title: c.title })}
+      >
+        {focused ? 'Focused ✓' : 'Ask about this'}
+      </button>
+    </span>
+  );
+}
+
+function ThumbIcon({ down }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={down ? { transform: 'scaleY(-1)' } : undefined}>
+      <path
+        d="M7 11v9H4v-9h3zm0 0 4-8c1.7 0 2.5 1.3 2.2 2.8L12.7 9H19a2 2 0 0 1 2 2.4l-1.4 7A2 2 0 0 1 17.6 20H7"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function Message({ msg, index, focus, onFocus, onRate, onRegenerate }) {
   if (msg.role === 'user') {
     return <div className="chat-msg chat-user">{msg.text}</div>;
   }
@@ -199,15 +253,38 @@ function Message({ msg }) {
                     <b>{c.source}</b> — {c.title}
                   </span>
                 )}
-                {c.storyUrl && (
-                  <a className="chat-story-link" href={c.storyUrl}>
-                    Story page
-                  </a>
+                {c.storyUrl && c.clusterId && (
+                  <StoryActions c={c} edition={msg.edition || 'geopolitics'} focus={focus} onFocus={onFocus} />
                 )}
               </li>
             );
           })}
         </ol>
+      )}
+      {!msg.error && (
+        <div className="chat-rate">
+          <button
+            type="button"
+            aria-pressed={msg.rating === 'up'}
+            aria-label="Helpful answer"
+            onClick={() => onRate(index, 'up')}
+          >
+            <ThumbIcon />
+          </button>
+          <button
+            type="button"
+            aria-pressed={msg.rating === 'down'}
+            aria-label="Unhelpful answer"
+            onClick={() => onRate(index, 'down')}
+          >
+            <ThumbIcon down />
+          </button>
+          {msg.rating === 'down' && (
+            <button type="button" className="chat-regen" onClick={() => onRegenerate(index)}>
+              Try again
+            </button>
+          )}
+        </div>
       )}
     </div>
   );
@@ -225,6 +302,8 @@ export default function ChatWidget() {
   const [memory, setMemory] = useState([]);
   const [learn, setLearn] = useState(true);
   const [view, setView] = useState('chat'); // 'chat' | 'memory'
+  const [ratings, setRatings] = useState({});
+  const [focus, setFocus] = useState(null); // { clusterId, title } story the chat is pinned to
   const logRef = useRef(null);
   const inputRef = useRef(null);
   const launcherRef = useRef(null);
@@ -234,6 +313,7 @@ export default function ChatWidget() {
     setMessages(loadStored());
     setMemory(loadMemory());
     setLearn(loadLearn());
+    setRatings(loadRatings());
   }, []);
 
   useEffect(() => {
@@ -279,18 +359,20 @@ export default function ChatWidget() {
   };
 
   const send = useCallback(
-    async (text) => {
+    async (text, opts = {}) => {
       const q = text.trim();
       if (q.length < 2 || busy) return;
       const context = readContext(pathname);
       setCtx(context);
       const sentMemory = selectForRequest(memory);
-      const history = messages
+      // "Try again" replaces an exchange: its history is the thread before it.
+      const base = opts.from != null ? messages.slice(0, opts.from) : messages;
+      const history = base
         .filter((m) => !m.error)
         .slice(-6)
         .map((m) => ({ role: m.role, text: m.text }));
 
-      setMessages((prev) => [...prev, { role: 'user', text: q }]);
+      setMessages([...base, { role: 'user', text: q }]);
       setInput('');
       setFollowUps([]);
       setBusy(true);
@@ -305,7 +387,8 @@ export default function ChatWidget() {
             message: q,
             history,
             edition: context.edition,
-            storyId: context.storyId,
+            storyId: focus?.clusterId || context.storyId,
+            fresh: opts.fresh === true,
             learn,
             memory: learn ? sentMemory : [],
           }),
@@ -334,6 +417,7 @@ export default function ChatWidget() {
             notice: data.notice,
             usedBackgroundKnowledge: data.usedBackgroundKnowledge,
             provider: data.provider,
+            edition: data.edition,
             learned,
           },
         ]);
@@ -348,7 +432,7 @@ export default function ChatWidget() {
         setBusy(false);
       }
     },
-    [busy, messages, pathname, memory, learn]
+    [busy, messages, pathname, memory, learn, focus]
   );
 
   const onSubmit = (e) => {
@@ -363,8 +447,20 @@ export default function ChatWidget() {
     }
   };
 
+  const rate = (index, rating) => {
+    const question = messages[index - 1]?.text;
+    const next = messages[index]?.rating === rating ? null : rating;
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, rating: next } : m)));
+    if (question) setRatings(setRating(question, next));
+  };
+  const regenerate = (index) => {
+    const question = messages[index - 1]?.text;
+    if (question) send(question, { fresh: true, from: index - 1 });
+  };
+
   const clear = () => {
     abortRef.current?.abort();
+    setFocus(null);
     setMessages([]);
     setFollowUps([]);
     setBusy(false);
@@ -386,9 +482,11 @@ export default function ChatWidget() {
     });
   };
 
-  const suggestionKey = ctx.storyId ? 'story' : ctx.edition;
-  const chips = messages.length === 0 ? SUGGESTIONS[suggestionKey] : followUps;
-  const scopeLabel = ctx.storyId
+  const suggestionKey = ctx.storyId || focus ? 'story' : ctx.edition;
+  const chips = filterChips(messages.length === 0 ? SUGGESTIONS[suggestionKey] : followUps, ratings);
+  const scopeLabel = focus
+    ? 'Focused on one story'
+    : ctx.storyId
     ? 'This story + current edition'
     : `${ctx.edition === 'finance' ? 'Finance' : 'Geopolitics'} edition`;
 
@@ -504,8 +602,8 @@ export default function ChatWidget() {
               </label>
               <p className="chat-mem-help">
                 Durable notes about your interests and preferences help tailor answers. They are
-                stored only in this browser, fade when unused, and are dropped automatically.
-                News facts and personal details are never kept.
+                kept in this browser and sent with your questions, fade when unused, and are
+                dropped automatically. News facts and personal details are not saved.
               </p>
               {memory.length === 0 ? (
                 <p className="chat-mem-empty">
@@ -547,7 +645,15 @@ export default function ChatWidget() {
                 </div>
               )}
               {messages.map((m, i) => (
-                <Message key={i} msg={m} />
+                <Message
+                  key={i}
+                  msg={m}
+                  index={i}
+                  focus={focus}
+                  onFocus={setFocus}
+                  onRate={rate}
+                  onRegenerate={regenerate}
+                />
               ))}
               {busy && <Thinking />}
             </div>
@@ -562,6 +668,16 @@ export default function ChatWidget() {
               </div>
             )}
 
+            {focus && (
+                <div className="chat-focus">
+                  <span>
+                    Focused on: <b>{focus.title}</b>
+                  </span>
+                  <button type="button" onClick={() => setFocus(null)} aria-label="Remove story focus">
+                    ✕
+                  </button>
+                </div>
+              )}
             <form className="chat-form" onSubmit={onSubmit}>
               <textarea
                 ref={inputRef}

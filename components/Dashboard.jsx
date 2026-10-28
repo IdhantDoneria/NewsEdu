@@ -672,7 +672,7 @@ export default function Dashboard() {
 
         <footer className="footer">
           <span>The Meridian Brief — news intelligence, ranked and scored</span>
-          <span>Free public RSS wires · No tracking · No paywalls</span>
+          <span>Free public RSS wires · No paywalls</span>
         </footer>
       </div>
     </div>

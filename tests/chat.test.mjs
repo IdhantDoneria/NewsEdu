@@ -241,3 +241,17 @@ test('a rate-limited model is skipped on the next call (cooldown), not hammered'
     delete process.env.OPENROUTER_MODEL;
   }
 });
+
+test('citations carry the cluster id and every article id in that story', async () => {
+  const pool = [
+    art('Oil climbs on Red Sea attacks', 'Brent rose after new tanker attacks.', { clusterId: 'cl-x', score: 90 }),
+    art('Tanker attacks push oil higher', 'Crude rose as shipping risk grew.', { clusterId: 'cl-x', score: 80 }),
+    art('Unrelated chip story', 'A chipmaker unveiled a processor.', { score: 10 }),
+  ];
+  const res = await answerChat({ articles: pool, edition: 'finance', message: 'oil tanker attacks' });
+  const c = res.citations.find((x) => x.clusterId === 'cl-x');
+  assert.ok(c);
+  assert.deepEqual(c.clusterArticleIds.sort(), [pool[0].id, pool[1].id].sort());
+  const plain = res.citations.find((x) => !x.clusterId);
+  if (plain) assert.deepEqual(plain.clusterArticleIds, []);
+});

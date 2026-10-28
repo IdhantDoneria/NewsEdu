@@ -2172,3 +2172,20 @@ a.chat-cite:hover { background: var(--accent); color: var(--paper-raised); }
 .chat-mem-actions { display: flex; gap: 8px; margin-top: auto; }
 .chat-mem-actions button { padding: 7px 12px; background: var(--paper); border: 1px solid var(--rule-dark); font: 600 0.78rem var(--sans); cursor: pointer; color: var(--ink); }
 .chat-mem-actions button:hover { background: var(--ink); color: var(--paper-raised); }
+
+/* chat: story actions, ratings, focus */
+.chat-acts { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 8px; vertical-align: baseline; }
+.chat-acts a, .chat-acts button {
+  padding: 0 6px; background: none; border: 1px solid var(--rule); color: var(--accent);
+  font: 600 0.65rem/1.7 var(--sans); cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.chat-acts a:hover, .chat-acts button:hover { background: var(--accent-soft); border-color: var(--accent); }
+.chat-acts button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--paper-raised); }
+.chat-rate { display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+.chat-rate button { display: inline-grid; place-items: center; width: 26px; height: 24px; background: none; border: 1px solid transparent; color: var(--ink-faint); cursor: pointer; }
+.chat-rate button:hover { color: var(--ink); border-color: var(--rule); }
+.chat-rate button[aria-pressed='true'] { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
+.chat-rate .chat-regen { width: auto; padding: 0 8px; font: 600 0.7rem var(--sans); color: var(--accent); border-color: var(--accent); }
+.chat-focus { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 14px; padding: 6px 8px; background: var(--accent-soft); border-left: 2px solid var(--accent); font: 0.72rem/1.35 var(--sans); }
+.chat-focus b { font-weight: 600; }
+.chat-focus button { flex: none; background: none; border: 0; color: var(--ink-faint); cursor: pointer; }

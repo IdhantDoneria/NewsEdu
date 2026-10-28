@@ -112,7 +112,7 @@ export default function Following() {
         <div className="state-box">
           You aren’t following any stories yet. Open a story’s intelligence page from the{' '}
           <Link href="/">front page</Link> and press “Follow this story” — material developments
-          will collect here. Follows are stored only in this browser.
+          will collect here.
         </div>
       ) : (
         <div className="follow-list">

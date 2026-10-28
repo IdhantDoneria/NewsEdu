@@ -52,7 +52,7 @@ export default function PageChrome({ kicker, title, edition = 'geopolitics', chi
 
         <footer className="footer">
           <span>The Meridian Brief — news intelligence, ranked and scored</span>
-          <span>Personal data stays in this browser · No tracking · No paywalls</span>
+          <span>Free public RSS wires · No paywalls</span>
         </footer>
       </div>
     </div>
