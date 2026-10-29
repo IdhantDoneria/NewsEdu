@@ -1,27 +1,29 @@
 import './globals.css';
-import { Inter, Playfair_Display, Source_Serif_4 } from 'next/font/google';
+import localFont from 'next/font/local';
 import ChatLoader from '@/components/ChatLoader';
 import PwaRegister from '@/components/PwaRegister';
 
-// Self-hosted (downloaded at build time) and preloaded: no render-blocking
-// request to Google Fonts. Each exposes a CSS variable used in globals.css.
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['500', '700', '900'],
-  style: ['normal', 'italic'],
+// Self-hosted variable fonts (Latin subset) committed to the repo, so the build
+// makes no network request to Google. Each exposes a CSS variable used in
+// globals.css; characters outside Latin fall back to the system serif/sans.
+const playfair = localFont({
+  src: [
+    { path: './fonts/playfair-display-latin.woff2', style: 'normal', weight: '400 900' },
+    { path: './fonts/playfair-display-italic-latin.woff2', style: 'italic', weight: '400 900' },
+  ],
   display: 'swap',
   variable: '--font-playfair',
 });
-const sourceSerif = Source_Serif_4({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  style: ['normal', 'italic'],
+const sourceSerif = localFont({
+  src: [
+    { path: './fonts/source-serif-4-latin.woff2', style: 'normal', weight: '200 900' },
+    { path: './fonts/source-serif-4-italic-latin.woff2', style: 'italic', weight: '200 900' },
+  ],
   display: 'swap',
   variable: '--font-source-serif',
 });
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+const inter = localFont({
+  src: [{ path: './fonts/inter-latin.woff2', style: 'normal', weight: '100 900' }],
   display: 'swap',
   variable: '--font-inter',
 });
