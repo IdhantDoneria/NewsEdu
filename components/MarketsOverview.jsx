@@ -80,21 +80,43 @@ export default function MarketsOverview() {
   const [marketData, setMarketData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [summary, setSummary] = useState(null);
+  const [summaryState, setSummaryState] = useState('idle'); // idle | loading | done | failed
 
   useEffect(() => {
     let cancelled = false;
     async function fetchData() {
       setLoading(true);
       setError(null);
+      setSummary(null);
+      setSummaryState('idle');
       try {
         const res = await fetch(`/api/markets?market=${encodeURIComponent(selectedMarket)}`);
         if (!res.ok) throw new Error('Failed to fetch market data');
         const data = await res.json();
-        if (!cancelled) setMarketData(data);
+        if (cancelled) return;
+        setMarketData(data);
+        setLoading(false);
+        // Headlines and the index level are on screen; the AI summary follows.
+        if (data.summary) {
+          setSummary(data.summary);
+        } else if (data.summaryPending) {
+          setSummaryState('loading');
+          try {
+            const sres = await fetch(`/api/markets/summary?market=${encodeURIComponent(selectedMarket)}`);
+            const sjson = await sres.json();
+            if (cancelled) return;
+            if (sjson.summary) setSummary(sjson.summary);
+            setSummaryState(sjson.summary ? 'done' : 'failed');
+          } catch {
+            if (!cancelled) setSummaryState('failed');
+          }
+        }
       } catch (err) {
-        if (!cancelled) setError(err.message);
-      } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setError(err.message);
+          setLoading(false);
+        }
       }
     }
     fetchData();
@@ -154,11 +176,24 @@ export default function MarketsOverview() {
 
           <div className="market-summary-box">
             <h3>AI Summary</h3>
-            <div className="summary-text">
-              {marketData.summary.split('\n\n').map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
-            </div>
+            {summary ? (
+              <div className="summary-text">
+                {summary.split('\n\n').map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
+              </div>
+            ) : summaryState === 'loading' ? (
+              <div aria-busy="true" aria-live="polite">
+                <span className="sr-only">Writing the {selectedMarket} market summary…</span>
+                <SkeletonLines count={4} />
+              </div>
+            ) : (
+              <p className="empty-note">
+                {summaryState === 'failed'
+                  ? 'The AI summary is unavailable right now. The headlines below are live.'
+                  : 'No AI summary for this market.'}
+              </p>
+            )}
           </div>
 
           <div className="market-news-list">

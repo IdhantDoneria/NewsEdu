@@ -21,6 +21,8 @@ Beyond the ranked front page, Meridian is a personalized intelligence and knowle
 
 **AI model:** intelligence generation, framing narratives, Q&A and recall grading use Gemini 2.5 Flash when `GEMINI_API_KEY` is set, with strict JSON schemas, server-side validation (fabricated citations are stripped; ungrounded "facts" are demoted to analysis) and caching per cluster version. Without a key, every feature still works in a deterministic extractive mode.
 
+**Performance:** the front page is server-rendered with the geopolitics brief in the HTML (re-generated every 5 minutes), fonts are self-hosted, the chat code loads when the browser is idle, and the news brief is served stale-while-revalidate. Story pages show the stored or extractive analysis immediately and swap in the AI analysis when it is ready; the Markets tab shows headlines and the index level first and fills in the AI summary afterwards. All AI features share one model chain (`lib/intelligence/llm.mjs`: Gemini models, then OpenRouter).
+
 **UI design (Canva):** [view](https://www.canva.com/d/gFXk9iwoJ3Temwq) · [edit](https://www.canva.com/d/jPzlvn-58viI3IQ)
 
 ---

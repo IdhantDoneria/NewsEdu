@@ -254,33 +254,74 @@ export default function StoryPage({ id, editionHint }) {
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
   const [related, setRelated] = useState([]);
+  const [refining, setRefining] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    const q = editionHint ? `edition=${editionHint}` : '';
+    const get = async (path) => {
+      const res = await fetch(path);
+      const json = await res.json();
+      return { ok: res.ok, json };
+    };
+
     (async () => {
       try {
-        const res = await fetch(`/api/intel/${id}${editionHint ? `?edition=${editionHint}` : ''}`);
-        const json = await res.json();
+        // 1. Fast: the stored or extractive brief, shown immediately.
+        const first = await get(`/api/intel/${id}?fast=1${q ? `&${q}` : ''}`);
         if (cancelled) return;
-        if (!res.ok) {
-          setError(json?.message || 'This story could not be loaded.');
-        } else {
-          setData(json);
-          setFollowing(isFollowing(id));
-          // Reading this page is the visit baseline for "What Changed" and
-          // feeds Weekly Recall history — all stored locally.
-          markVisit(id, json.cluster.articleIds);
-          recordHistory({
-            clusterId: id,
-            title: json.cluster.title,
-            edition: json.cluster.edition,
-            kind: 'read',
-          });
+        if (!first.ok) {
+          setError(first.json?.message || 'This story could not be loaded.');
+          return;
+        }
+        const json = first.json;
+        setData(json);
+        setLoading(false);
+        setFollowing(isFollowing(id));
+        // Reading this page is the visit baseline for "What Changed" and
+        // feeds Weekly Recall history — all stored locally.
+        markVisit(id, json.cluster.articleIds);
+        recordHistory({
+          clusterId: id,
+          title: json.cluster.title,
+          edition: json.cluster.edition,
+          kind: 'read',
+        });
+
+        // 2. Upgrade to the AI analysis in the background.
+        let framingPending = json.framingPending;
+        if (json.pending) {
+          setRefining(true);
+          try {
+            const full = await get(`/api/intel/${id}${q ? `?${q}` : ''}`);
+            if (cancelled) return;
+            if (full.ok) {
+              setData(full.json);
+              framingPending = full.json.framingPending;
+            }
+          } catch {
+            /* keep the extractive brief */
+          } finally {
+            if (!cancelled) setRefining(false);
+          }
+        }
+
+        // 3. Framing narrative, last: it is the least important part.
+        if (framingPending && !cancelled) {
+          try {
+            const f = await get(`/api/intel/${id}/framing${q ? `?${q}` : ''}`);
+            if (!cancelled && f.ok && f.json.framing) {
+              setData((prev) => (prev ? { ...prev, framing: f.json.framing } : prev));
+            }
+          } catch {
+            /* optional */
+          }
         }
       } catch {
-        if (!cancelled) setError('The wire is unreachable. It will retry when you reload.');
-      } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setError('The wire is unreachable. It will retry when you reload.');
+          setLoading(false);
+        }
       }
     })();
     return () => {
@@ -386,7 +427,12 @@ export default function StoryPage({ id, editionHint }) {
           <span className="meta">
             {data.articles.length} article{data.articles.length === 1 ? '' : 's'} ·{' '}
             {cluster.sources.length} source{cluster.sources.length === 1 ? '' : 's'}
-            {intel.mode === 'fallback' && ' · extractive brief (AI analysis not configured)'}
+            {refining
+              ? ' · writing the AI analysis…'
+              : intel.mode === 'fallback' &&
+                (data.pending
+                  ? ' · extractive brief (AI analysis unavailable right now)'
+                  : ' · extractive brief (AI analysis not configured)')}
           </span>
         </div>
       }
