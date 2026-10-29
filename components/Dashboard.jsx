@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
 import MarketsOverview from './MarketsOverview';
@@ -17,8 +17,13 @@ const EDITION_LABELS = {
 
 const REFRESH_MS = 5 * 60 * 1000;
 
-function timeAgo(ts) {
-  const mins = Math.floor((Date.now() - ts) / 60000);
+// "Now" for relative times. It starts at the moment the data was built (the same
+// value on the server and in the browser's first render, so hydration matches)
+// and moves to the real clock right after mount.
+const NowContext = createContext(0);
+
+function timeAgo(ts, now = Date.now()) {
+  const mins = Math.floor((now - ts) / 60000);
   if (mins < 1) return 'just now';
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
@@ -205,12 +210,13 @@ function ScoreBreakdown({ breakdown, compact = false }) {
 }
 
 function Byline({ article, terms }) {
+  const now = useContext(NowContext) || undefined;
   return (
     <div className="byline">
       <span className="src">{article.sourceName}</span>
       <span aria-hidden="true">·</span>
-      <time dateTime={new Date(article.publishedAt).toISOString()} title={absoluteTime(article.publishedAt)}>
-        {timeAgo(article.publishedAt)}
+      <time dateTime={new Date(article.publishedAt).toISOString()} title={absoluteTime(article.publishedAt)} suppressHydrationWarning>
+        {timeAgo(article.publishedAt, now)}
       </time>
       {terms?.length > 0 && <WatchTags article={article} terms={terms} />}
     </div>
@@ -225,8 +231,11 @@ function LeadCard({ article, tiltProps, terms }) {
   // Reset per-article so switching editions / refreshing doesn't carry over
   // a stale loaded/failed state onto a different image.
   useEffect(() => {
-    setImgLoaded(false);
     setImgFailed(false);
+    // The image can finish loading before hydration (server-rendered page), in
+    // which case React never sees onLoad: check the element directly.
+    const el0 = imgRef.current;
+    setImgLoaded(Boolean(el0 && el0.complete && el0.naturalWidth > 0));
     if (!article.image) return undefined;
     // Watchdog: some news CDNs hotlink-block by hanging the request rather
     // than returning a clean 4xx, so the <img> onError handler never fires
@@ -317,7 +326,7 @@ function WhatChangedStrip() {
 
   if (!summary || summary.total === 0) return null;
   return (
-    <Link href="/following" className="what-changed-strip">
+    <Link href="/following" prefetch={false} className="what-changed-strip">
       <span className="wc-label">Since you left</span>
       <span className="wc-text">
         {summary.total} material development{summary.total === 1 ? '' : 's'} across{' '}
@@ -334,6 +343,7 @@ function IntelLink({ article, edition }) {
   if (!article?.clusterId) return null;
   return (
     <Link
+      prefetch={false}
       className="intel-link"
       href={`/story/${article.clusterId}?edition=${edition}`}
       title="Open the full intelligence brief: actors, timeline, scenarios, source comparison, Q&A"
@@ -363,10 +373,13 @@ function SourcesStatus({ feeds, liveCount }) {
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ initialData = null }) {
   const [edition, setEdition] = useState('geopolitics');
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // The page is rendered on the server with the geopolitics brief already in it.
+  const [data, setData] = useState(initialData);
+  const [loading, setLoading] = useState(!initialData);
+  const [now, setNow] = useState(initialData?.generatedAt || 0);
+  const seeded = useRef(Boolean(initialData));
   const [refreshing, setRefreshing] = useState(false);
   const [flipping, setFlipping] = useState(false);
   const [error, setError] = useState(null);
@@ -427,11 +440,24 @@ export default function Dashboard() {
   }, [refreshing, loading, load, edition]);
 
   useEffect(() => {
-    setLoading(true);
-    load(edition);
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    if (seeded.current && edition === 'geopolitics') {
+      // First paint came with the page. Only refresh quietly if it is old.
+      seeded.current = false;
+      if (Date.now() - (initialData?.generatedAt || 0) > 2 * 60 * 1000) load(edition);
+    } else {
+      seeded.current = false;
+      setLoading(true);
+      load(edition);
+    }
     const id = setInterval(() => load(edition), REFRESH_MS);
     return () => clearInterval(id);
-  }, [edition, load]);
+  }, [edition, load, initialData]);
 
   const switchEdition = (ed) => {
     if (ed === edition || flipping) return;
@@ -465,15 +491,16 @@ export default function Dashboard() {
   const tierThresholds = computeTierThresholds(articles);
 
   return (
+    <NowContext.Provider value={now}>
     <div data-edition={edition}>
       <div className="shell">
         <div className="topbar">
-          <span>{todayLine()}</span>
+          <span suppressHydrationWarning>{todayLine()}</span>
           <nav className="intel-nav" aria-label="Meridian sections">
-            <Link href="/briefing">Your Briefing</Link>
-            <Link href="/search">Search</Link>
-            <Link href="/following">Following</Link>
-            <Link href="/recall">Recall</Link>
+            <Link href="/briefing" prefetch={false}>Your Briefing</Link>
+            <Link href="/search" prefetch={false}>Search</Link>
+            <Link href="/following" prefetch={false}>Following</Link>
+            <Link href="/recall" prefetch={false}>Recall</Link>
           </nav>
           <nav
             className="edition-toggle"
@@ -536,7 +563,7 @@ export default function Dashboard() {
               <span className="meta" aria-live="polite">
                 {loading
                   ? 'Consulting the wire…'
-                  : `${articles.length} briefs · refreshed ${data ? timeAgo(data.generatedAt) : '—'}`}
+                  : `${articles.length} briefs · refreshed ${data ? timeAgo(data.generatedAt, now || data.generatedAt) : '—'}`}
               </span>
               <SourcesStatus feeds={data?.feeds} liveCount={liveFeeds} />
               <button
@@ -639,12 +666,9 @@ export default function Dashboard() {
                     </div>
                     <ol className="card-grid">
                       {rest.map((a) => (
-                        <a
+                        <li
                           key={a.id}
                           className="news-card"
-                          href={a.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           data-tier={scoreTier(a.score, tierThresholds)}
                           {...tilt}
                         >
@@ -652,11 +676,23 @@ export default function Dashboard() {
                             <Byline article={a} terms={terms} />
                             <ScoreDial score={a.score} small breakdown={a.scoreBreakdown} />
                           </div>
-                          <h4>{a.title}</h4>
+                          {/* The whole card is clickable through this link's ::after; the
+                              intelligence link below is a sibling, not nested (nested
+                              anchors are invalid HTML and break hydration). */}
+                          <h4>
+                            <a
+                              className="card-link"
+                              href={a.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {a.title}
+                            </a>
+                          </h4>
                           {a.summary && <p className="summary">{a.summary}</p>}
                           <ScoreBreakdown breakdown={a.scoreBreakdown} compact />
                           <IntelLink article={a} edition={edition} />
-                        </a>
+                        </li>
                       ))}
                     </ol>
                   </>
@@ -728,5 +764,6 @@ export default function Dashboard() {
         </footer>
       </div>
     </div>
+    </NowContext.Provider>
   );
 }

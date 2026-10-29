@@ -108,3 +108,14 @@ test('selectForRequest returns only id/text/kind and cleanIncomingMemory revalid
   ]);
   assert.deepEqual(cleaned.map((n) => n.id), ['m1']);
 });
+
+test('reinforcing a long-idle note builds on its decayed score, not its original peak', () => {
+  const idle = note('m1', 'Follows Israeli politics closely', { score: 9, lastUsedAt: NOW - 80 * DAY });
+  const before = effectiveScore(idle, NOW);
+  assert.ok(before < 1.5);
+  const r = mergeMemory([idle], { add: [{ text: 'Follows Israeli politics', kind: 'interest', importance: 3 }] }, NOW);
+  assert.equal(r.memory.length, 1);
+  // ~1.4 decayed + 1.5 = ~2.9, not 9 + 1.5
+  assert.ok(r.memory[0].score < 4, `score was ${r.memory[0].score}`);
+  assert.ok(r.memory[0].score > before);
+});

@@ -33,7 +33,7 @@ export default function PageChrome({ kicker, title, edition = 'geopolitics', chi
           <span>{todayLine()}</span>
           <nav className="intel-nav" aria-label="Meridian sections">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className={pathname === n.href ? 'on' : ''}>
+              <Link key={n.href} href={n.href} prefetch={false} className={pathname === n.href ? 'on' : ''}>
                 {n.label}
               </Link>
             ))}

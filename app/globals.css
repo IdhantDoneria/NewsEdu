@@ -21,9 +21,9 @@
   --accent-soft: rgba(140, 47, 27, 0.08);
   --good: #1f6b45;
   --bad: #a3271a;
-  --serif-display: 'Playfair Display', Georgia, serif;
-  --serif-text: 'Source Serif 4', Georgia, serif;
-  --sans: 'Inter', -apple-system, sans-serif;
+  --serif-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --serif-text: var(--font-source-serif), 'Source Serif 4', Georgia, serif;
+  --sans: var(--font-inter), 'Inter', -apple-system, sans-serif;
 
   /* 4px spacing scale */
   --sp-1: 4px;
@@ -2262,3 +2262,11 @@ a.chat-cite:hover { background: var(--accent); color: var(--paper-raised); }
 .listen-bar select { padding: 6px 8px; border: 1px solid var(--rule); background: var(--paper-raised); font: 0.76rem var(--sans); color: var(--ink); }
 .offline-note { margin: 0 0 10px; padding: 6px 10px; border-left: 2px solid var(--gold); background: rgba(168,133,46,0.1); }
 .chat-rate .chat-listen { width: auto; padding: 0 7px; font-size: 0.8rem; margin-left: auto; }
+
+/* story cards: the whole card is one link (stretched ::after); the intelligence
+   link is a sibling raised above it */
+.news-card .card-link { color: inherit; text-decoration: none; }
+.news-card .card-link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+.news-card .card-link:focus-visible { outline: none; }
+.news-card:focus-within { box-shadow: 0 0 0 2px var(--accent); }
+.news-card .intel-link, .news-card .byline a { position: relative; z-index: 2; }
