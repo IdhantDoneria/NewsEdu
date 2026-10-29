@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getEditionClusters } from '@/lib/ingest';
-import { getIntelForCluster } from '@/lib/intelligence/extract.mjs';
+import { getIntelForCluster, buildFallbackIntel } from '@/lib/intelligence/extract.mjs';
+import { clusterVersion } from '@/lib/intelligence/cluster.mjs';
+import { keepAlive } from '@/lib/keepalive.mjs';
 import { composeBriefing } from '@/lib/intelligence/briefing.mjs';
 import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 
@@ -9,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 const MAX_FOLLOWS = 50;
 const MAX_INTERESTS = 18;
-// Cap on lazy intelligence generation per briefing request (AI cost bound).
+// Cap on background intelligence generation per briefing request (AI cost bound).
 const INTEL_BUDGET = 6;
 
 /**
@@ -49,32 +51,36 @@ export async function POST(request) {
   ]);
   const clusters = [...geo.clusters, ...fin.clusters];
 
-  // Load stored intelligence cheaply for everything; generate (bounded) for
-  // the clusters most likely to surface: top-scored and followed.
+  // Never make the reader wait for the AI. Use the stored analysis where there
+  // is one and the deterministic extractive brief otherwise, and warm the AI
+  // analyses for the clusters most likely to surface (top-scored and followed)
+  // in the background, bounded, so the next briefing and story views have them.
   const intelByCluster = new Map();
   const followedIds = new Set(profile.follows.map((f) => f.clusterId));
   const priority = [...clusters]
     .sort((a, b) => (followedIds.has(b.id) ? 1 : 0) - (followedIds.has(a.id) ? 1 : 0) || b.score - a.score)
     .slice(0, INTEL_BUDGET);
 
+  const toWarm = [];
   await Promise.all(
-    priority.map(async (c) => {
-      try {
-        const rec = await getIntelForCluster(c);
-        if (rec) intelByCluster.set(c.id, rec);
-      } catch {
-        /* briefing degrades gracefully without intel */
+    clusters.map(async (c) => {
+      const stored = await getIntelForCluster(c, { allowGenerate: false });
+      const fresh = stored && stored.version === clusterVersion(c) && stored.mode === 'ai';
+      if (stored) {
+        intelByCluster.set(c.id, stored);
+      } else {
+        intelByCluster.set(c.id, {
+          clusterId: c.id,
+          version: clusterVersion(c),
+          generatedAt: Date.now(),
+          mode: 'fallback',
+          intel: buildFallbackIntel(c),
+        });
       }
+      if (!fresh && priority.includes(c)) toWarm.push(c);
     })
   );
-  await Promise.all(
-    clusters
-      .filter((c) => !intelByCluster.has(c.id))
-      .map(async (c) => {
-        const rec = await getIntelForCluster(c, { allowGenerate: false });
-        if (rec) intelByCluster.set(c.id, rec);
-      })
-  );
+  keepAlive(Promise.allSettled(toWarm.map((c) => getIntelForCluster(c))));
 
   const briefing = composeBriefing(clusters, intelByCluster, profile);
   return NextResponse.json(briefing);
