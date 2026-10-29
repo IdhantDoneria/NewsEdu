@@ -76,7 +76,12 @@ export async function POST(request) {
   const contexts = await Promise.all(
     wanted.map((m) => getMarketContext(m).catch(() => null))
   );
-  const pinned = contexts.flatMap((ctx, i) => (ctx ? marketSources(wanted[i], ctx) : []));
+  // Share the pinned-source budget: with two markets, each gets its index
+  // level plus a few headlines instead of the first market using every slot.
+  const maxHeadlines = wanted.length > 1 ? 3 : 8;
+  const pinned = contexts.flatMap((ctx, i) =>
+    ctx ? marketSources(wanted[i], ctx, Date.now(), { maxHeadlines }) : []
+  );
 
   const request_ = {
     pinned,
