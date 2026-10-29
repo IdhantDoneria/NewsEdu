@@ -4,6 +4,8 @@ import { answerChat } from '@/lib/intelligence/chat.mjs';
 import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 import { cacheKey, withCache } from '@/lib/intelligence/chatcache.mjs';
 import { cleanIncomingMemory } from '@/lib/intelligence/memory.mjs';
+import { detectMarkets, isMarketKey, marketSources } from '@/lib/intelligence/marketsctx.mjs';
+import { getMarketContext } from '@/lib/markets.mjs';
 import { hasGeminiKey } from '@/lib/intelligence/ai.mjs';
 import { hasOpenRouterKey } from '@/lib/intelligence/openrouter.mjs';
 
@@ -55,12 +57,29 @@ export async function POST(request) {
     );
   }
 
-  const edition = body.edition === 'finance' ? 'finance' : 'geopolitics';
+  // The Markets tab has no ranked articles of its own: it answers from the
+  // finance wire plus that tab's market data (headlines and index levels).
+  const marketsTab = body.edition === 'markets';
+  const edition = body.edition === 'finance' || marketsTab ? 'finance' : 'geopolitics';
+  const selectedMarket = isMarketKey(body.market) ? body.market : null;
   const focusClusterId =
     typeof body.storyId === 'string' && /^[\w-]{1,64}$/.test(body.storyId) ? body.storyId : undefined;
 
   const brief = await getEditionBrief(edition);
+
+  // Pin market data when the question is about a market (any edition), or
+  // default to the market selected on the Markets tab.
+  const wanted = detectMarkets(body.message, {
+    defaultMarket: marketsTab ? selectedMarket : null,
+    force: marketsTab,
+  });
+  const contexts = await Promise.all(
+    wanted.map((m) => getMarketContext(m).catch(() => null))
+  );
+  const pinned = contexts.flatMap((ctx, i) => (ctx ? marketSources(wanted[i], ctx) : []));
+
   const request_ = {
+    pinned,
     articles: brief.articles,
     edition,
     message: body.message,
@@ -83,7 +102,8 @@ export async function POST(request) {
     focusClusterId,
     memory: cleanIncomingMemory(body.memory),
     learn: request_.learn,
-    briefVersion: brief.generatedAt,
+    // Market data moves faster than the brief: bucket it by 2 minutes.
+    briefVersion: `${brief.generatedAt}|${wanted.join(',')}|${wanted.length ? Math.floor(Date.now() / 120000) : 0}`,
   });
   const { value, cached } = await withCache(key, () => answerChat(request_), {
     fresh: body.fresh === true,

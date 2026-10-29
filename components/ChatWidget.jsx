@@ -25,6 +25,12 @@ const SUGGESTIONS = {
     'Any big regulatory or earnings news?',
     'What are the biggest risks right now?',
   ],
+  markets: (market) => [
+    `How is the ${market} market doing today?`,
+    'What moved the index and why?',
+    'Which headlines matter most right now?',
+    market === 'US' ? 'How do other major markets compare?' : 'How does it compare with the US market?',
+  ],
   story: [
     'What happened here, in plain terms?',
     'Why does this matter?',
@@ -43,9 +49,10 @@ function readContext(pathname) {
   const params = new URLSearchParams(window.location.search);
   let edition = document.querySelector('[data-edition]:not(.chat-root)')?.getAttribute('data-edition');
   if (story) edition = params.get('edition') || edition;
-  // The markets tab has no ranked articles of its own; use the finance wire.
-  edition = edition === 'finance' || edition === 'markets' ? 'finance' : 'geopolitics';
-  return { edition, storyId: story ? story[1] : null };
+  edition = edition === 'finance' || edition === 'markets' ? edition : 'geopolitics';
+  // On the Markets tab, which market the reader has selected.
+  const market = edition === 'markets' ? document.querySelector('.market-select')?.value || 'US' : null;
+  return { edition, storyId: story ? story[1] : null, market };
 }
 
 function loadStored() {
@@ -309,7 +316,7 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
-  const [ctx, setCtx] = useState({ edition: 'geopolitics', storyId: null });
+  const [ctx, setCtx] = useState({ edition: 'geopolitics', storyId: null, market: null });
   const [followUps, setFollowUps] = useState([]);
   const [memory, setMemory] = useState([]);
   const [learn, setLearn] = useState(true);
@@ -344,7 +351,9 @@ export default function ChatWidget() {
     const sync = () => {
       const next = readContext(pathname);
       setCtx((prev) =>
-        prev.edition === next.edition && prev.storyId === next.storyId ? prev : next
+        prev.edition === next.edition && prev.storyId === next.storyId && prev.market === next.market
+          ? prev
+          : next
       );
     };
     sync();
@@ -401,6 +410,7 @@ export default function ChatWidget() {
             message: q,
             history,
             edition: context.edition,
+            market: context.market,
             storyId: focus?.clusterId || context.storyId,
             fresh: opts.fresh === true,
             learn,
@@ -508,11 +518,15 @@ export default function ChatWidget() {
   };
 
   const suggestionKey = ctx.storyId || focus ? 'story' : ctx.edition;
-  const chips = filterChips(messages.length === 0 ? SUGGESTIONS[suggestionKey] : followUps, ratings);
+  const suggestions =
+    suggestionKey === 'markets' ? SUGGESTIONS.markets(ctx.market || 'US') : SUGGESTIONS[suggestionKey];
+  const chips = filterChips(messages.length === 0 ? suggestions : followUps, ratings);
   const scopeLabel = focus
     ? 'Focused on one story'
     : ctx.storyId
     ? 'This story + current edition'
+    : ctx.edition === 'markets'
+    ? `Markets · ${ctx.market || 'US'}`
     : `${ctx.edition === 'finance' ? 'Finance' : 'Geopolitics'} edition`;
 
   return (
