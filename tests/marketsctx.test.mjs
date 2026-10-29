@@ -62,3 +62,11 @@ test('the answer cache key separates markets and time buckets', () => {
   assert.notEqual(cacheKey({ ...base, briefVersion: '1|India|5' }), cacheKey({ ...base, briefVersion: '1|Japan|5' }));
   assert.notEqual(cacheKey({ ...base, briefVersion: '1|India|5' }), cacheKey({ ...base, briefVersion: '1|India|6' }));
 });
+
+test('maxHeadlines leaves room for a second market in the pinned budget', () => {
+  const many = { ...ctx, articles: Array.from({ length: 10 }, (_, i) => ({ title: `Headline ${i}`, link: `https://example.com/${i}`, publishedAt: new Date().toUTCString(), source: 'S' })) };
+  assert.equal(marketSources('India', many).length, 9); // index + 8 headlines
+  const shared = [...marketSources('India', many, Date.now(), { maxHeadlines: 3 }), ...marketSources('Japan', many, Date.now(), { maxHeadlines: 3 })];
+  assert.equal(shared.length, 8);
+  assert.ok(shared.some((s) => s.id.startsWith('mkt-japan')) && shared.length <= 9);
+});
