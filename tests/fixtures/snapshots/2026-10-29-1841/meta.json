@@ -1,0 +1,14 @@
+{
+  "stamp": "2026-10-29-1841",
+  "capturedAt": "2026-10-29T18:41:13.882Z",
+  "base": "https://news-edu-doneriaidhant-4248s-projects.vercel.app",
+  "files": [
+    "news-geopolitics.json",
+    "intel-geopolitics.json",
+    "news-finance.json",
+    "intel-finance.json",
+    "raw-geopolitics.json",
+    "raw-finance.json"
+  ],
+  "errors": []
+}

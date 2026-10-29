@@ -1,0 +1,1341 @@
+{
+ "name": "pump-vs-legit",
+ "version": 1,
+ "createdAt": "2026-10-29",
+ "method": "pump = promotional or manipulative stock/crypto copy (ticker hype, guaranteed returns, urgency, sponsored funnels, fake press-release excitement). legit = news reporting on markets and companies, including headlines that use strong verbs (soars, plunges, crashes) or that report on pump schemes. Pump rows are all synthetic (the curated feeds contain none); real legit rows are drawn from the snapshots.",
+ "limits": [
+  "Single annotator (Claude, reading each headline); no inter-annotator agreement was measured. Treat borderline=true rows as soft labels.",
+  "Real headlines come from one day (2026-10-29) of the production feeds, so topics and outlets are skewed to that news cycle (Israel election, Spain train crash, Fed/CPI).",
+  "Several feeds (BBC raw, Guardian, NYT raw, DW, Fox Business, Yahoo Finance) returned 403/404 to the capture host; their headlines appear only via the production top-60 snapshots.",
+  "Rows marked synthetic=true were written by the annotator to cover patterns the live feeds did not contain that day; they are realistic but not harvested, so treat results on them as optimistic.",
+  "Labels judge the headline only (no summary, body or outlet), because scoring fixtures use neutral outlet and age."
+ ],
+ "items": [
+  {
+   "title": "🚀 $KRTX set to EXPLODE 1,200% — insiders are loading up before Monday!!!",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "URGENT: $VNTA is the next 100x penny stock and the window to buy is closing fast",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "$ZNTX shares about to go PARABOLIC — get in before Wall Street wakes up",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "This $0.03 stock could turn $1,000 into $50,000 by Friday",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Penny stock alert: $BRLT up 340% in 3 days and it is only getting started",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Don’t miss $QMXI: the under-the-radar microcap poised to soar 800%",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "$HYPR is trading at a MASSIVE discount — smart money is quietly buying ahead of the announcement",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Last chance to buy $TLNX under $1 before the huge catalyst hits",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Why $SNDL-style squeeze is coming for $OCTA this week (buy now!)",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Breaking: $ARXY locks in game-changing deal, shares set to skyrocket tomorrow",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Short squeeze alert: $PXMD could rocket 500% as shorts get trapped",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "$MBIO is the best-kept secret on Wall Street — 20x potential, act today",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Hot stock alert: $GRNW flashing the same pattern as before its 900% run",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Tiny biotech $CLVX about to announce a miracle drug — load up before the news drops",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Get in early on $FUSN: the nuclear microcap Wall Street cannot stop talking about",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "$LTHM-like gains incoming? This $0.08 lithium stock is ready to explode",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Rare opportunity: $DRNX trading for pennies, analysts predict 2,000% upside",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Triple-digit gains possible as $SPCX breaks out — do not be left behind",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "The next GameStop? Why $WKLY is exploding premarket",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Massive volume spike in $AUTX signals a monster move is imminent",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "$NRGE confirms huge contract, stock set to double overnight — buy before the open",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "You will kick yourself if you miss $IMTL before it hits $5",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Wall Street’s best-kept penny stock secret is about to go viral",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "Exclusive: why $BTCQ could be the next 50-bagger",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "microcap-pump",
+   "synthetic": true
+  },
+  {
+   "title": "This 100x crypto gem is about to list on Binance — buy before it moons!!!",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "$SHIBX presale ends tonight: early investors could turn $100 into $100,000",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Whales are secretly accumulating this tiny altcoin before a massive pump",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Next Bitcoin? This under-$0.01 token is set to explode in November",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Don’t miss the biggest crypto presale of 2026 — only 48 hours left",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Elon’s secret memecoin: why $MUSKY could 1000x by Christmas",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Crypto millionaire reveals the one coin he is buying right now (before it’s too late)",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "This AI token is the new Solana and you can still get in at pennies",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Moonshot alert: $PEPEZ up 600% overnight, here is how to join the rocket",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Insiders dump Ethereum for this tiny coin ready to run 50x",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "The $0.002 altcoin that could make you rich before the next halving",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Buy this coin NOW: exchange listing leak sends token parabolic",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "ICO guaranteed to return 10x — limited seats left",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Why smart investors are rushing into $DOGEKING before the bull run explodes",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "$LUNAR token burn tonight could trigger the biggest rally in crypto history",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "Shocking: ordinary trader turns $500 into $2 million with this one altcoin",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "crypto-shill",
+   "synthetic": true
+  },
+  {
+   "title": "The one AI stock Wall Street doesn’t want you to buy before it triples",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "This under-the-radar AI stock could be the next Nvidia — buy now before it’s too late",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Warren Buffett’s secret stock pick revealed — and it is not what you think",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Top analyst says this $2 stock will be worth $200: here is why you must act now",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Why Cathie Wood’s latest buy could make ordinary investors millionaires",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "I found the next Amazon — and it is trading for under $5",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "The $1 stock Elon Musk fans are racing to buy before Tesla’s big reveal",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Prediction: this tiny chip stock will crush Nvidia by 2027 — get in before everyone else does",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "You’re going to regret not buying this stock before Monday",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Wall Street insiders are quietly buying this \"forgotten\" stock — here is the ticker",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Billionaire investor just dumped Apple for this mystery stock",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "This one move could double your portfolio in 30 days (it’s not what you think)",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Stock market crash coming? Do THIS right now before it’s too late",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "The stock that turned $10,000 into $1 million is about to do it again",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Why this \"boring\" stock is the best buy of the decade — urgent update inside",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "3 hidden gem stocks poised for 1,000% gains: number 2 will shock you",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Fed insider reveals the stock Powell does not want you to own",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Retired trader reveals his 5-minute method for $3,000 a day profits",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Quantum computing stock poised to 20x — top analyst makes bold call, get in now",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "This overlooked EV maker could be the next Tesla — and it is still cheap",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Shocking leak: the AI stock set to take over Wall Street next week",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Don’t buy another stock until you read this free report",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "The next trillion-dollar company is trading at $3 today (analysts stunned)",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Why this dividend stock will make retirees rich — guaranteed 18% yield",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guru-tip",
+   "synthetic": true
+  },
+  {
+   "title": "Sponsored: This $0.04 stock could be the next Tesla",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Paid content: how one little-known stock is minting millionaires",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Advertisement: the stock Wall Street analysts are begging you not to ignore",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Special report: 3 tiny stocks set to explode — free for the next 24 hours only",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Join our VIP trading room: members made 480% last month",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Free webinar: learn the secret options strategy that wins 95% of the time",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Claim your free stock alert: our latest pick is up 310% in two weeks",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Limited time: get my top 5 penny stock picks before they run",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Make $5,000 a week from home trading this one pattern",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Subscribe now to unlock next week’s #1 explosive stock pick",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Click here to see the stock our analysts say will 10x by spring",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Exclusive offer: lock in the ticker that will define the next bull market",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Your free guide to the \"unstoppable\" stock that is about to go parabolic",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Join 50,000 traders getting daily alerts on stocks about to explode",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Trade alert: our AI flagged this stock as 98% likely to double this month",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "The Fed doesn’t want you to know about this gold stock — watch the free video",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "sponsored-promo",
+   "synthetic": true
+  },
+  {
+   "title": "Guaranteed 300% returns in 90 days with this simple trading bot",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Risk-free investment pays 25% a month — no experience needed",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "This forex robot never loses: investors report 40% weekly profits",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Double your money in 14 days: the passive income secret banks hide",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Zero-risk arbitrage opportunity returns 12% per week, limited slots",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Turn $250 into $25,000 using this one weird investing loophole",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Investors report 1,000% returns from this proven trading system",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Safe 50% monthly yield — join the private investor club today",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Never lose money in the stock market again with this guaranteed strategy",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "Your money will triple in 60 days or we pay you double",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "guaranteed-returns",
+   "synthetic": true
+  },
+  {
+   "title": "BREAKING: $ZNTX secures MASSIVE $2 billion contract — shares set to skyrocket",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "ALERT: $VRTX-AI announces revolutionary breakthrough that changes everything, stock explodes",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "Huge news: $PLSM acquires industry giant in blockbuster deal, shares soar 400% premarket",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "FDA fast-tracks miracle cure from tiny $GENX — stock about to take off",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "Shares of $ORBT rocket after rumours of Apple buyout (not confirmed, but get in now)",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "CEO buys 5 million shares of $KLNT: the signal smart money has been waiting for",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "URGENT UPDATE: $MTRX confirms record orders — analysts say $10 is only the beginning",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "$HLXN to be added to major index? Rumour sends stock into overdrive — buy before the rest",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "Stock of the day: $UPWD about to ignite after top-secret partnership",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "Insiders SHOCKED as $FTRX gains 120% — here is how to buy before tomorrow",
+   "source": "synthetic",
+   "label": "pump",
+   "kind": "fake-press-release",
+   "synthetic": true
+  },
+  {
+   "title": "Some Observations About Anthropic’s IPO Filing",
+   "source": "Crunchbase News",
+   "label": "legit"
+  },
+  {
+   "title": "Third-quarter U.S. GDP increases a better-than-expected 3.4% as September inflation accelerates",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Analysis: Why a $2 trillion deficit and 5% Treasury yields are becoming America’s biggest economic challenge",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Did the Fed make a mistake with its October rate pause? The Treasury could help save the day.",
+   "source": "MarketWatch",
+   "label": "legit"
+  },
+  {
+   "title": "European Central Bank keeps key interest rate on hold at 2.5%",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "From 8VC to Benchmark, here’s what’s hiding in October SEC filings",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Crunchbase Data Shows Q3 Robotics Startup Funding Jumps 185% As US And China Lead Physical AI Push",
+   "source": "Crunchbase News",
+   "label": "legit"
+  },
+  {
+   "title": "All the reasons Marvell investors are ‘freaking out’ as Lumentum deal rumors swirl",
+   "source": "MarketWatch",
+   "label": "legit"
+  },
+  {
+   "title": "Fed rate hikes are coming, but not this week: CNBC survey",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Exclusive: Numeracle Raises $28M To Keep Legitimate Business Calls From Spam Label",
+   "source": "Crunchbase News",
+   "label": "legit"
+  },
+  {
+   "title": "Bessent says ‘not necessarily’ a mistake if the Fed hikes again",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Series B Funding Is Up, But Fewer Deals Are Getting Done",
+   "source": "Crunchbase News",
+   "label": "legit"
+  },
+  {
+   "title": "Here are five key takeaways from the Fed rate decision and Warsh news conference",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Analysis: Kevin Warsh is keeping Wall Street guessing. It may be his most powerful tool",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "The UK cuts energy bills, taxes banks and boosts defense in high-stakes budget",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Exclusive: Lovable offers employees $80m cash-out at $13.3bn valuation",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "World Bank’s Banga: Availability of capital ‘not really an issue’ as AI demand drives up borrowing costs",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "The politics of President Lagarde’s European Central Bank early exit — and who could replace her",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Microsoft expects to raise $25 billion in US bond sale, source says",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "GM to pay $220 million to settle allegations it violated drivers’ privacy",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Exclusive: Fractile raises £540m in new Series C funding, filings show",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "This fintech wasn’t ‘actively’ fundraising. Then it closed a $90m round at an $800m valuation",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "Sequoia and General Catalyst value ex-police chief’s AI startup at $400m — reports",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "Revolut faces Bank of England scrutiny over product approval process, reports say",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "The French robotics startup promising to deploy industrial humanoids after just 20 minutes of training",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "Brazil interest burden climbs to 9% of GDP, highest since 2016",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Norway’s Investinor out raising new LP fund amid European push to fund scaleups",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "UK Budget: Capital gains, work visas and young entrepreneur allowances",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "Guidewire buys Hyperexponential for $1.7B in cash",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Microsoft’s cloud growth accelerates, and so too does the spending",
+   "source": "Fortune",
+   "label": "legit"
+  },
+  {
+   "title": "Ex-Palantir execs launch Dream with $17M from a16z to build AI world models for construction",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "VCs will make billions on Anthropic’s IPO, but Amazon is set to make much (much) more",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Disruptive raises $10B fund to make big bets on at least 10 companies",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Carta and NewView partner, hoping to entice more startups to let employees sell shares early",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "What some of Anthropic’s backers are worth before its IPO",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Warhound raises $200M to engineer war dogs and arm them with Anduril gear",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "As blockchain investing falls out of vogue, a16z Crypto rebrands as a16z Frontier",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Legal AI startup Legora raises $550M Series E at $8.8B valuation",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Blacksmith hits unicorn valuation after Sequoia leads Series C",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "Foursquare co-founder says equity holders saw no returns from the company’s acquisition",
+   "source": "TechCrunch Venture",
+   "label": "legit"
+  },
+  {
+   "title": "When Traction Becomes Personal Exposure: What The Joonko Guilty Plea Means For Founders",
+   "source": "Crunchbase News",
+   "label": "legit"
+  },
+  {
+   "title": "Jobless claims near the lowest since the 1960s as low-fire trend continues",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "UK inflation jumps to 3.5% — cementing rate hike expectations",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Housing is flashing warning signs just as the Fed weighs more interest rate hikes",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "U.S. budget deficit swells to almost $2 trillion for fiscal 2026, up 12% in a single year",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Analysis: Everyone expects the Fed to hold rates in October. Kevin Warsh could surprise us all",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Economists: Hot PPI shows Fed’s work is not done",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "U.S. Treasury dismisses IMF debt warning and ‘messy’ forecasting",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Wholesale prices jumped 6.3% annually in September, biggest gain since 2022",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "China indicates rare earths will keep flowing to EU, regardless of U.S. trade deal expiration",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "UK economy grew 0.1% in August, beating expectations",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Consumer prices rose 3.7% annually in September as gas prices skyrocket",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "‘Godzilla El Niño’ is wreaking havoc with Philippine central bank’s inflation forecasts",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "The latest inflation data is expected to show price increases are accelerating",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "In charts: How one of the world’s biggest economies got trapped by debt",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "IMF warns bond yields could see a ‘disorderly’ spike as debt, inflation risks worsen",
+   "source": "CNBC Markets",
+   "label": "legit"
+  },
+  {
+   "title": "Exclusive: Deeptech startup MuRay raises €7.1m to see inside rocket engines",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "Revolut’s UK lending push is a ‘watershed’ moment. Can it take on the big banks?",
+   "source": "Sifted",
+   "label": "legit"
+  },
+  {
+   "title": "Toast faces FTC lawsuit over business contract practices",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Equities and bond yields dip with AI jitters and economic data in focus",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Nasdaq falls as Alphabet set for record loss amid AI spending woes",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Analysis-Soy, rare earths and fuels: how Brazil vote impacts the global flow of resources",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Orion Group Holdings wins $250M in October contracts",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Clorox appoints Unilever executive as its new CEO",
+   "source": "Investing.com",
+   "label": "legit"
+  },
+  {
+   "title": "Nvidia shares jump 8% after record data-center revenue",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Tesla stock plunges as deliveries miss estimates",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "SEC charges promoters in $30 million pump-and-dump scheme targeting retail investors",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "FINRA fines brokerage over misleading penny-stock recommendations",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Bitcoin surges past $120,000 as ETF inflows hit a record",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Meme-stock frenzy returns as retail traders pile into GameStop",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Biotech stock soars 45% after FDA approves experimental therapy",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Shares of chipmaker skyrocket on report of $5 billion U.S. subsidy",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Bank stocks crash as regulators warn of commercial real estate losses",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Oil soars to $98 as Middle East tensions disrupt shipping",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Rivian shares plummet after cutting production forecast",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Short sellers target Carvana as accounting questions mount",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Penny stocks face tougher disclosure rules under SEC proposal",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Crypto exchange collapses, freezing $2 billion in customer funds",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Dollar tumbles to six-month low as traders bet on Fed cuts",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "AMD jumps premarket after OpenAI signs multiyear chip deal",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Inflation fears send gold to a record high above $4,000",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Palantir stock surges 12% on stronger-than-expected U.S. commercial growth",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Apple reports record services revenue, iPhone sales slightly miss estimates",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Microsoft to buy cybersecurity startup for $2.4 billion in cash",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Treasury yields spike after hot jobs report, stocks tumble",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Starbucks shares rally as turnaround plan shows early results",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Zoom, Snowflake beat estimates as enterprise spending recovers",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Hedge fund founder charged with manipulating microcap stocks, prosecutors say",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Retail investors flood into leveraged ETFs, raising regulators’ concerns",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Walmart raises full-year outlook as shoppers trade down",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Tesla vs Rivian: which EV maker is better positioned for 2027?",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Emerging-market stocks rebound as dollar weakens",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Boeing gains after Pentagon awards $4.2 billion fighter contract",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Goldman Sachs profit jumps 22% on trading and investment banking",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Intel stock climbs on report of foundry customer win",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Dogecoin spikes 15% after Musk post, then gives back gains",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Why Palantir shares are surging today",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Small-cap stocks outperform as rate-cut bets build",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Analysts upgrade Uber to buy, see 30% upside on autonomous rollout",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "GameStop shares double in a week; analysts warn of speculative trading",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Lithium prices crash 12% as Chinese supply returns",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "First Brands creditors push for liquidation as fraud probe widens",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Peloton surges after surprise profit; short interest hits record",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "AI bubble fears hit chip stocks, Nvidia falls 6%",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "IPO frenzy: Cerebras triples on debut, raising $1.1 billion",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Regulators warn of surge in social-media \"finfluencer\" pump schemes",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Wells Fargo to pay $1 billion to settle shareholder lawsuit",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Ethereum rallies 9% as staking ETF approval nears",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Berkshire Hathaway’s cash pile hits record $380 billion",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "ECB holds rates steady, warns on trade tensions",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Chinese EV maker BYD overtakes Tesla in quarterly sales",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "JPMorgan CEO warns of 30% chance of recession",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Cheap stocks, big gains: value investors return to small caps",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Meta shares slide 9% as AI spending forecast spooks investors",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  },
+  {
+   "title": "Nasdaq hits record high as megacaps rally",
+   "source": "synthetic",
+   "label": "legit",
+   "synthetic": true
+  }
+ ]
+}
