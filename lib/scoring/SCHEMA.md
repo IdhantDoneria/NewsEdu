@@ -19,22 +19,23 @@ future analytics store) can rely on these fields.
 | `image`                | string  | Best-effort media URL, may be `null`.                                                          |
 | `publishedAt`          | number  | Unix ms.                                                                                       |
 | `sourceName`           | string  | Outlet display name.                                                                           |
-| `source`               | object  | `{ name, trust (0-20), authority (0-10) }` — used by the L1 baselines.                         |
+| `source`               | object  | `{ name, trust (0-20), authority (0-10) }`. Only `name` and (for unknown outlets) `trust` matter: the outlet table in `outlets.mjs` is keyed by domain and name.                         |
 | `edition`              | string  | `"geopolitics"` or `"finance"`.                                                                |
 | `metrics`              | object  | **Legacy, superseded.** Old 4-metric Meridian breakdown `{ headlineIntegrity, sourceTrust, freshness }`. Kept for observability only — do not render as the explanation for `score`. |
 | `ageHours`             | number  | Hours since publication when scored.                                                           |
 | `corroboration`        | number  | **Legacy, superseded.** −12..+8 from the old cross-source de-duplication pass.                 |
 | `scoreNotes`           | array   | **Legacy, superseded.** Human-readable notes from the old headline-integrity metric.            |
-| **`geopoliticalScore`** | integer | 0-100, from the 10-layer geopolitics pipeline. Present on every article regardless of edition. |
-| **`financialScore`**    | integer | 0-100, from the 10-layer finance pipeline. Present on every article regardless of edition.     |
-| **`finalCurationScore`** | integer | 0-100, the edition-appropriate score used for sort / filter.                                  |
-| **`scoreBreakdown`**    | array   | The edition-relevant pipeline's signed per-layer contributions: `[{ key, label, delta }, ...]`. `delta` values (pre-clamp) are what the UI renders as the score's explanation — this is the only breakdown guaranteed to match `finalCurationScore`. |
+| **`geopoliticalScore`** | integer | 0-100 display value of the geopolitics pipeline. Present on every article regardless of edition. |
+| **`financialScore`**    | integer | 0-100 display value of the finance pipeline. Present on every article regardless of edition. |
+| **`rankScore`**         | number  | Unclamped sort key of the edition pipeline (may exceed 100 or go below 0; 0.01 resolution). **Sort on this.** |
+| **`finalCurationScore`** | integer | `displayScore(rankScore)`: monotonic 0-100 for the dial and the noise floor. Identity up to 90, then saturating. Never sort on it. |
+| **`scoreBreakdown`**    | array   | `[{ key, label, delta, note? }, ...]`. The deltas sum **exactly** to `rankScore` (`layers.reduce((a, l) => a + l.delta, 0) === rankScore`). Layers: outlet baseline (bounded band), recency (30 x 0.5^(age/half-life); 18 h geopolitics, 8 h finance), entities or instruments, density, event/macro/fundamental vocabulary, volatility, speculation and clickbait, topic gate, soft news. |
 | `meridianScore`        | integer | 0-100, legacy Meridian metric total. Kept for observability only — no longer the ranking basis. |
 | `score`                | integer | Alias of `finalCurationScore` — kept so existing UI bindings keep working.                     |
 
 ## Frontend contract
 
-- **Ordering.** Articles are pre-sorted by `finalCurationScore` (descending)
+- **Ordering.** Articles are pre-sorted by `rankScore` (descending)
   server-side. Clients that want a different order should sort by any of the
   three integer score fields.
 - **Filtering.** Anything below the `noiseFloor` in the response payload has

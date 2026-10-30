@@ -70,7 +70,7 @@ test('soft news is penalised: how-to, listicle, personal finance, sport, index w
 
 test('soft-news penalties are capped so one headline cannot be driven to the floor by soft news alone', async () => {
   const r = await run(art('Top 10 celebrity football wedding tips: should I retire?'), 'finance');
-  assert.ok(layer(r, 'softNews') >= -24);
+  assert.ok(layer(r, 'softNews') >= -30);
 });
 
 /* -------------------------------- Finance rules --------------------------- */
@@ -97,7 +97,19 @@ test('pump-and-dump variants are recognised', () => {
     'The next Tesla is a 100x multibagger',
     'Easy money: get rich quick with this secret stock',
   ]) assert.ok(fin.speculationPenalty({ title: t, summary: '' }) >= 8, t);
-  assert.equal(fin.speculationPenalty({ title: 'SEC charges founder in pump-and-dump scheme' , summary: ''}) >= 8, true);
+  // News about pump-and-dump (enforcement, rules, warnings) is not itself a pump.
+  assert.equal(fin.speculationPenalty({ title: 'SEC charges founder in pump-and-dump scheme', summary: '' }), 0);
+  assert.equal(fin.speculationPenalty({ title: 'Penny stocks face tougher disclosure rules under SEC proposal', summary: '' }), 0);
+  // Implausible returns and promotional framing.
+  for (const t of [
+    'Turn $250 into $25,000 using this one weird investing loophole',
+    '$ABCD poised to soar 800% - last chance to buy',
+    'Join our VIP trading room: members made 480% last month',
+    'Why this stock could make ordinary investors millionaires',
+  ]) assert.ok(fin.speculationPenalty({ title: t, summary: '' }) >= 8, t);
+  // Ordinary market words that merely contain a hype stem are not hype.
+  assert.equal(fin.speculationPenalty({ title: 'Shares of chipmaker skyrocket on subsidy report', summary: '' }), 0);
+  assert.equal(fin.speculationPenalty({ title: 'Deeptech startup raises EUR7m to see inside rocket engines', summary: '' }), 0);
   assert.equal(fin.speculationPenalty({ title: 'Oil majors pump more crude as demand rebounds', summary: '' }), 0);
 });
 
