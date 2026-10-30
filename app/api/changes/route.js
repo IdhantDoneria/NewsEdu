@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getEditionClusters } from '@/lib/ingest';
-import { detectChanges } from '@/lib/intelligence/changes.mjs';
+import { detectChanges, noteClustersFirstSeen } from '@/lib/intelligence/changes.mjs';
+import { matchFollowedCluster } from '@/lib/intelligence/identity.mjs';
 import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 
 export const runtime = 'nodejs';
@@ -38,10 +39,13 @@ export async function POST(request) {
     getEditionClusters('geopolitics'),
     getEditionClusters('finance'),
   ]);
-  const byId = new Map([...geo.clusters, ...fin.clusters].map((c) => [c.id, c]));
+  const all = [...geo.clusters, ...fin.clusters];
+  noteClustersFirstSeen(all);
+  const byId = new Map(all.map((c) => [c.id, c]));
 
   const results = snapshots.map((snap) => {
-    const cluster = byId.get(snap.clusterId);
+    // By id, then alias, then article overlap, so a re-clustered story is not reported as expired.
+    const cluster = byId.get(snap.clusterId) || matchFollowedCluster(snap, all);
     if (!cluster) {
       return {
         clusterId: snap.clusterId,

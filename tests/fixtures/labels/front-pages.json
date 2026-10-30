@@ -1,0 +1,614 @@
+{
+ "version": 1,
+ "proxy": true,
+ "description": "Editorial front-page positives. PROXY ONLY: entries marked source=feed-order are each outlet's own feed order (not a fetched front page). See scripts/eval/frontpages.mjs.",
+ "snapshots": {
+  "2026-10-29-1841": {
+   "source": "feed-order",
+   "geopolitics": [
+    {
+     "outlet": "Al Jazeera",
+     "rank": 1,
+     "title": "Albanian opposition storms parliament, sets off flares and smoke bombs",
+     "link": "https://www.aljazeera.com/news/2026/10/29/albanian-opposition-storms-parliament-sets-off-flares-and-smoke-bombs?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 2,
+     "title": "At least 14 people killed in attack on Ukraine train station",
+     "link": "https://www.aljazeera.com/video/newsfeed/2026/10/29/aje-onl-nf_russian-drone-strike-at-dnipro-train-platform-291026?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 3,
+     "title": "Pakistan rights activist Imaan Mazari and husband jailed for 10 years",
+     "link": "https://www.aljazeera.com/news/2026/10/29/pakistan-rights-activist-imaan-mazari-and-husband-jailed-for-10-years?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 4,
+     "title": "UAE sentences eight people to life over arms supplies to Sudan’s army",
+     "link": "https://www.aljazeera.com/news/2026/10/29/uae-sentences-eight-people-to-life-over-arms-supplies-to-sudans-army?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 5,
+     "title": "France football chief backs Real Madrid’s Mbappe after China apology",
+     "link": "https://www.aljazeera.com/sports/2026/10/29/france-football-chief-speaks-up-for-real-madrids-mbappe-in-china-apology?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 6,
+     "title": "European Central Bank President Lagarde to step down early",
+     "link": "https://www.aljazeera.com/news/2026/10/29/european-central-bank-president-lagarde-to-step-down-early?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 7,
+     "title": "Why US Sports Owners Spend Millions on Politics",
+     "link": "https://www.aljazeera.com/video/game-theory/2026/10/29/why-us-sports-owners-spend-millions-on-politics?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 8,
+     "title": "Manchester United’s Carrick backs Fernandes and is expected to face Chelsea",
+     "link": "https://www.aljazeera.com/sports/2026/10/29/manchester-uniteds-carrick-expected-to-face-chelsea-and-backs-fernandes?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 9,
+     "title": "Deadly rock collapse at famous Turkiye tourist site",
+     "link": "https://www.aljazeera.com/video/newsfeed/2026/10/29/deadly-rock-collapse-at-famous-turkiye-tourist-site?traffic_source=rss"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "rank": 10,
+     "title": "Israel’s anti-Qatar campaign bleeds into elections",
+     "link": "https://www.aljazeera.com/news/2026/10/29/israels-anti-qatar-campaign-bleeds-into-elections?traffic_source=rss"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 1,
+     "title": "‘Deeply regressive’: How the French government plans to make protesters pay for riots and looting",
+     "link": "https://www.france24.com/en/france/20261029-deeply-regressive-how-the-french-government-plans-to-make-protesters-pay-for-riots-and-looting"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 2,
+     "title": "Lt. Gen. Ben Hodges accuses Hegseth of ‘getting rid of people who may have the courage to push back’",
+     "link": "https://www.france24.com/en/lt-gen-ben-hodges-accuses-hegseth-of-getting-rid-of-people-who-may-have-the-courage-to-push-back"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 3,
+     "title": "‘An absurdity’ to blame human error: Spain’s deadly train crash ‘should never’ have happened",
+     "link": "https://www.france24.com/en/an-absurdity-to-blame-human-error-spain-s-deadly-train-crash-should-never-have-happened"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 4,
+     "title": "DR Congo: A centre celebrates the discharge of last Ebola patients",
+     "link": "https://www.france24.com/en/video/20261029-dr-congo-a-centre-celebrates-the-discharge-of-last-ebola-patients"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 5,
+     "title": "Ireland becomes refuge for anti-Trump Americans",
+     "link": "https://www.france24.com/en/tv-shows/reporters/20261029-ireland-becomes-refuge-for-anti-trump-americans"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 6,
+     "title": "Ian McEwan speculates on ‘What We Can Know’ in the 22nd century",
+     "link": "https://www.france24.com/en/tv-shows/arts24/20261029-ian-mcewan-speculates-on-what-we-can-know-in-the-22nd-century"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 7,
+     "title": "Flavio Bolsonaro’s great escape: Is this the beginning of the end for ‘Bolsonarism’?",
+     "link": "https://www.france24.com/en/americas/20261029-flavio-bolsonaro-s-great-escape-is-this-the-beginning-of-the-end-for-bolsonarism"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 8,
+     "title": "Aid mission set to enter Ukraine’s Oleshky as localised ceasefire holds for third day",
+     "link": "https://www.france24.com/en/europe/20261029-aid-mission-set-to-enter-ukraine-s-oleshky-as-localised-ceasefire-holds-for-third-day"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 9,
+     "title": "A tale of two economies: How America’s cost-of-living crisis is shaping US midterm elections",
+     "link": "https://www.france24.com/en/tv-shows/people-profit/20261029-a-tale-of-two-economies-how-america-s-cost-of-living-crisis-is-shaping-us-midterm-elections"
+    },
+    {
+     "outlet": "France 24",
+     "rank": 10,
+     "title": "Spain’s King Felipe VI and Queen Letizia visit injured in train crash at Toledo hospital",
+     "link": "https://www.france24.com/en/video/20261029-spain-s-king-felipe-vi-and-queen-letizia-visit-injured-in-train-crash-at-toledo-hospital"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 1,
+     "title": "No One Has a Plan for American Decline",
+     "link": "https://foreignpolicy.com/2026/10/29/america-decline-power-trump-liberal-progressive-neocon/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 2,
+     "title": "Is the UAE the Missing Link in the Fight Against the Houthis?",
+     "link": "https://foreignpolicy.com/2026/10/29/uae-saudi-arabia-yemen-houthis-iran/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 3,
+     "title": "Europe Was Never Meant to Be a ‘Regulatory Superpower’",
+     "link": "https://foreignpolicy.com/2026/10/29/europe-regulatory-superpower-trade/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 4,
+     "title": "Bangladesh Measles Outbreak Is a ‘Warning Sign’",
+     "link": "https://foreignpolicy.com/2026/10/28/bangladesh-measles-outbreak-vaccination-crisis-health/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 5,
+     "title": "Flávio Bolsonaro Becomes a Florida Man",
+     "link": "https://foreignpolicy.com/2026/10/28/flavio-bolsonaro-flees-brazil-florida-trump-presidential-election-lula/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 6,
+     "title": "In Deadlocked Israeli Election, Netanyahu Has Upper Hand",
+     "link": "https://foreignpolicy.com/2026/10/28/netanyahu-election-eisenkot-israel-palestinians-trump/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 7,
+     "title": "Has Russia’s Influence in Africa Peaked?",
+     "link": "https://foreignpolicy.com/2026/10/28/russia-africa-summit-putin-moscow-war-backlash/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 8,
+     "title": "Ukrainians Have a Long-Shot Plan to Boot Russia from the U.N.",
+     "link": "https://foreignpolicy.com/2026/10/28/ukraine-russia-ussr-united-nations-history/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 9,
+     "title": "Violence Flares Again in Thailand’s Deep South",
+     "link": "https://foreignpolicy.com/2026/10/28/thailand-violence-south-armed-groups-security/"
+    },
+    {
+     "outlet": "Foreign Policy",
+     "rank": 10,
+     "title": "Trump’s Middle East Dealmaking Is Working Against Itself",
+     "link": "https://foreignpolicy.com/2026/10/28/trump-middle-east-saudi-qatar-deals-syria-uae/"
+    }
+   ],
+   "finance": [
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 1,
+     "title": "Ex-Palantir execs launch Dream with $17M from a16z to build AI world models for construction",
+     "link": "https://techcrunch.com/2026/10/29/ex-palantir-execs-launch-dream-with-17m-from-a16z-to-build-ai-world-models-for-construction/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 2,
+     "title": "Who will you learn from in 6 days at TechCrunch Founder Summit? Meet the founders and investors taking the stages",
+     "link": "https://techcrunch.com/2026/10/29/who-will-you-learn-from-in-6-days-at-techcrunch-founder-summit-meet-the-founders-and-investors-taking-the-stage/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 3,
+     "title": "7 days until TechCrunch Founder Summit: Save up to $100 on your pass before doors open",
+     "link": "https://techcrunch.com/2026/10/28/7-days-until-techcrunch-founder-summit-save-up-to-100-before-doors-open/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 4,
+     "title": "VCs will make billions on Anthropic’s IPO, but Amazon is set to make much (much) more",
+     "link": "https://techcrunch.com/2026/10/27/vcs-will-make-billions-on-anthropics-ipo-but-amazon-is-set-to-make-much-much-more/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 5,
+     "title": "Guidewire buys Hyperexponential for $1.7B in cash",
+     "link": "https://techcrunch.com/2026/10/27/guidewire-buys-hyperexponential-for-1-7b-in-cash/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 6,
+     "title": "From 8VC to Benchmark, here’s what’s hiding in October SEC filings",
+     "link": "https://techcrunch.com/2026/10/27/from-8vc-to-benchmark-heres-whats-hiding-in-october-sec-filings/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 7,
+     "title": "Disruptive raises $10B fund to make big bets on at least 10 companies",
+     "link": "https://techcrunch.com/2026/10/27/disruptive-raises-10b-fund-to-make-big-bets-on-at-least-10-companies/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 8,
+     "title": "VCs, Superhuman Mail founder share red flags about product-market fit",
+     "link": "https://techcrunch.com/2026/10/23/vcs-superhuman-mail-founder-share-red-flags-about-product-market-fit/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 9,
+     "title": "Carta and NewView partner, hoping to entice more startups to let employees sell shares early",
+     "link": "https://techcrunch.com/2026/10/23/carta-and-newview-partner-hoping-to-entice-more-startups-to-let-employees-sell-shares-early/"
+    },
+    {
+     "outlet": "TechCrunch Venture",
+     "rank": 10,
+     "title": "What some of Anthropic’s backers are worth before its IPO",
+     "link": "https://techcrunch.com/2026/10/23/what-some-of-anthropics-backers-are-reportedly-worth-before-its-ipo/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 1,
+     "title": "Series B Funding Is Up, But Fewer Deals Are Getting Done",
+     "link": "https://news.crunchbase.com/venture/seriesb-startup-funding-up-deals-down-ai-prometheus/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 2,
+     "title": "Jumbo Series A Rounds Hiding The Real Squeeze On Seed Startups",
+     "link": "https://news.crunchbase.com/seed/jumbo-seriesa-squeeze-seed-startup-funding-schroder-mgv/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 3,
+     "title": "The Crunchbase Tech Layoffs Tracker",
+     "link": "https://news.crunchbase.com/startups/tech-layoffs/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 4,
+     "title": "Exclusive: Numeracle Raises $28M To Keep Legitimate Business Calls From Spam Label",
+     "link": "https://news.crunchbase.com/venture/numeracle-raise-edison-ai-spam-communications-johnson/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 5,
+     "title": "The Invisible Graph: How Companies Grow Revenue And Still Lose Value",
+     "link": "https://news.crunchbase.com/ma/grow-revenue-lose-enterprise-value-sagie/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 6,
+     "title": "From Monk To Startups: One Founder’s Unusual Path To Building Government Software",
+     "link": "https://news.crunchbase.com/startups/nontech-founder-government-ai-software-chen-fsh/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 7,
+     "title": "Crunchbase Data Shows Q3 Robotics Startup Funding Jumps 185% As US And China Lead Physical AI Push",
+     "link": "https://news.crunchbase.com/venture/q3-2026-us-china-robotics-startup-funding-jumps-physical-ai-push/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 8,
+     "title": "Your AI Agents Need A Chief Operating Officer, Too",
+     "link": "https://news.crunchbase.com/real-estate-property-tech/agentic-ai-staffing-coo-folgmann-get-covered/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 9,
+     "title": "Some Observations About Anthropic’s IPO Filing",
+     "link": "https://news.crunchbase.com/public/anthropic-ipo-filing-ai-earnings-growth-risks/"
+    },
+    {
+     "outlet": "Crunchbase News",
+     "rank": 10,
+     "title": "When Traction Becomes Personal Exposure: What The Joonko Guilty Plea Means For Founders",
+     "link": "https://news.crunchbase.com/startups/personal-exposure-securities-fraud-joonko-jeziorski-founder-shield/"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 1,
+     "title": "Our church has a $1.5 million bequest earning 3.75% in a bank account. Is inflation eroding it?",
+     "link": "https://www.marketwatch.com/story/there-may-be-better-investment-options-my-church-received-1-5-million-from-a-parishioner-is-3-75-interest-enough-5164d790?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 2,
+     "title": "‘Fancy cars hold no appeal’: We have a 99% chance of outliving our life savings. Why not spend, spend, spend?",
+     "link": "https://www.marketwatch.com/story/fancy-cars-hold-no-appeal-my-wife-and-i-have-a-99-chance-of-outliving-our-savings-why-dont-we-spend-it-all-932a2166?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 3,
+     "title": "Did the Fed make a mistake with its October rate pause? The Treasury could help save the day.",
+     "link": "https://www.marketwatch.com/story/did-the-fed-make-a-mistake-with-its-october-rate-pause-the-treasury-could-help-save-the-day-77d84993?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 4,
+     "title": "Medicare used AI to pre-approve patient care, and it immediately led to a large drop in medical services",
+     "link": "https://www.marketwatch.com/story/medicare-used-ai-to-pre-approve-patient-care-and-it-immediately-led-to-a-large-drop-in-medical-services-dc38a210?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 5,
+     "title": "All the reasons Marvell investors are ‘freaking out’ as Lumentum deal rumors swirl",
+     "link": "https://www.marketwatch.com/story/marvell-is-reportedly-close-to-buying-lumentum-analysts-say-they-see-logic-in-a-potential-deal-d7539c59?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 6,
+     "title": "This credit card is the ‘best weapon’ to fight debt while interest rates keep climbing",
+     "link": "https://www.marketwatch.com/story/this-credit-card-is-the-best-weapon-to-fight-debt-while-interest-rates-keep-climbing-8378fcf2?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 7,
+     "title": "Get ready for the ‘Year of Starlink’ as airlines battle over superfast WiFi",
+     "link": "https://www.marketwatch.com/story/get-ready-for-the-year-of-starlink-as-airlines-battle-over-superfast-wifi-6bce32c1?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 8,
+     "title": "You can’t rely on the S&P 500 as much as you may think",
+     "link": "https://www.marketwatch.com/story/you-cant-rely-on-the-s-p-500-as-much-as-you-may-think-a3ac0cb7?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 9,
+     "title": "Looking for income? These dividend stocks have high yields that seem well supported.",
+     "link": "https://www.marketwatch.com/story/looking-for-income-these-dividend-stocks-have-high-yields-that-seem-well-supported-81093bdf?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "MarketWatch",
+     "rank": 10,
+     "title": "Florida is voting on whether to slash property taxes. Here’s who it would benefit — and hurt.",
+     "link": "https://www.marketwatch.com/story/florida-is-voting-on-whether-to-slash-property-taxes-heres-who-it-would-benefit-and-hurt-6c34b470?mod=mw_rss_topstories"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 1,
+     "title": "European Central Bank keeps key interest rate on hold at 2.5%",
+     "link": "https://www.cnbc.com/2026/10/29/european-central-bank-interest-rates.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 2,
+     "title": "Third-quarter U.S. GDP increases a better-than-expected 3.4% as September inflation accelerates",
+     "link": "https://www.cnbc.com/2026/10/29/pce-inflation-report-september-2026-.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 3,
+     "title": "The politics of President Lagarde’s European Central Bank early exit — and who could replace her",
+     "link": "https://www.cnbc.com/2026/10/29/lagarde-ecb-stand-down.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 4,
+     "title": "Analysis: Kevin Warsh is keeping Wall Street guessing. It may be his most powerful tool",
+     "link": "https://www.cnbc.com/2026/10/29/kevin-warsh-fed-october-rate-decision-december-hike.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 5,
+     "title": "Here are five key takeaways from the Fed rate decision and Warsh news conference",
+     "link": "https://www.cnbc.com/2026/10/28/fed-rate-decision-warsh-takeaways.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 6,
+     "title": "Bessent says ‘not necessarily’ a mistake if the Fed hikes again",
+     "link": "https://www.cnbc.com/2026/10/28/scott-bessent-interview.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 7,
+     "title": "The UK cuts energy bills, taxes banks and boosts defense in high-stakes budget",
+     "link": "https://www.cnbc.com/2026/10/28/uk-autumn-budget-cost-living-defense-ai.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 8,
+     "title": "World Bank’s Banga: Availability of capital ‘not really an issue’ as AI demand drives up borrowing costs",
+     "link": "https://www.cnbc.com/2026/10/27/world-bank-president-ajay-banga.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 9,
+     "title": "Fed rate hikes are coming, but not this week: CNBC survey",
+     "link": "https://www.cnbc.com/2026/10/27/federal-reserve-rate-hike-timing-expectations.html"
+    },
+    {
+     "outlet": "CNBC Markets",
+     "rank": 10,
+     "title": "Jobless claims near the lowest since the 1960s as low-fire trend continues",
+     "link": "https://www.cnbc.com/2026/10/22/jobless-claims-record-low-weekly.html"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 1,
+     "title": "Does home insurance cover storm damage?",
+     "link": "https://fortune.com/article/does-home-insurance-cover-storm-damage/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 2,
+     "title": "Which Gen Z will show up for the midterms: the socialist rebels or the ones who reelected Trump?",
+     "link": "https://fortune.com/2026/10/29/which-gen-z-will-show-up-for-the-midterms-the-socialist-rebels-or-the-ones-who-reelected-trump/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 3,
+     "title": "The neocloud shakeout is coming, and even the neoclouds seem to know it",
+     "link": "https://fortune.com/2026/10/29/elon-musk-neoclouds-ai-bubble-coreweave-nebius-consolidation/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 4,
+     "title": "Hong Kong leader apologizes for fire that killed 168 as housing secretary resigns",
+     "link": "https://fortune.com/2026/10/29/hong-kong-housing-minister-resigns-fire-168/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 5,
+     "title": "‘The most European of non-European countries’: Canada looks to become an ‘associate member’ of the EU as ‘economic pressure’ from the U.S. looms",
+     "link": "https://fortune.com/2026/10/29/canada-associate-member-eu-economic-pressure-us/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 6,
+     "title": "‘Operation Supercharge’: Japan and U.S. agree to develop Japanese missile facility—a ‘strong, quiet and clear’ message against China’s naval activity",
+     "link": "https://fortune.com/2026/10/29/japan-us-missile-facility-china-naval-activity/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 7,
+     "title": "‘The assertion that the AI is an autonomous being is insane’: Cyber expert says companies should face criminal charges when their AI hacks",
+     "link": "https://fortune.com/2026/10/29/black-october-ai-cyberattacks-hackers-php2shell/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 8,
+     "title": "‘You can’t trust the Reese’s logo’: The grandson of Reese’s inventor says Hershey’s 2027 recipe fix is ‘a stall’—and he’s igniting a family feud",
+     "link": "https://fortune.com/2026/10/29/reeses-peanut-butter-cup-recipe-inventor-hershey-chocolate/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 9,
+     "title": "Mark Cuban says owning the Mavericks went from being about basketball to ‘about valuations’ and created ‘more stress’—it still made him $4.3 billion",
+     "link": "https://fortune.com/2026/10/29/billionaire-mark-cuban-mavericks-stressful-4-3-billion/"
+    },
+    {
+     "outlet": "Fortune",
+     "rank": 10,
+     "title": "Microsoft’s cloud growth accelerates, and so too does the spending",
+     "link": "https://fortune.com/2026/10/28/microsofts-cloud-growth-accelerates-and-so-too-does-the-spending/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 1,
+     "title": "‘There’s no magic money tree’: Alex Depledge on the Budget, startup lobbying and why she left the UK government",
+     "link": "https://sifted.eu/articles/uk-budget-alex-depledge-advisor-startups/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 2,
+     "title": "Exclusive: Fractile raises £540m in new Series C funding, filings show",
+     "link": "https://sifted.eu/articles/exclusive-fractile-series-c/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 3,
+     "title": "Are Europe’s fastest-growing startups hiring wrong?",
+     "link": "https://sifted.eu/articles/are-europes-fastest-growing-startups-hiring-wrong-brnd/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 4,
+     "title": "Exclusive: Deeptech startup MuRay raises €7.1m to see inside rocket engines",
+     "link": "https://sifted.eu/articles/exclusive-deeptech-startup-muray-raises-e7-1m-to-see-inside-rocket-engines/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 5,
+     "title": "The French robotics startup promising to deploy industrial humanoids after just 20 minutes of training",
+     "link": "https://sifted.eu/articles/french-robotics-startup-industrial-humanoids-20-minutes-of-training/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 6,
+     "title": "How to build an investment thesis and win early-stage deals, according to VCs",
+     "link": "https://sifted.eu/articles/how-to-build-an-investment-thesis-and-win-early-stage-deals-according-to-vcs/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 7,
+     "title": "Norway’s Investinor out raising new LP fund amid European push to fund scaleups",
+     "link": "https://sifted.eu/articles/norway-investinor-raising-new-lp-fund-nordics-europe-scaleup/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 8,
+     "title": "This fintech wasn’t ‘actively’ fundraising. Then it closed a $90m round at an $800m valuation",
+     "link": "https://sifted.eu/articles/spiko-interview/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 9,
+     "title": "How to outcompete the ‘warp speed’ AI labs on hiring",
+     "link": "https://sifted.eu/articles/how-to-outcompete-ai-labs/"
+    },
+    {
+     "outlet": "Sifted",
+     "rank": 10,
+     "title": "The executive talent market is divided in two",
+     "link": "https://sifted.eu/articles/executive-talent-market-is-divided-in-two-brnd/"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 1,
+     "title": "Toast faces FTC lawsuit over business contract practices",
+     "link": "https://www.investing.com/news/company-news/toast-faces-ftc-lawsuit-over-business-contract-practices-93CH-4984864"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 2,
+     "title": "Equities and bond yields dip with AI jitters and economic data in focus",
+     "link": "https://www.investing.com/news/economy-news/asian-shares-fall-as-alphabet-earnings-miss-drags-wall-st-futures-lower-4981378"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 3,
+     "title": "Nasdaq falls as Alphabet set for record loss amid AI spending woes",
+     "link": "https://www.investing.com/news/economy-news/nasdaq-futures-slide-as-mixed-big-tech-results-test-ai-trade-4981842"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 4,
+     "title": "Analysis-Soy, rare earths and fuels: how Brazil vote impacts the global flow of resources",
+     "link": "https://www.investing.com/news/economy-news/analysissoy-rare-earths-and-fuels-how-brazil-vote-impacts-the-global-flow-of-resources-4984862"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 5,
+     "title": "Orion Group Holdings wins $250M in October contracts",
+     "link": "https://www.investing.com/news/company-news/orion-group-holdings-wins-250m-in-october-contracts-93CH-4984861"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 6,
+     "title": "Brazil interest burden climbs to 9% of GDP, highest since 2016",
+     "link": "https://www.investing.com/news/economy-news/brazil-interest-burden-climbs-to-9-of-gdp-highest-since-2016-4984860"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 7,
+     "title": "Microsoft expects to raise $25 billion in US bond sale, source says",
+     "link": "https://www.investing.com/news/stock-market-news/microsoft-expects-to-raise-25-billion-in-us-bond-sale-source-says-4984856"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 8,
+     "title": "GM to pay $220 million to settle allegations it violated drivers’ privacy",
+     "link": "https://www.investing.com/news/stock-market-news/gm-to-pay-220-million-to-settle-allegations-it-violated-consumers-privacy-4984760"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 9,
+     "title": "Priced out: Milan’s cost of living drives away teachers",
+     "link": "https://www.investing.com/news/economic-indicators/priced-outmilans-cost-of-living-drives-away-teachers-4984855"
+    },
+    {
+     "outlet": "Investing.com",
+     "rank": 10,
+     "title": "Clorox appoints Unilever executive as its new CEO",
+     "link": "https://www.investing.com/news/stock-market-news/clorox-appoints-unilever-executive-as-its-new-ceo-4983032"
+    }
+   ]
+  }
+ }
+}

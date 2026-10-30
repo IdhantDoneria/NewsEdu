@@ -501,6 +501,7 @@ export default function Dashboard({ initialData = null }) {
             <Link href="/search" prefetch={false}>Search</Link>
             <Link href="/following" prefetch={false}>Following</Link>
             <Link href="/recall" prefetch={false}>Recall</Link>
+            <Link href="/trends" prefetch={false}>Trends</Link>
           </nav>
           <nav
             className="edition-toggle"
@@ -704,9 +705,11 @@ export default function Dashboard({ initialData = null }) {
                     Every brief runs through a dedicated 10-layer pipeline for this
                     edition. Each layer inspects one property of the article — the
                     outlet, the language, the facts it contains — and adds or
-                    subtracts points from a running total, which is finally clamped
-                    to a 0–100 integer. Tap any score on the page to see the exact
-                    layers that produced it.
+                    subtracts points from a running total. Stories reported by several
+                    independent outlets earn a breadth bonus, and no single outlet
+                    or story may fill the top of the page. The total is shown on a
+                    0–100 dial. Tap any score on the page to see the exact layers
+                    that produced it.
                   </p>
                   <div className="methodology-grid">
                     {edition === 'finance' ? (
@@ -732,7 +735,7 @@ export default function Dashboard({ initialData = null }) {
                       <>
                         <div>
                           <h5>Source credibility</h5>
-                          <p>A curated trust database baselines each outlet; unlisted sources fall back to their editorial trust rating.</p>
+                          <p>A hand-reviewed reliability tier baselines each outlet within a capped band; unlisted sources get a conservative default.</p>
                         </div>
                         <div>
                           <h5>Facts &amp; density</h5>
@@ -740,7 +743,7 @@ export default function Dashboard({ initialData = null }) {
                         </div>
                         <div>
                           <h5>Age decay</h5>
-                          <p>−0.5 points per hour since publication — old news fades; it is never artificially revived.</p>
+                          <p>Freshness halves every 18 hours (8 in Finance) — old news fades smoothly and is never artificially revived.</p>
                         </div>
                         <div>
                           <h5>Subjectivity &amp; clickbait</h5>

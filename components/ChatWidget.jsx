@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { mergeMemory, sanitizeUpdates, selectForRequest } from '@/lib/intelligence/memory.mjs';
 import { loadLearn, loadMemory, saveLearn, saveMemory } from '@/lib/client/chatMemory';
 import { filterChips, loadRatings, setRating } from '@/lib/client/chatFeedback';
+import { sendFeedback } from '@/lib/client/telemetry';
 import { followStory, isFollowing, unfollowStory } from '@/lib/client/userState';
 import { speakable, useSpeech } from '@/lib/client/speech';
 
@@ -237,6 +238,9 @@ function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, spe
         <p className="chat-note">Includes general background, not only today&apos;s reporting.</p>
       )}
       {msg.notice && <p className="chat-note">{msg.notice}</p>}
+      {msg.provider !== 'fallback' && msg.grounding?.total > 0 && msg.grounding.supported === msg.grounding.total && (
+        <p className="chat-note">Each cited statement was checked against a quote from its source.</p>
+      )}
       {msg.provider === 'openrouter' && (
         <p className="chat-note">Answered by a backup model while the main one was unavailable.</p>
       )}
@@ -253,7 +257,12 @@ function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, spe
             return (
               <li key={c.n} value={c.n}>
                 {href ? (
-                  <a href={href} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={c.quote ? `Supported by: “${c.quote}”` : undefined}
+                  >
                     <b>{c.source}</b> — {c.title}
                   </a>
                 ) : (
@@ -442,6 +451,8 @@ export default function ChatWidget() {
             usedBackgroundKnowledge: data.usedBackgroundKnowledge,
             provider: data.provider,
             edition: data.edition,
+            grounding: data.grounding,
+            cached: data.cached === true,
             learned,
           },
         ]);
@@ -476,6 +487,18 @@ export default function ChatWidget() {
     const next = messages[index]?.rating === rating ? null : rating;
     setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, rating: next } : m)));
     if (question) setRatings(setRating(question, next));
+    // Server-side telemetry: the rating always; the question only on a thumbs-down
+    // (so unhelpful answers can be diagnosed), truncated, and never the answer.
+    if (next) {
+      const m = messages[index];
+      const provider = m?.cached ? 'cache' : m?.provider;
+      sendFeedback({
+        rating: next,
+        // /api/telemetry accepts only these provider labels
+        provider: ['gemini', 'openrouter', 'cache', 'fallback', 'none'].includes(provider) ? provider : undefined,
+        ...(next === 'down' && question ? { question: String(question).slice(0, 200) } : {}),
+      });
+    }
   };
   const regenerate = (index) => {
     const question = messages[index - 1]?.text;
