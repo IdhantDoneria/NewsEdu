@@ -224,3 +224,15 @@ test('capByOutlet: a loose cap over the top 60 keeps one outlet from filling the
   assert.equal(out.length, 60);
   assert.equal(out.filter((a) => outletKey(a) === 'big.com').length, LIMITS.OUTLET_TOP_C_MAX);
 });
+
+import { diversify as _diversify, LIMITS as _LIMITS } from '../lib/ingestion/pipeline.mjs';
+import { test as _test } from 'node:test';
+import _assert from 'node:assert/strict';
+
+_test('diversify: one region cannot fill more than half of the top 20', () => {
+  const mk = (i, region) => ({ id: `a${i}`, clusterId: `c${i}`, sourceName: `Outlet ${i}`, source: { name: `Outlet ${i}` }, link: `https://o${i}.example/x`, region, rankScore: 100 - i, publishedAt: 1000 - i });
+  const sorted = [...Array.from({ length: 20 }, (_, i) => mk(i, 'india')), ...Array.from({ length: 20 }, (_, i) => mk(20 + i, 'europe'))];
+  const top = _diversify(sorted, { limit: 20 });
+  const india = top.filter((a) => a.region === 'india').length;
+  _assert.ok(india <= _LIMITS.REGION_MAX, `india=${india}`);
+});
