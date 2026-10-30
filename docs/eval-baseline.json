@@ -1,0 +1,339 @@
+{
+  "meta": {
+    "commit": "a675e42",
+    "snapshots": [
+      "2026-10-29-1841",
+      "2026-10-29"
+    ],
+    "primary": "2026-10-29-1841",
+    "mode": "auto",
+    "labelFiles": {
+      "soft-vs-hard.json": {
+        "bytes": 52266,
+        "sha1": "78552e2b29"
+      },
+      "pump-vs-legit.json": {
+        "bytes": 37842,
+        "sha1": "d6ffc3ff1f"
+      },
+      "edition-topicality.json": {
+        "bytes": 41277,
+        "sha1": "4c0719bffd"
+      },
+      "cluster-pairs.json": {
+        "bytes": 111395,
+        "sha1": "31bfea0edd"
+      },
+      "topics.json": {
+        "bytes": 52883,
+        "sha1": "8c2a3110f3"
+      },
+      "front-pages.json": {
+        "bytes": 27796,
+        "sha1": "377d4ad613"
+      }
+    }
+  },
+  "snapshots": {
+    "2026-10-29-1841": {
+      "name": "2026-10-29-1841",
+      "mode": "pipeline",
+      "editions": {
+        "geopolitics": {
+          "mode": "pipeline",
+          "nArticles": 60,
+          "nClusters": 47,
+          "singletonClusterShare": 0.851,
+          "shareAt100": 0.017,
+          "shareSortKeyOver100": 0,
+          "medianDisplay": 85.5,
+          "sdDisplay": 4.26,
+          "sdSortKey": 4.26,
+          "distinctDisplay": 18,
+          "distinctSortKey": 18,
+          "tiesTop50": 44,
+          "outletMaxShareTop20": 0.6,
+          "distinctOutletsTop20": 3,
+          "medianAgeTop20Hours": 4.7,
+          "shareOver24hTop20": 0,
+          "shareOver24hAll": 0,
+          "regionKnownShare": 0,
+          "regionNonUsEuShareTop60": null,
+          "distinctEventsTop60": 47,
+          "softShareTop20": 0,
+          "offTopicShareTop20": 0.15,
+          "labelCoverageTop20": 1,
+          "details": {
+            "outletsTop20": [
+              "NYT World:12",
+              "BBC World:7",
+              "Al Jazeera:1"
+            ],
+            "augmentedFeeds": [
+              "BBC World",
+              "NYT World"
+            ],
+            "note": null
+          }
+        },
+        "finance": {
+          "mode": "pipeline",
+          "nArticles": 60,
+          "nClusters": 59,
+          "singletonClusterShare": 0.983,
+          "shareAt100": 0,
+          "shareSortKeyOver100": 0,
+          "medianDisplay": 76,
+          "sdDisplay": 5.59,
+          "sdSortKey": 5.59,
+          "distinctDisplay": 13,
+          "distinctSortKey": 13,
+          "tiesTop50": 46,
+          "outletMaxShareTop20": 0.5,
+          "distinctOutletsTop20": 4,
+          "medianAgeTop20Hours": 2.9,
+          "shareOver24hTop20": 0.3,
+          "shareOver24hAll": 0.417,
+          "regionKnownShare": 0,
+          "regionNonUsEuShareTop60": null,
+          "distinctEventsTop60": 59,
+          "softShareTop20": 0.35,
+          "offTopicShareTop20": 0.05,
+          "labelCoverageTop20": 1,
+          "details": {
+            "outletsTop20": [
+              "MarketWatch:10",
+              "Crunchbase News:5",
+              "CNBC Markets:4",
+              "TechCrunch Venture:1"
+            ],
+            "augmentedFeeds": [],
+            "note": null
+          }
+        }
+      },
+      "briefing": {
+        "essentialCount": 4,
+        "essentialMaxTopicShare": 0.25,
+        "essentialMaxTopicShareInterested": 0.75,
+        "essentialDistinctOutletsMean": 1.75,
+        "dayOverDay": {
+          "simulated": true,
+          "repeatRateAll": 1,
+          "repeatRateEssential": 1,
+          "day2Items": 5
+        }
+      },
+      "retrieval": {
+        "geopoliticsGenericMaxOutletShare": 0.6,
+        "financeGenericMaxOutletShare": 0.5,
+        "entityQueryHitRate": 1,
+        "queries": 30
+      },
+      "frontPages": {
+        "proxy": true,
+        "geopolitics": {
+          "k": 10,
+          "nEntries": 30,
+          "articlesMatched": 8,
+          "entryCoverage": 0.267,
+          "precisionAtK": 0,
+          "ndcgAtK": 0
+        },
+        "finance": {
+          "k": 10,
+          "nEntries": 70,
+          "articlesMatched": 49,
+          "entryCoverage": 0.7,
+          "precisionAtK": 1,
+          "ndcgAtK": 0.691
+        }
+      }
+    },
+    "2026-10-29": {
+      "name": "2026-10-29",
+      "mode": "rescore",
+      "editions": {
+        "geopolitics": {
+          "mode": "rescore",
+          "nArticles": 60,
+          "nClusters": 47,
+          "singletonClusterShare": 0.851,
+          "shareAt100": 0.017,
+          "shareSortKeyOver100": 0,
+          "medianDisplay": 86,
+          "sdDisplay": 4.17,
+          "sdSortKey": 4.17,
+          "distinctDisplay": 17,
+          "distinctSortKey": 17,
+          "tiesTop50": 45,
+          "outletMaxShareTop20": 0.6,
+          "distinctOutletsTop20": 3,
+          "medianAgeTop20Hours": 4.7,
+          "shareOver24hTop20": 0,
+          "shareOver24hAll": 0,
+          "regionKnownShare": 0,
+          "regionNonUsEuShareTop60": null,
+          "distinctEventsTop60": 47,
+          "softShareTop20": 0,
+          "offTopicShareTop20": 0.15,
+          "labelCoverageTop20": 1,
+          "details": {
+            "outletsTop20": [
+              "NYT World:12",
+              "BBC World:7",
+              "Al Jazeera:1"
+            ],
+            "augmentedFeeds": [],
+            "note": null
+          }
+        },
+        "finance": {
+          "mode": "rescore",
+          "nArticles": 60,
+          "nClusters": 59,
+          "singletonClusterShare": 0.983,
+          "shareAt100": 0,
+          "shareSortKeyOver100": 0,
+          "medianDisplay": 78,
+          "sdDisplay": 5.71,
+          "sdSortKey": 5.71,
+          "distinctDisplay": 14,
+          "distinctSortKey": 14,
+          "tiesTop50": 45,
+          "outletMaxShareTop20": 0.45,
+          "distinctOutletsTop20": 4,
+          "medianAgeTop20Hours": 3.4,
+          "shareOver24hTop20": 0.35,
+          "shareOver24hAll": 0.433,
+          "regionKnownShare": 0,
+          "regionNonUsEuShareTop60": null,
+          "distinctEventsTop60": 59,
+          "softShareTop20": 0.3,
+          "offTopicShareTop20": 0.05,
+          "labelCoverageTop20": 1,
+          "details": {
+            "outletsTop20": [
+              "MarketWatch:9",
+              "Crunchbase News:5",
+              "CNBC Markets:5",
+              "TechCrunch Venture:1"
+            ],
+            "augmentedFeeds": [],
+            "note": null
+          }
+        }
+      },
+      "briefing": {
+        "essentialCount": 4,
+        "essentialMaxTopicShare": 0.25,
+        "essentialMaxTopicShareInterested": 0.75,
+        "essentialDistinctOutletsMean": 1.75,
+        "dayOverDay": {
+          "simulated": true,
+          "repeatRateAll": 1,
+          "repeatRateEssential": 1,
+          "day2Items": 5
+        }
+      },
+      "retrieval": {
+        "geopoliticsGenericMaxOutletShare": 0.6,
+        "financeGenericMaxOutletShare": 0.5,
+        "entityQueryHitRate": 1,
+        "queries": 30
+      },
+      "frontPages": {
+        "skipped": "no front-page entries for snapshot 2026-10-29"
+      }
+    }
+  },
+  "labelled": {
+    "softVsHard": {
+      "n": 280,
+      "softShare": 0.346,
+      "editions": {
+        "geopolitics": {
+          "n": 145,
+          "aucHardOverSoft": 0.812,
+          "softShareTop20pct": 0.069,
+          "softBaseRate": 0.297,
+          "meanGapHardMinusSoft": 5.58,
+          "bestF1SoftFlag": 0.7
+        },
+        "finance": {
+          "n": 135,
+          "aucHardOverSoft": 0.684,
+          "softShareTop20pct": 0.148,
+          "softBaseRate": 0.4,
+          "meanGapHardMinusSoft": 2.66,
+          "bestF1SoftFlag": 0.631
+        }
+      },
+      "aucHardOverSoft": 0.748,
+      "meanGapHardMinusSoft": 4.12,
+      "softCutByNoiseFloor": {
+        "floor": 32,
+        "precision": 0,
+        "recall": 0,
+        "f1": 0
+      }
+    },
+    "pumpVsLegit": {
+      "nPump": 100,
+      "nLegit": 115,
+      "aucLegitOverPump": 0.553,
+      "meanGapLegitMinusPump": 1.69,
+      "pumpAtOrAboveMedianLegit": 0.81,
+      "pumpAboveLegitQ25": 0.5,
+      "bestF1PumpFlag": 0.647,
+      "bestF1Precision": 0.483,
+      "bestF1Recall": 0.98,
+      "pumpCutByNoiseFloor": {
+        "floor": 32,
+        "precision": 0,
+        "recall": 0,
+        "f1": 0
+      },
+      "realLegitMeanScore": 72.3,
+      "pumpMeanScore": 71.5
+    },
+    "editionTopicality": {
+      "n": 261,
+      "offTopicShare": 0.261,
+      "editions": {
+        "geopolitics": {
+          "aucOnOverOff": 0.746,
+          "offTopicShareTop20pct": 0.269,
+          "offTopicBaseRate": 0.617
+        },
+        "finance": {
+          "aucOnOverOff": 0.687,
+          "offTopicShareTop20pct": 0.308,
+          "offTopicBaseRate": 0.579
+        }
+      },
+      "aucOnOverOff": 0.716,
+      "offTopicShareTop20pct": 0.289
+    },
+    "clusterPairs": {
+      "n": 594,
+      "unreadable": 0,
+      "precision": 0.964,
+      "recall": 0.21,
+      "f1": 0.345,
+      "accuracy": 0.662,
+      "orderInvariantShare": 1
+    },
+    "topics": {
+      "n": 316,
+      "microPrecision": 0.863,
+      "microRecall": 0.521,
+      "microF1": 0.65,
+      "macroPrecision": 0.894,
+      "macroRecall": 0.522
+    },
+    "changeCards": {
+      "skipped": "tests/fixtures/labels/change-cards.json absent (stream D)"
+    }
+  }
+}
