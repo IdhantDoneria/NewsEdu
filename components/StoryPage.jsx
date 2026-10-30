@@ -431,8 +431,10 @@ export default function StoryPage({ id, editionHint }) {
               ? ' · writing the AI analysis…'
               : intel.mode === 'fallback' &&
                 (data.pending
-                  ? ' · extractive brief (AI analysis unavailable right now)'
+                  ? ' · extractive brief (AI analysis unavailable right now; retrying automatically)'
                   : ' · extractive brief (AI analysis not configured)')}
+            {!refining && intel.mode === 'ai' && intel.grounding?.total > 0 &&
+              ` · ${intel.grounding.supported} of ${intel.grounding.total} factual claims verified against source quotes`}
           </span>
         </div>
       }
