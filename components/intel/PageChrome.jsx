@@ -9,6 +9,7 @@ const NAV = [
   { href: '/search', label: 'Search' },
   { href: '/following', label: 'Following' },
   { href: '/recall', label: 'Recall' },
+  { href: '/trends', label: 'Trends' },
 ];
 
 function todayLine() {
