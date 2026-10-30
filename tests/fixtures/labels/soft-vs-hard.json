@@ -1,0 +1,1886 @@
+{
+ "name": "soft-vs-hard",
+ "version": 1,
+ "createdAt": "2026-10-29",
+ "method": "Labelled hard unless the headline is service content, how-to/listicle, personal finance, sport, celebrity/culture, lifestyle, promo, index wrap, opinion/essay without a news hook, or human-interest. \"kind\" records the soft category. Analysis tied to a concrete event or data release stays hard.",
+ "limits": [
+  "Single annotator (Claude, reading each headline); no inter-annotator agreement was measured. Treat borderline=true rows as soft labels.",
+  "Real headlines come from one day (2026-10-29) of the production feeds, so topics and outlets are skewed to that news cycle (Israel election, Spain train crash, Fed/CPI).",
+  "Several feeds (BBC raw, Guardian, NYT raw, DW, Fox Business, Yahoo Finance) returned 403/404 to the capture host; their headlines appear only via the production top-60 snapshots.",
+  "Rows marked synthetic=true were written by the annotator to cover patterns the live feeds did not contain that day; they are realistic but not harvested, so treat results on them as optimistic.",
+  "Labels judge the headline only (no summary, body or outlet), because scoring fixtures use neutral outlet and age."
+ ],
+ "items": [
+  {
+   "title": "Netanyahu’s bloc leading Israel election but short of majority, partial results show",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Trump and His Aides Helped Bolsonaro Flee Brazil and Enter U.S.",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "EU chief lays out vision for new Canada partnership at Montreal summit",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Flávio Bolsonaro Lands in Miami After Fleeing Brazil",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Record number of purges as Xi emphasises ‘party discipline’ at China political gathering",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "How Israel’s Election Could End",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "China Confirms Expulsion of 33 Officials, as Xi’s Purge Deepens",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Trump Officials Discussing Sanctions Relief for Russian Fund, Russia Acknowledges",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "In Marseille, Macron Confronts a Potent Mix of France’s Problems",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Fighting rages near Yemen’s Taiz as UN urges humanitarian access",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Haiti Postpones Elections as Gang Violence Runs Rampant",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "State Dept. to Shift Millions in Contraception Funding to Cover Energy Costs",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "How André Janones Helped Turbocharge Lula’s Comeback in Brazil’s Election",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "A Cease-Fire Melania Trump Announced Gives a City Brief Calm",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "What We Know About the Deadly Train Crash in Spain",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Flávio Bolsonaro calls himself ‘leader of Brazil’ after election loss",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "What we know so far about deadly Spain train crash",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Rock collapse kills two in Turkey’s Cappadocia, local media reports",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "How Netanyahu Used Fear, Again, to Win Votes in the Israel Elections",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "El Salvador sends 2,000 troops to Haiti to rescue four missing soldiers",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Spain Crash Investigators Focus on Train Traffic Controllers’ Role",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "How could Israel break election deadlock? Here are four scenarios",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Israel’s anti-Qatar campaign bleeds into elections",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Cuauhtémoc Cárdenas, Who Helped End One-Party Rule in Mexico, Dies at 92",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Suspect in France Shootings Said He Targeted Muslims and Africans, Prosecutor Says",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Building boom puts 300,000 people in the path of potential Himalayan disasters",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "After 28 Years Walking the Globe, Karl Bushby Is Almost Home",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "human-interest"
+  },
+  {
+   "title": "Finland launches criminal probe of suspected environmental damage by Google",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Philippine police obtain warrant to search Thomas Markle’s devices",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "celebrity",
+   "borderline": true
+  },
+  {
+   "title": "India’s Media Giants Join Fight Against Upcoming Privacy Law",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Is There a ‘Safest Seat’ in a Train Crash? Experts Say It’s Not So Simple.",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "service"
+  },
+  {
+   "title": "What to Make of Israel’s Ambiguous Election",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Ireland becomes refuge for anti-Trump Americans",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Russian drone attack on Ukrainian train station kills at least 14, officials say",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Audio reveals exchanges between control centre and drivers before deadly Spain train crash",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Alaska governor orders probe into Democratic campaign’s alleged links to same-name candidate",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "How to Plan a Trip Around a Running Race",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "service"
+  },
+  {
+   "title": "UAE sentences eight people to life over arms supplies to Sudan’s army",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Putin seeks to expand ties with African countries at Russia-Africa summit",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "A Marathon Runner’s Hard Lesson",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "human-interest"
+  },
+  {
+   "title": "Ethiopia acquires Russian fighter jets and air defence systems amid war in Tigray",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Hello Kitty maker cuts ties with Japanese spy drama after China backlash",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "culture",
+   "borderline": true
+  },
+  {
+   "title": "At least 14 people killed in attack on Ukraine train station",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Watch: VHS tapes and computers handed to police as Thomas Markle is investigated",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "celebrity"
+  },
+  {
+   "title": "China Is Not Happy About Fan-made A.I. Videos of Sun Wukong and Lin Daiyu",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "culture"
+  },
+  {
+   "title": "Israel’s Parties Gird for Wrangling to Form a Government, With No Clear Path",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Deadly rock collapse at famous Turkiye tourist site",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Ireland opens arms to Americans fleeing US President Donald Trump",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Russian Strike on Ukrainian Train Station Kills 14",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "With No Clear Winner, How Could Israel Get a Prime Minister?",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Pakistan rights activist Imaan Mazari and husband jailed for 10 years",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Europe Was Never Meant to Be a ‘Regulatory Superpower’",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Hong Kong Leader Apologizes for Deadly Apartment Building Fire",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Vance Proposes Restarting Peace Talks in Outreach to Iranian Official",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "How Arab Voters in Israel Shifted the Political Landscape",
+   "source": "NYT World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Israeli strikes hit Gaza as Health Ministry urges Rafah opening",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Bangladesh’s Shadman Islam hits century, but West Indies force collapse",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport"
+  },
+  {
+   "title": "Is the UAE the Missing Link in the Fight Against the Houthis?",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Audacious Indian jailbreak saga ends with 17 prisoners recaptured",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Details of thousands of US immigration agents leaked in major hack",
+   "source": "BBC World",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Some Observations About Anthropic’s IPO Filing",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Third-quarter U.S. GDP increases a better-than-expected 3.4% as September inflation accelerates",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Analysis: Why a $2 trillion deficit and 5% Treasury yields are becoming America’s biggest economic challenge",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Our church has a $1.5 million bequest earning 3.75% in a bank account. Is inflation eroding it?",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance"
+  },
+  {
+   "title": "Did the Fed make a mistake with its October rate pause? The Treasury could help save the day.",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "European Central Bank keeps key interest rate on hold at 2.5%",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "This credit card is the ‘best weapon’ to fight debt while interest rates keep climbing",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance"
+  },
+  {
+   "title": "Looking for income? These dividend stocks have high yields that seem well supported.",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "stock-picks"
+  },
+  {
+   "title": "From 8VC to Benchmark, here’s what’s hiding in October SEC filings",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Medicare used AI to pre-approve patient care, and it immediately led to a large drop in medical services",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Crunchbase Data Shows Q3 Robotics Startup Funding Jumps 185% As US And China Lead Physical AI Push",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "You can’t rely on the S&P 500 as much as you may think",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "All the reasons Marvell investors are ‘freaking out’ as Lumentum deal rumors swirl",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Get ready for the ‘Year of Starlink’ as airlines battle over superfast WiFi",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Florida is voting on whether to slash property taxes. Here’s who it would benefit — and hurt.",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Fed rate hikes are coming, but not this week: CNBC survey",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Exclusive: Numeracle Raises $28M To Keep Legitimate Business Calls From Spam Label",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Bessent says ‘not necessarily’ a mistake if the Fed hikes again",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Series B Funding Is Up, But Fewer Deals Are Getting Done",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The Invisible Graph: How Companies Grow Revenue And Still Lose Value",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion"
+  },
+  {
+   "title": "‘Fancy cars hold no appeal’: We have a 99% chance of outliving our life savings. Why not spend, spend, spend?",
+   "source": "MarketWatch",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance"
+  },
+  {
+   "title": "Here are five key takeaways from the Fed rate decision and Warsh news conference",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Analysis: Kevin Warsh is keeping Wall Street guessing. It may be his most powerful tool",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The UK cuts energy bills, taxes banks and boosts defense in high-stakes budget",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Exclusive: Lovable offers employees $80m cash-out at $13.3bn valuation",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Jumbo Series A Rounds Hiding The Real Squeeze On Seed Startups",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "From Monk To Startups: One Founder’s Unusual Path To Building Government Software",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "human-interest"
+  },
+  {
+   "title": "Your AI Agents Need A Chief Operating Officer, Too",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion"
+  },
+  {
+   "title": "World Bank’s Banga: Availability of capital ‘not really an issue’ as AI demand drives up borrowing costs",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The politics of President Lagarde’s European Central Bank early exit — and who could replace her",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The Crunchbase Tech Layoffs Tracker",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "service",
+   "borderline": true
+  },
+  {
+   "title": "Microsoft expects to raise $25 billion in US bond sale, source says",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Mark Cuban says owning the Mavericks went from being about basketball to ‘about valuations’ and created ‘more stress’—it still made him $4.3 billion",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "celebrity"
+  },
+  {
+   "title": "GM to pay $220 million to settle allegations it violated drivers’ privacy",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Exclusive: Fractile raises £540m in new Series C funding, filings show",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "This fintech wasn’t ‘actively’ fundraising. Then it closed a $90m round at an $800m valuation",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Sequoia and General Catalyst value ex-police chief’s AI startup at $400m — reports",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Revolut faces Bank of England scrutiny over product approval process, reports say",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The French robotics startup promising to deploy industrial humanoids after just 20 minutes of training",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Brazil interest burden climbs to 9% of GDP, highest since 2016",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "‘There’s no magic money tree’: Alex Depledge on the Budget, startup lobbying and why she left the UK government",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "interview",
+   "borderline": true
+  },
+  {
+   "title": "How to build an investment thesis and win early-stage deals, according to VCs",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "how-to"
+  },
+  {
+   "title": "Norway’s Investinor out raising new LP fund amid European push to fund scaleups",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "How to outcompete the ‘warp speed’ AI labs on hiring",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "how-to",
+   "borderline": true
+  },
+  {
+   "title": "The executive talent market is divided in two",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "UK Budget: Capital gains, work visas and young entrepreneur allowances",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Why the smartest AI models still need human context",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion"
+  },
+  {
+   "title": "The climate tech startups still growing despite the funding slowdown",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "How to fund your robotics company: not another fundraise",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "how-to"
+  },
+  {
+   "title": "‘It feels like you’re wearing a Superman suit’: Why Europe’s fintech founders are starting over with AI",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion"
+  },
+  {
+   "title": "Beyond the EV hype: Why the used-car industry is Europe’s untapped asset",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "New funds in Europe in Q3 2026",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "service"
+  },
+  {
+   "title": "How to expand into new markets",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "how-to"
+  },
+  {
+   "title": "7 days until TechCrunch Founder Summit: Save up to $100 on your pass before doors open",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "promo"
+  },
+  {
+   "title": "Guidewire buys Hyperexponential for $1.7B in cash",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "‘You can’t trust the Reese’s logo’: The grandson of Reese’s inventor says Hershey’s 2027 recipe fix is ‘a stall’—and he’s igniting a family feud",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "celebrity"
+  },
+  {
+   "title": "Hong Kong leader apologizes for fire that killed 168 as housing secretary resigns",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The neocloud shakeout is coming, and even the neoclouds seem to know it",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Microsoft’s cloud growth accelerates, and so too does the spending",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "‘The most European of non-European countries’: Canada looks to become an ‘associate member’ of the EU as ‘economic pressure’ from the U.S. looms",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Albanian opposition storms parliament, sets off flares and smoke bombs",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "France football chief backs Real Madrid’s Mbappe after China apology",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport"
+  },
+  {
+   "title": "European Central Bank President Lagarde to step down early",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Why US Sports Owners Spend Millions on Politics",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Manchester United’s Carrick backs Fernandes and is expected to face Chelsea",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport"
+  },
+  {
+   "title": "Spanish long jumper Julieta Gallego among victims of deadly train collision",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "As US midterms approach, farmers decide what to plant and how to vote",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "YouTube star Jake Paul returns to boxing after Joshua loss for Dubai fight",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport"
+  },
+  {
+   "title": "Neville says managers need sacking ‘for own good’ as Man Utd retain Carrick",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport"
+  },
+  {
+   "title": "Damascus, Amman contradict each other on attack that killed civilians",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Indonesians share impact of haze on their livelihoods",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "human-interest",
+   "borderline": true
+  },
+  {
+   "title": "Rising fuel costs force passengers off cruise ship",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "The megadonors financing the US midterms to influence policy",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Men pulled from vehicle stranded by floods in Syria",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Afghan farmers pushed to opium farming to make a living",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "human-interest",
+   "borderline": true
+  },
+  {
+   "title": "South Korean prosecutors press for death sentence in Yoon martial law case",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Why is Russia sending fighter jets and air defences to Ethiopia?",
+   "source": "Al Jazeera",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "‘Deeply regressive’: How the French government plans to make protesters pay for riots and looting",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Lt. Gen. Ben Hodges accuses Hegseth of ‘getting rid of people who may have the courage to push back’",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "‘An absurdity’ to blame human error: Spain’s deadly train crash ‘should never’ have happened",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "DR Congo: A centre celebrates the discharge of last Ebola patients",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Ian McEwan speculates on ‘What We Can Know’ in the 22nd century",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "culture"
+  },
+  {
+   "title": "Flavio Bolsonaro’s great escape: Is this the beginning of the end for ‘Bolsonarism’?",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Aid mission set to enter Ukraine’s Oleshky as localised ceasefire holds for third day",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "A tale of two economies: How America’s cost-of-living crisis is shaping US midterm elections",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Spain’s King Felipe VI and Queen Letizia visit injured in train crash at Toledo hospital",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Pentagon shake-up continues: US fires top army general in latest ouster",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Food safety in India: A challenge for the world’s most populous country",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "human-interest",
+   "borderline": true
+  },
+  {
+   "title": "US Midterms: Donald Trump and Barack Obama make closing pitches",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Spain reckons with second deadly train crash of the year ahead of national election",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Trump and Obama trade barbs in closing week of US midterm election",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Minimum wage increase could come early as France braces for protests",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "‘Real questions to be asked’ after deadly train collision in Spain, journalist says",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Why is Donald Trump avoiding the Epstein case at all costs?",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Paris becomes an open-air museum",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "lifestyle"
+  },
+  {
+   "title": "DRC: C64 opposition coalition meets in Rome, calls for inclusive dialogue",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "France: Trappes racist shooting suspect transferred to French court",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Niger: Guards accused of ‘cruel, inhuman’ treatment after 33 die in detention",
+   "source": "France 24",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "No One Has a Plan for American Decline",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Bangladesh Measles Outbreak Is a ‘Warning Sign’",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Flávio Bolsonaro Becomes a Florida Man",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "In Deadlocked Israeli Election, Netanyahu Has Upper Hand",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Has Russia’s Influence in Africa Peaked?",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Ukrainians Have a Long-Shot Plan to Boot Russia from the U.N.",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Violence Flares Again in Thailand’s Deep South",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Trump’s Middle East Dealmaking Is Working Against Itself",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "How to Not Change Your Mind",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion"
+  },
+  {
+   "title": "The Quiet Power of International Orders",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion"
+  },
+  {
+   "title": "Dawn of the Data Centers",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Young People Are Struggling in Southeast Asia Too",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Why Party Plenums Matter So Much to Xi",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Decoding Israel’s Election Results",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Trump’s Tariffs Will Have Another Day in Court",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Dramatic Changes Are Unlikely in Israel, Even if Netanyahu Is Ousted",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Is Israel a Good Ally?",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Space Junk Is a Problem We Know How to Solve",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion"
+  },
+  {
+   "title": "Trump Has Lost the Foreign-Policy Debate",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "A Papal ‘Homecoming’",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "culture",
+   "borderline": true
+  },
+  {
+   "title": "The Global Push to Keep Kids Off Social Media",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "China Is Building Its Way Around Europe’s EV Tariffs",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "China Takes Its Lawfare to Sea",
+   "source": "Foreign Policy",
+   "edition": "geopolitics",
+   "label": "hard"
+  },
+  {
+   "title": "Ex-Palantir execs launch Dream with $17M from a16z to build AI world models for construction",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Who will you learn from in 6 days at TechCrunch Founder Summit? Meet the founders and investors taking the stages",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "promo"
+  },
+  {
+   "title": "VCs will make billions on Anthropic’s IPO, but Amazon is set to make much (much) more",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Disruptive raises $10B fund to make big bets on at least 10 companies",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "VCs, Superhuman Mail founder share red flags about product-market fit",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Carta and NewView partner, hoping to entice more startups to let employees sell shares early",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "What some of Anthropic’s backers are worth before its IPO",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Warhound raises $200M to engineer war dogs and arm them with Anduril gear",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "As blockchain investing falls out of vogue, a16z Crypto rebrands as a16z Frontier",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The secret to fast startup growth isn’t early sales, top names in tech say",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Investors break down how founders can raise a Series A today",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "how-to"
+  },
+  {
+   "title": "TechCrunch Founder Summit 2026: Everything you need to know",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "promo"
+  },
+  {
+   "title": "Legal AI startup Legora raises $550M Series E at $8.8B valuation",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Blacksmith hits unicorn valuation after Sequoia leads Series C",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Foursquare co-founder says equity holders saw no returns from the company’s acquisition",
+   "source": "TechCrunch Venture",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "When Traction Becomes Personal Exposure: What The Joonko Guilty Plea Means For Founders",
+   "source": "Crunchbase News",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Jobless claims near the lowest since the 1960s as low-fire trend continues",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Trump’s approval rating on economy hits all-time low as midterm looms: CNBC survey",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "UK inflation jumps to 3.5% — cementing rate hike expectations",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Car buyers are demanding lower prices and better tech. Automakers must deliver both",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Housing is flashing warning signs just as the Fed weighs more interest rate hikes",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Women may be at greater risk of AI job losses. Telephone switch operators and PCs show why",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "explainer",
+   "borderline": true
+  },
+  {
+   "title": "India’s finance minister says market liquidity makes it easier for investors to exit",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "U.S. budget deficit swells to almost $2 trillion for fiscal 2026, up 12% in a single year",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Analysis: Everyone expects the Fed to hold rates in October. Kevin Warsh could surprise us all",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Economists: Hot PPI shows Fed’s work is not done",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "U.S. Treasury dismisses IMF debt warning and ‘messy’ forecasting",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Wholesale prices jumped 6.3% annually in September, biggest gain since 2022",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "China indicates rare earths will keep flowing to EU, regardless of U.S. trade deal expiration",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "UK economy grew 0.1% in August, beating expectations",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "How high inflation became a ‘fact of life’ in the U.S.",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "explainer",
+   "borderline": true
+  },
+  {
+   "title": "Consumer prices rose 3.7% annually in September as gas prices skyrocket",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "‘Godzilla El Niño’ is wreaking havoc with Philippine central bank’s inflation forecasts",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "The latest inflation data is expected to show price increases are accelerating",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "In charts: How one of the world’s biggest economies got trapped by debt",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "IMF warns bond yields could see a ‘disorderly’ spike as debt, inflation risks worsen",
+   "source": "CNBC Markets",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Does home insurance cover storm damage?",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "service"
+  },
+  {
+   "title": "Which Gen Z will show up for the midterms: the socialist rebels or the ones who reelected Trump?",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "‘Operation Supercharge’: Japan and U.S. agree to develop Japanese missile facility—a ‘strong, quiet and clear’ message against China’s naval activity",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "‘The assertion that the AI is an autonomous being is insane’: Cyber expert says companies should face criminal charges when their AI hacks",
+   "source": "Fortune",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Are Europe’s fastest-growing startups hiring wrong?",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Exclusive: Deeptech startup MuRay raises €7.1m to see inside rocket engines",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Who has the best LinkedIn photo in European tech?",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "lifestyle"
+  },
+  {
+   "title": "Are VCs as ‘dangerous’ as Nik Storonsky thinks they are?",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "opinion",
+   "borderline": true
+  },
+  {
+   "title": "Revolut’s UK lending push is a ‘watershed’ moment. Can it take on the big banks?",
+   "source": "Sifted",
+   "edition": "finance",
+   "label": "hard",
+   "borderline": true
+  },
+  {
+   "title": "Toast faces FTC lawsuit over business contract practices",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Equities and bond yields dip with AI jitters and economic data in focus",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Nasdaq falls as Alphabet set for record loss amid AI spending woes",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Analysis-Soy, rare earths and fuels: how Brazil vote impacts the global flow of resources",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Orion Group Holdings wins $250M in October contracts",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Priced out: Milan’s cost of living drives away teachers",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "human-interest",
+   "borderline": true
+  },
+  {
+   "title": "Clorox appoints Unilever executive as its new CEO",
+   "source": "Investing.com",
+   "edition": "finance",
+   "label": "hard"
+  },
+  {
+   "title": "Stocks close higher as Dow gains 200 points; S&P 500 ends the week up 1%",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "wrap",
+   "synthetic": true
+  },
+  {
+   "title": "Wall Street ends mixed: what moved the markets today",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "wrap",
+   "synthetic": true
+  },
+  {
+   "title": "Stock market today: Dow, S&P 500, Nasdaq edge lower ahead of the weekend",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "wrap",
+   "synthetic": true
+  },
+  {
+   "title": "5 dividend stocks to buy and hold forever",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "stock-picks",
+   "synthetic": true
+  },
+  {
+   "title": "10 ways to save more money on your next grocery run",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance",
+   "synthetic": true
+  },
+  {
+   "title": "How to build an emergency fund in 6 simple steps",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "how-to",
+   "synthetic": true
+  },
+  {
+   "title": "The best high-yield savings accounts for November 2026",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance",
+   "synthetic": true
+  },
+  {
+   "title": "Should you pay off your mortgage early or invest? Here is how to decide",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance",
+   "synthetic": true
+  },
+  {
+   "title": "Your 401(k) checklist: 7 mistakes to avoid before year-end",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance",
+   "synthetic": true
+  },
+  {
+   "title": "I am 58 with $600,000 saved. Can I retire at 62?",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance",
+   "synthetic": true
+  },
+  {
+   "title": "Best travel credit cards for holiday trips",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance",
+   "synthetic": true
+  },
+  {
+   "title": "Apple’s new chargers: everything you need to know before you buy",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "service",
+   "synthetic": true
+  },
+  {
+   "title": "The 12 best Black Friday tech deals you can get right now",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "service",
+   "synthetic": true
+  },
+  {
+   "title": "What is a Roth conversion and should you do one?",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "explainer",
+   "synthetic": true
+  },
+  {
+   "title": "Millionaire next door: the surprising habits of frugal retirees",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "human-interest",
+   "synthetic": true
+  },
+  {
+   "title": "This simple budgeting trick could save you thousands a year",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "soft",
+   "kind": "personal-finance",
+   "synthetic": true
+  },
+  {
+   "title": "Liverpool beat Arsenal 2-1 in thrilling Premier League clash",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport",
+   "synthetic": true
+  },
+  {
+   "title": "Lakers edge Celtics in overtime as LeBron scores 38",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport",
+   "synthetic": true
+  },
+  {
+   "title": "Match preview: what to expect from Sunday’s derby",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "sport",
+   "synthetic": true
+  },
+  {
+   "title": "Oscars 2027 predictions: who will win best picture?",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "culture",
+   "synthetic": true
+  },
+  {
+   "title": "Taylor Swift’s latest album: a track-by-track review",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "culture",
+   "synthetic": true
+  },
+  {
+   "title": "The best restaurants to try in Lisbon this autumn",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "lifestyle",
+   "synthetic": true
+  },
+  {
+   "title": "How to plan the perfect weekend in Kyoto",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "service",
+   "synthetic": true
+  },
+  {
+   "title": "Photos of the week: the world in pictures",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "listicle",
+   "synthetic": true
+  },
+  {
+   "title": "Quiz: how well do you know world capitals?",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "listicle",
+   "synthetic": true
+  },
+  {
+   "title": "Newsletter: the five things you need to know this morning",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "wrap",
+   "synthetic": true
+  },
+  {
+   "title": "Celebrity couple announces split after ten years",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "celebrity",
+   "synthetic": true
+  },
+  {
+   "title": "Why I stopped checking the news every morning",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "opinion",
+   "synthetic": true
+  },
+  {
+   "title": "Ask the expert: how do I choose a good wine?",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "service",
+   "synthetic": true
+  },
+  {
+   "title": "Horoscope for the week ahead",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "lifestyle",
+   "synthetic": true
+  },
+  {
+   "title": "The 8 books every international relations student should read",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "listicle",
+   "synthetic": true
+  },
+  {
+   "title": "Podcast: a conversation with a Booker Prize nominee",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "soft",
+   "kind": "culture",
+   "synthetic": true
+  },
+  {
+   "title": "Federal Reserve raises rates by 25 basis points, signals one more hike",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Oil jumps 4% after OPEC+ agrees surprise output cut",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Nvidia posts record quarterly revenue, guides above estimates",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "SEC sues hedge fund over alleged insider trading ring",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Bank of Japan holds rates, yen slides past 160 per dollar",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Eurozone inflation slows to 2.1% in October, flash estimate shows",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Boeing to pay $1.1 billion to settle 737 MAX fraud case",
+   "source": "synthetic",
+   "edition": "finance",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Russia launches largest drone strike on Kyiv since the war began",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "UN Security Council votes to extend peacekeeping mission in Lebanon",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "India and China agree to resume direct flights, ease border patrols",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Taiwan scrambles jets as Chinese carrier group enters strait",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Senate passes defence bill with $900 billion topline",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Coup attempt foiled in Guinea-Bissau, officials say",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "Iran and the IAEA agree new inspection schedule after talks in Vienna",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  },
+  {
+   "title": "EU leaders agree 20th sanctions package against Russia",
+   "source": "synthetic",
+   "edition": "geopolitics",
+   "label": "hard",
+   "synthetic": true
+  }
+ ]
+}
