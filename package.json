@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test --test-reporter=spec tests/*.test.mjs"
+    "test": "node --test --test-reporter=spec tests/*.test.mjs",
+    "eval": "node --no-warnings scripts/eval/vitals.mjs",
+    "eval:capture": "node --no-warnings scripts/eval/capture.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.10.0",
