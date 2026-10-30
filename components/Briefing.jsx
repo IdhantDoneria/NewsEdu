@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import PageChrome from './intel/PageChrome';
+import styles from './Briefing.module.css';
 import ClassBadge from './intel/ClassBadge';
 import { TOPICS } from '@/lib/intelligence/topics.mjs';
 import { speakable, useSpeech } from '@/lib/client/speech';
@@ -12,6 +13,7 @@ import {
   toggleInterest,
   briefingPayload,
   recordHistory,
+  recordShown,
 } from '@/lib/client/userState';
 
 function timeAgo(ts) {
@@ -129,6 +131,42 @@ function InterestPicker({ interests, onToggle, compact }) {
   );
 }
 
+const EXPLORATION_LABEL = 'Outside your usual topics';
+
+/** "Why this?": relevance vs global significance, one node until opened. */
+function whyText(item) {
+  const parts = [`Relevance to you ${item.relevance}/100, global significance ${item.global}/100.`];
+  if (item.matchedTopics?.length) parts.push(`Matches: ${item.matchedTopics.join(', ')}.`);
+  if (item.followed) parts.push('You follow this story.');
+  if (item.exploration) parts.push('Picked from outside your usual topics so the briefing does not narrow.');
+  else if (item.slot === 'global') parts.push('Reserved slot for the biggest story that does not overlap the others.');
+  if (item.repeat) parts.push('Shown before; included again because it changed.');
+  return parts.join(' ');
+}
+
+function WhyThis({ item }) {
+  const [open, setOpen] = useState(false);
+  const text = whyText(item);
+  return (
+    <>
+      <button
+        type="button"
+        className={styles.why}
+        aria-expanded={open}
+        title={text}
+        onClick={() => setOpen((o) => !o)}
+      >
+        why this?
+      </button>
+      {open && (
+        <span className={styles.whyText} role="note">
+          {text}
+        </span>
+      )}
+    </>
+  );
+}
+
 function BriefingItem({ item, rank }) {
   return (
     <li className="brief-item">
@@ -136,6 +174,7 @@ function BriefingItem({ item, rank }) {
         {String(rank).padStart(2, '0')}
       </span>
       <div className="brief-body">
+        {item.exploration && <span className={styles.explore}>{EXPLORATION_LABEL}</span>}
         <Link href={`/story/${item.clusterId}?edition=${item.edition}`} className="brief-title">
           {item.title}
         </Link>
@@ -150,6 +189,7 @@ function BriefingItem({ item, rank }) {
           {item.sources.join(' · ')} · {timeAgo(item.latestAt)}
           {item.followed && ' · following'}
           {item.relevance > 0 && ` · matches your interests`}
+          {item.repeat && ' · updated'} {typeof item.relevance === 'number' && <WhyThis item={item} />}
         </span>
       </div>
     </li>
@@ -178,6 +218,9 @@ export default function Briefing() {
       const json = await res.json();
       setBriefing(json);
       saveLastBriefing(json);
+      // Remember everything this briefing showed so tomorrow's does not repeat it
+      // (the server still re-includes a story that has materially changed).
+      recordShown([...(json.essential || []), ...(json.developing || []), ...(json.understand || []), ...(json.watch || [])]);
       // Briefed stories count as consumed for Weekly Recall.
       for (const item of (json.essential || []).slice(0, 3)) {
         recordHistory({
