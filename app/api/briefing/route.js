@@ -5,12 +5,16 @@ import { clusterVersion } from '@/lib/intelligence/cluster.mjs';
 import { keepAlive } from '@/lib/keepalive.mjs';
 import { composeBriefing } from '@/lib/intelligence/briefing.mjs';
 import { readJsonBounded } from '@/lib/intelligence/http.mjs';
+import { matchFollowedCluster } from '@/lib/intelligence/identity.mjs';
+import { noteClustersFirstSeen } from '@/lib/intelligence/changes.mjs';
+import { topicById } from '@/lib/intelligence/topics.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const MAX_FOLLOWS = 50;
 const MAX_INTERESTS = 18;
+const MAX_SHOWN = 80; // 48 h of briefed ids; the client prunes, this bounds a hostile payload
 // Cap on background intelligence generation per briefing request (AI cost bound).
 const INTEL_BUDGET = 6;
 
@@ -43,6 +47,8 @@ export async function POST(request) {
       }))
       .slice(0, MAX_FOLLOWS),
     weights: body?.weights,
+    interestWeights: sanitizeWeights(body?.interestWeights),
+    shown: sanitizeShown(body?.shown),
   };
 
   const [geo, fin] = await Promise.all([
@@ -50,6 +56,15 @@ export async function POST(request) {
     getEditionClusters('finance'),
   ]);
   const clusters = [...geo.clusters, ...fin.clusters];
+  const now = Date.now();
+  noteClustersFirstSeen(clusters, now);
+
+  // A followed story whose id changed (re-clustering) is matched by id, alias
+  // or article overlap, and the follow is pointed at the current cluster.
+  profile.follows = profile.follows.map((f) => {
+    const m = matchFollowedCluster({ clusterId: f.clusterId, articleIds: f.snapshot.articleIds }, clusters);
+    return m && m.id !== f.clusterId ? { ...f, clusterId: m.id } : f;
+  });
 
   // Never make the reader wait for the AI. Use the stored analysis where there
   // is one and the deterministic extractive brief otherwise, and warm the AI
@@ -82,6 +97,31 @@ export async function POST(request) {
   );
   keepAlive(Promise.allSettled(toWarm.map((c) => getIntelForCluster(c))));
 
-  const briefing = composeBriefing(clusters, intelByCluster, profile);
+  const briefing = composeBriefing(clusters, intelByCluster, profile, { now });
   return NextResponse.json(briefing);
+}
+
+/** { topicId: weight } with known topics only, weights clamped to 0-1. */
+function sanitizeWeights(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const [id, w] of Object.entries(raw).slice(0, MAX_INTERESTS * 2)) {
+    const n = Number(w);
+    if (topicById(id) && Number.isFinite(n) && n > 0) out[id] = Math.min(1, n);
+  }
+  return out;
+}
+
+/** Shown-state: [{ id, at, articleIds? }] (bare id strings are accepted). */
+function sanitizeShown(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((s) => (typeof s === 'string' ? { id: s, at: Date.now() } : s))
+    .filter((s) => s && typeof s.id === 'string' && s.id.length <= 64)
+    .slice(0, MAX_SHOWN)
+    .map((s) => ({
+      id: s.id,
+      at: Number(s.at) || 0,
+      articleIds: Array.isArray(s.articleIds) ? s.articleIds.map(String).slice(0, 12) : [],
+    }));
 }

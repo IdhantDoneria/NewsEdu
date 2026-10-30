@@ -1,0 +1,2347 @@
+{
+ "description": "Hand-labelled headlines for topic tagging (lib/intelligence/topics.mjs). Rule: a topic applies when it (or its country/institution) is a named actor, setting or subject of the headline. snapshot:* = production headlines of 2026-10-29; synthetic = hand-written adversarial headlines.",
+ "topics": [
+  "us-politics",
+  "china",
+  "russia-ukraine",
+  "middle-east",
+  "europe",
+  "india",
+  "africa",
+  "latin-america",
+  "trade-tariffs",
+  "defense-security",
+  "energy",
+  "ai-technology",
+  "markets-macro",
+  "venture-startups",
+  "crypto",
+  "corporate",
+  "health",
+  "courts-law"
+ ],
+ "items": [
+  {
+   "title": "Netanyahu’s bloc leading Israel election but short of majority, partial results show",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Trump and His Aides Helped Bolsonaro Flee Brazil and Enter U.S.",
+   "topics": [
+    "latin-america",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "EU chief lays out vision for new Canada partnership at Montreal summit",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Flávio Bolsonaro Lands in Miami After Fleeing Brazil",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Record number of purges as Xi emphasises ‘party discipline’ at China political gathering",
+   "topics": [
+    "china"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "How Israel’s Election Could End",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "China Confirms Expulsion of 33 Officials, as Xi’s Purge Deepens",
+   "topics": [
+    "china"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Trump Officials Discussing Sanctions Relief for Russian Fund, Russia Acknowledges",
+   "topics": [
+    "russia-ukraine",
+    "trade-tariffs",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "In Marseille, Macron Confronts a Potent Mix of France’s Problems",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Fighting rages near Yemen’s Taiz as UN urges humanitarian access",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Haiti Postpones Elections as Gang Violence Runs Rampant",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "State Dept. to Shift Millions in Contraception Funding to Cover Energy Costs",
+   "topics": [
+    "health",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "How André Janones Helped Turbocharge Lula’s Comeback in Brazil’s Election",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "A Cease-Fire Melania Trump Announced Gives a City Brief Calm",
+   "topics": [
+    "defense-security",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "What We Know About the Deadly Train Crash in Spain",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Flávio Bolsonaro calls himself ‘leader of Brazil’ after election loss",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "What we know so far about deadly Spain train crash",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Rock collapse kills two in Turkey’s Cappadocia, local media reports",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "How Netanyahu Used Fear, Again, to Win Votes in the Israel Elections",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "El Salvador sends 2,000 troops to Haiti to rescue four missing soldiers",
+   "topics": [
+    "defense-security",
+    "latin-america"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Spain Crash Investigators Focus on Train Traffic Controllers’ Role",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "How could Israel break election deadlock? Here are four scenarios",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Israel’s anti-Qatar campaign bleeds into elections",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Cuauhtémoc Cárdenas, Who Helped End One-Party Rule in Mexico, Dies at 92",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Suspect in France Shootings Said He Targeted Muslims and Africans, Prosecutor Says",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Building boom puts 300,000 people in the path of potential Himalayan disasters",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "After 28 Years Walking the Globe, Karl Bushby Is Almost Home",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Finland launches criminal probe of suspected environmental damage by Google",
+   "topics": [
+    "ai-technology",
+    "courts-law",
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Philippine police obtain warrant to search Thomas Markle’s devices",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "India’s Media Giants Join Fight Against Upcoming Privacy Law",
+   "topics": [
+    "courts-law",
+    "india"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Is There a ‘Safest Seat’ in a Train Crash? Experts Say It’s Not So Simple.",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "What to Make of Israel’s Ambiguous Election",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Ireland becomes refuge for anti-Trump Americans",
+   "topics": [
+    "europe",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Russian drone attack on Ukrainian train station kills at least 14, officials say",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Audio reveals exchanges between control centre and drivers before deadly Spain train crash",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Alaska governor orders probe into Democratic campaign’s alleged links to same-name candidate",
+   "topics": [
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "How to Plan a Trip Around a Running Race",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "UAE sentences eight people to life over arms supplies to Sudan’s army",
+   "topics": [
+    "africa",
+    "courts-law",
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Putin seeks to expand ties with African countries at Russia-Africa summit",
+   "topics": [
+    "africa",
+    "russia-ukraine"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "A Marathon Runner’s Hard Lesson",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Ethiopia acquires Russian fighter jets and air defence systems amid war in Tigray",
+   "topics": [
+    "africa",
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Hello Kitty maker cuts ties with Japanese spy drama after China backlash",
+   "topics": [
+    "china"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "At least 14 people killed in attack on Ukraine train station",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Watch: VHS tapes and computers handed to police as Thomas Markle is investigated",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "China Is Not Happy About Fan-made A.I. Videos of Sun Wukong and Lin Daiyu",
+   "topics": [
+    "ai-technology",
+    "china"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Israel’s Parties Gird for Wrangling to Form a Government, With No Clear Path",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Deadly rock collapse at famous Turkiye tourist site",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Ireland opens arms to Americans fleeing US President Donald Trump",
+   "topics": [
+    "europe",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Russian Strike on Ukrainian Train Station Kills 14",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "With No Clear Winner, How Could Israel Get a Prime Minister?",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Pakistan rights activist Imaan Mazari and husband jailed for 10 years",
+   "topics": [
+    "courts-law"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Europe Was Never Meant to Be a ‘Regulatory Superpower’",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Hong Kong Leader Apologizes for Deadly Apartment Building Fire",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Vance Proposes Restarting Peace Talks in Outreach to Iranian Official",
+   "topics": [
+    "middle-east",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "How Arab Voters in Israel Shifted the Political Landscape",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Israeli strikes hit Gaza as Health Ministry urges Rafah opening",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Bangladesh’s Shadman Islam hits century, but West Indies force collapse",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Is the UAE the Missing Link in the Fight Against the Houthis?",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Audacious Indian jailbreak saga ends with 17 prisoners recaptured",
+   "topics": [
+    "india"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Details of thousands of US immigration agents leaked in major hack",
+   "topics": [
+    "ai-technology",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:geopolitics"
+  },
+  {
+   "title": "Some Observations About Anthropic’s IPO Filing",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Third-quarter U.S. GDP increases a better-than-expected 3.4% as September inflation accelerates",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Analysis: Why a $2 trillion deficit and 5% Treasury yields are becoming America’s biggest economic challenge",
+   "topics": [
+    "markets-macro",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Our church has a $1.5 million bequest earning 3.75% in a bank account. Is inflation eroding it?",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Did the Fed make a mistake with its October rate pause? The Treasury could help save the day.",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "European Central Bank keeps key interest rate on hold at 2.5%",
+   "topics": [
+    "europe",
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "This credit card is the ‘best weapon’ to fight debt while interest rates keep climbing",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Looking for income? These dividend stocks have high yields that seem well supported.",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "From 8VC to Benchmark, here’s what’s hiding in October SEC filings",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Medicare used AI to pre-approve patient care, and it immediately led to a large drop in medical services",
+   "topics": [
+    "ai-technology",
+    "health"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Crunchbase Data Shows Q3 Robotics Startup Funding Jumps 185% As US And China Lead Physical AI Push",
+   "topics": [
+    "ai-technology",
+    "china",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "You can’t rely on the S&P 500 as much as you may think",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "All the reasons Marvell investors are ‘freaking out’ as Lumentum deal rumors swirl",
+   "topics": [
+    "corporate"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Get ready for the ‘Year of Starlink’ as airlines battle over superfast WiFi",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Florida is voting on whether to slash property taxes. Here’s who it would benefit — and hurt.",
+   "topics": [
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Fed rate hikes are coming, but not this week: CNBC survey",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Exclusive: Numeracle Raises $28M To Keep Legitimate Business Calls From Spam Label",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Bessent says ‘not necessarily’ a mistake if the Fed hikes again",
+   "topics": [
+    "markets-macro",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Series B Funding Is Up, But Fewer Deals Are Getting Done",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The Invisible Graph: How Companies Grow Revenue And Still Lose Value",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "‘Fancy cars hold no appeal’: We have a 99% chance of outliving our life savings. Why not spend, spend, spend?",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Here are five key takeaways from the Fed rate decision and Warsh news conference",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Analysis: Kevin Warsh is keeping Wall Street guessing. It may be his most powerful tool",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The UK cuts energy bills, taxes banks and boosts defense in high-stakes budget",
+   "topics": [
+    "defense-security",
+    "energy",
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Exclusive: Lovable offers employees $80m cash-out at $13.3bn valuation",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Jumbo Series A Rounds Hiding The Real Squeeze On Seed Startups",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "From Monk To Startups: One Founder’s Unusual Path To Building Government Software",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Your AI Agents Need A Chief Operating Officer, Too",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "World Bank’s Banga: Availability of capital ‘not really an issue’ as AI demand drives up borrowing costs",
+   "topics": [
+    "ai-technology",
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The politics of President Lagarde’s European Central Bank early exit — and who could replace her",
+   "topics": [
+    "europe",
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The Crunchbase Tech Layoffs Tracker",
+   "topics": [
+    "ai-technology",
+    "corporate"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Microsoft expects to raise $25 billion in US bond sale, source says",
+   "topics": [
+    "ai-technology",
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Mark Cuban says owning the Mavericks went from being about basketball to ‘about valuations’ and created ‘more stress’—it still made him $4.3 billion",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "GM to pay $220 million to settle allegations it violated drivers’ privacy",
+   "topics": [
+    "corporate",
+    "courts-law"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Exclusive: Fractile raises £540m in new Series C funding, filings show",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "This fintech wasn’t ‘actively’ fundraising. Then it closed a $90m round at an $800m valuation",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Sequoia and General Catalyst value ex-police chief’s AI startup at $400m — reports",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Revolut faces Bank of England scrutiny over product approval process, reports say",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The French robotics startup promising to deploy industrial humanoids after just 20 minutes of training",
+   "topics": [
+    "ai-technology",
+    "europe",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Brazil interest burden climbs to 9% of GDP, highest since 2016",
+   "topics": [
+    "latin-america",
+    "markets-macro"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "‘There’s no magic money tree’: Alex Depledge on the Budget, startup lobbying and why she left the UK government",
+   "topics": [
+    "europe",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "How to build an investment thesis and win early-stage deals, according to VCs",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Norway’s Investinor out raising new LP fund amid European push to fund scaleups",
+   "topics": [
+    "europe",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "How to outcompete the ‘warp speed’ AI labs on hiring",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The executive talent market is divided in two",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "UK Budget: Capital gains, work visas and young entrepreneur allowances",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Why the smartest AI models still need human context",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The climate tech startups still growing despite the funding slowdown",
+   "topics": [
+    "energy",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "How to fund your robotics company: not another fundraise",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "‘It feels like you’re wearing a Superman suit’: Why Europe’s fintech founders are starting over with AI",
+   "topics": [
+    "ai-technology",
+    "europe",
+    "venture-startups"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Beyond the EV hype: Why the used-car industry is Europe’s untapped asset",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "New funds in Europe in Q3 2026",
+   "topics": [
+    "europe"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "How to expand into new markets",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "7 days until TechCrunch Founder Summit: Save up to $100 on your pass before doors open",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Guidewire buys Hyperexponential for $1.7B in cash",
+   "topics": [
+    "corporate"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "‘You can’t trust the Reese’s logo’: The grandson of Reese’s inventor says Hershey’s 2027 recipe fix is ‘a stall’—and he’s igniting a family feud",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Hong Kong leader apologizes for fire that killed 168 as housing secretary resigns",
+   "topics": [],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "The neocloud shakeout is coming, and even the neoclouds seem to know it",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Microsoft’s cloud growth accelerates, and so too does the spending",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "‘The most European of non-European countries’: Canada looks to become an ‘associate member’ of the EU as ‘economic pressure’ from the U.S. looms",
+   "topics": [
+    "europe",
+    "us-politics"
+   ],
+   "origin": "snapshot:2026-10-29:finance"
+  },
+  {
+   "title": "Woman who survived 40 days lost at sea reunites with family",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Price war erupts among streaming services as subscribers churn",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Police fire tear gas at protesters in Santiago",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Government raises fuel prices by 12% as subsidies end",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "US announces tariffs on Indian steel imports",
+   "topics": [
+    "india",
+    "trade-tariffs",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Russian forces advance near Pokrovsk as Kyiv appeals for air defence",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Report raises concerns about hospital staffing levels",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Survival rates for breast cancer climb, study finds",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Crime rates fall in major cities as policing changes",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Mortgage rates climb to 7.2% as bond yields jump",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Fed up with delays, commuters launch petition for new bus lines",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Fed holds rates steady, signals patience on cuts",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "The Fed minutes show officials split on inflation outlook",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Gas prices at the pump fall for fifth straight week",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Tear gas fired as protesters clash with police in Nairobi",
+   "topics": [
+    "africa"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Bidding war erupts for Hollywood studio as suitors circle",
+   "topics": [
+    "corporate"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Culture war flares over school library books in Texas",
+   "topics": [
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Trade war: Beijing retaliates with new export controls on rare earths",
+   "topics": [
+    "china",
+    "trade-tariffs"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Sanctions on Iranian oil exporters widen as Tehran denies tanker seizure",
+   "topics": [
+    "energy",
+    "middle-east",
+    "trade-tariffs"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Lawmakers pass bill to expand school funding in Ohio",
+   "topics": [
+    "courts-law",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Startup funding for climate tech rebounds",
+   "topics": [
+    "energy",
+    "venture-startups"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Series of explosions rock Kharkiv overnight, officials say",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Local team hires new coach after three straight defeats",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Judge dismisses lawsuit against Meta over teen safety",
+   "topics": [
+    "ai-technology",
+    "courts-law"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Clinical trial shows new obesity drug cuts weight by 20%",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Potato chip maker recalls snacks over allergy risk",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Chip stocks slide as Nvidia warns on export curbs",
+   "topics": [
+    "ai-technology",
+    "markets-macro",
+    "trade-tariffs"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Chipmaker TSMC lifts capital spending plan on AI demand",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Bitcoin tops $120,000 as ETF inflows hit record",
+   "topics": [
+    "crypto"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Ethereum developers delay upgrade after testnet bug",
+   "topics": [
+    "crypto"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Stablecoin bill clears Senate committee",
+   "topics": [
+    "courts-law",
+    "crypto",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Brazilian central bank holds Selic at 15%",
+   "topics": [
+    "latin-america",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Mexican peso slides as Sheinbaum defends judicial overhaul",
+   "topics": [
+    "courts-law",
+    "latin-america",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Nigerian naira rallies after central bank surprise hike",
+   "topics": [
+    "africa",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Kenyan court blocks finance bill protests ban",
+   "topics": [
+    "africa",
+    "courts-law"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Sudan's army and RSF trade blame as El Fasher shelling kills dozens",
+   "topics": [
+    "africa",
+    "defense-security"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "German factory orders fall for third month, hitting euro",
+   "topics": [
+    "europe",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "French lawmakers topple government in budget vote",
+   "topics": [
+    "europe"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "British gilt yields spike after Reeves budget leak",
+   "topics": [
+    "europe",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Italian prosecutors charge Meloni ally in corruption probe",
+   "topics": [
+    "courts-law",
+    "europe"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Polish farmers block border crossing with Ukraine over grain imports",
+   "topics": [
+    "europe",
+    "russia-ukraine"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Indian shares hit record as Sensex tops 90,000",
+   "topics": [
+    "india",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "RBI keeps repo rate unchanged, rupee steadies",
+   "topics": [
+    "india",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Modi and Xi hold talks on border de-escalation",
+   "topics": [
+    "china",
+    "india"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Adani Group wins court relief in US bribery case",
+   "topics": [
+    "courts-law",
+    "india",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Chinese EV makers expand in Europe as tariffs bite",
+   "topics": [
+    "china",
+    "europe",
+    "trade-tariffs"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "China's exports unexpectedly drop as demand weakens",
+   "topics": [
+    "china",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Taiwan Strait tensions rise after PLA drills",
+   "topics": [
+    "china",
+    "defense-security"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Huawei unveils new AI chip, challenging Nvidia",
+   "topics": [
+    "ai-technology",
+    "china"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Israeli airstrikes hit southern Lebanon despite truce",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Iran says it will resume nuclear talks with European powers",
+   "topics": [
+    "defense-security",
+    "europe",
+    "middle-east"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Saudi Arabia cuts oil output as OPEC+ meets",
+   "topics": [
+    "energy",
+    "middle-east"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Houthis claim attack on commercial ship in Red Sea",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Qatar mediates new round of Gaza hostage talks",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Syrian government and Kurdish forces agree integration deal",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Putin and Trump to meet next month, Kremlin says",
+   "topics": [
+    "russia-ukraine",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Ukrainian drones hit Russian refinery, fuel exports halted",
+   "topics": [
+    "defense-security",
+    "energy",
+    "russia-ukraine"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Zelensky urges allies to speed air defence deliveries",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "NATO leaders pledge higher defence spending at summit",
+   "topics": [
+    "defense-security",
+    "europe"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Pentagon awards $9bn contract for next-generation fighter",
+   "topics": [
+    "defense-security",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Congress passes stopgap funding bill to avert shutdown",
+   "topics": [
+    "courts-law",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Trump signs executive order on drug pricing",
+   "topics": [
+    "health",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Senate Democrats block vote on judicial nominees",
+   "topics": [
+    "courts-law",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Supreme Court agrees to hear challenge to birthright citizenship",
+   "topics": [
+    "courts-law",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Biden-era rule struck down by federal appeals court",
+   "topics": [
+    "courts-law",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "White House weighs new sanctions on Russian oil majors",
+   "topics": [
+    "energy",
+    "russia-ukraine",
+    "trade-tariffs",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Apple unveils new iPhone with on-device AI",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Google faces EU antitrust fine over ad tech",
+   "topics": [
+    "ai-technology",
+    "corporate",
+    "courts-law",
+    "europe"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "OpenAI in talks to raise funding at $500bn valuation",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Hackers breach hospital network, patient data exposed",
+   "topics": [
+    "ai-technology",
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Ransomware attack halts production at carmaker",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Quantum computing startup raises $150 million Series B",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Solar installations hit record as panel prices fall",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Offshore wind developer cancels project citing costs",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "EU agrees 2040 emissions target after marathon talks",
+   "topics": [
+    "energy",
+    "europe"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "COP31 negotiators clash over climate finance",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Oil prices jump as OPEC+ signals deeper output cuts",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Natural gas storage falls short ahead of winter",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Dollar slips as traders bet on Fed cut",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Wall Street ends higher as earnings beat forecasts",
+   "topics": [
+    "corporate",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Treasury yields climb after strong jobs report",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Eurozone inflation cools to 2.1% in October",
+   "topics": [
+    "europe",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Bank of Japan holds rates, yen weakens",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Recession fears rise as manufacturing contracts",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Gold hits record high on safe-haven demand",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Founders raise $12m seed round for AI legal assistant",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "VC firm closes $400m climate fund",
+   "topics": [
+    "energy",
+    "venture-startups"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Fintech unicorn files for IPO in New York",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Y Combinator demo day draws record investor crowd",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Pharmaceutical giant to acquire biotech for $4bn",
+   "topics": [
+    "corporate",
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Retailer files for bankruptcy protection, closing 200 stores",
+   "topics": [
+    "corporate"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "CEO resigns after accounting probe, shares tumble",
+   "topics": [
+    "corporate",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Tech firm announces 3,000 layoffs as AI cuts costs",
+   "topics": [
+    "ai-technology",
+    "corporate"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Quarterly earnings: bank profits beat estimates",
+   "topics": [
+    "corporate"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Merger of two rail operators faces antitrust review",
+   "topics": [
+    "corporate",
+    "courts-law"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "WHO declares end to mpox emergency",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Measles outbreak spreads to new states",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Vaccine makers report strong demand for flu shots",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Court sentences former minister to 8 years for graft",
+   "topics": [
+    "courts-law"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Jury convicts founder of crypto exchange on fraud charges",
+   "topics": [
+    "courts-law",
+    "crypto"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Appeals court overturns ruling in landmark copyright case against AI firm",
+   "topics": [
+    "ai-technology",
+    "courts-law"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Prosecutors indict mayor in bribery scheme",
+   "topics": [
+    "courts-law"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Parliament approves landmark privacy law despite industry opposition",
+   "topics": [
+    "courts-law"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Haiti gang leaders indicted by US prosecutors",
+   "topics": [
+    "courts-law",
+    "latin-america",
+    "us-politics"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Argentina's Milei wins midterm vote, peso surges",
+   "topics": [
+    "latin-america",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Colombian rebels kill soldiers in ambush near Venezuela border",
+   "topics": [
+    "defense-security",
+    "latin-america"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Venezuelan opposition leader detained, rights groups say",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Chile's lithium output surges as demand for batteries grows",
+   "topics": [
+    "energy",
+    "latin-america"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Ethiopian forces clash with rebels in Amhara region",
+   "topics": [
+    "africa",
+    "defense-security"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Egyptian pound weakens as IMF delays loan review",
+   "topics": [
+    "africa",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Ghana seeks debt restructuring deal with bondholders",
+   "topics": [
+    "africa",
+    "markets-macro"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Congo peace talks stall as M23 rebels seize town",
+   "topics": [
+    "africa",
+    "defense-security"
+   ],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Local bakery wins national award for sourdough",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Film festival opens with record attendance",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Weather: heavy rain expected across the Midwest this weekend",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Lakers beat Celtics in overtime thriller",
+   "topics": [],
+   "origin": "synthetic"
+  },
+  {
+   "title": "Putin ally visits Pyongyang as Moscow seeks more shells",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Ukrainians flee as Russian missiles pound Odesa port",
+   "topics": [
+    "defense-security",
+    "russia-ukraine"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Beijing warns Washington over arms sales to Taipei",
+   "topics": [
+    "china",
+    "defense-security",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Chinese tech giants see profits slide on weak consumer demand",
+   "topics": [
+    "ai-technology",
+    "china",
+    "corporate"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Xi to host regional leaders at security forum in Tianjin",
+   "topics": [
+    "china"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Hamas says it has received ceasefire proposal from mediators",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Lebanese army deploys along southern border under new truce",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Iran's rial hits record low as sanctions bite",
+   "topics": [
+    "markets-macro",
+    "middle-east",
+    "trade-tariffs"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Gulf states pledge billions for Syria reconstruction",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Netanyahu coalition talks stall over draft law",
+   "topics": [
+    "middle-east"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Germany approves record defence budget as Merz seeks bigger army",
+   "topics": [
+    "defense-security",
+    "europe"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "France unveils austerity plan, markets shrug",
+   "topics": [
+    "europe",
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Britain to ban social media for under-16s, ministers say",
+   "topics": [
+    "ai-technology",
+    "europe"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Spanish wildfires force thousands to evacuate",
+   "topics": [
+    "europe"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Swiss voters reject EU treaty package",
+   "topics": [
+    "europe"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Greek ferry workers walk out over pay",
+   "topics": [
+    "europe"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Delhi smog worsens as farm fires rage",
+   "topics": [
+    "india"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Mumbai property prices hit new high",
+   "topics": [
+    "india"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Indian exporters brace for US tariffs",
+   "topics": [
+    "india",
+    "trade-tariffs",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Modi government unveils new semiconductor subsidy",
+   "topics": [
+    "ai-technology",
+    "india"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Lagos port congestion delays cargo for weeks",
+   "topics": [
+    "africa"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Kenya opposition leader dies, nation in mourning",
+   "topics": [
+    "africa"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "South Africa's rand weakens on power cut fears",
+   "topics": [
+    "africa",
+    "energy",
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Mali junta tightens grip as jihadists blockade capital",
+   "topics": [
+    "africa",
+    "defense-security"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Libya oil exports resume after blockade ends",
+   "topics": [
+    "africa",
+    "energy"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Brazil's Lula vetoes controversial mining bill",
+   "topics": [
+    "courts-law",
+    "latin-america"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Mexico City mayor unveils flood defences",
+   "topics": [
+    "latin-america"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Peru congress impeaches president",
+   "topics": [
+    "courts-law",
+    "latin-america"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Venezuela frees American detainees in prisoner swap",
+   "topics": [
+    "latin-america",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Bolivia faces fuel shortages as dollars run dry",
+   "topics": [
+    "energy",
+    "latin-america",
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Senate confirms new Treasury secretary",
+   "topics": [
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Biden pardons ex-aides ahead of leaving office",
+   "topics": [
+    "courts-law",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Republicans unveil tax plan that would cut corporate rate",
+   "topics": [
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Governor signs abortion ban into law in Missouri",
+   "topics": [
+    "courts-law",
+    "health",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Trump threatens 50% tariffs on EU pharmaceuticals",
+   "topics": [
+    "europe",
+    "health",
+    "trade-tariffs",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "New sanctions target shadow fleet carrying Russian crude",
+   "topics": [
+    "energy",
+    "russia-ukraine",
+    "trade-tariffs"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "EU weighs retaliatory tariffs on American steel",
+   "topics": [
+    "europe",
+    "trade-tariffs",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Washington and Beijing extend trade truce for 90 days",
+   "topics": [
+    "china",
+    "trade-tariffs",
+    "us-politics"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Drone swarm attack on airbase wounds dozens of troops",
+   "topics": [
+    "defense-security"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Navy deploys destroyer to Strait of Hormuz",
+   "topics": [
+    "defense-security",
+    "middle-east"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Nuclear talks resume in Vienna with no breakthrough",
+   "topics": [
+    "defense-security"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Army chief calls for faster procurement of air defence",
+   "topics": [
+    "defense-security"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Gunmen kill eight in attack on village market",
+   "topics": [
+    "defense-security"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "US natural gas exports hit record on Asian demand",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Windfall tax on oil majors divides coalition",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Heatwave strains power grid, utilities urge conservation",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Climate summit ends with weak pledge on coal phaseout",
+   "topics": [
+    "energy"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Nvidia earnings beat estimates on AI data centre demand",
+   "topics": [
+    "ai-technology",
+    "corporate"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Microsoft to invest $10bn in new cloud region",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Regulators open probe into chatbot's handling of teen users",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Robot maker unveils humanoid for warehouse work",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Cyberattack knocks out airline check-in systems",
+   "topics": [
+    "ai-technology"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Stocks rally as inflation cools, Nasdaq hits record",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Bond market selloff deepens as deficit worries grow",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Central bank cuts rates by 25 basis points",
+   "topics": [
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Oil slips, dollar firms ahead of Fed decision",
+   "topics": [
+    "energy",
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Pound falls as UK inflation surprises to the upside",
+   "topics": [
+    "europe",
+    "markets-macro"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Seed-stage fintech raises $6m to serve gig workers",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Late-stage valuations reset as funding dries up",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Sequoia leads $200m Series C in robotics startup",
+   "topics": [
+    "ai-technology",
+    "venture-startups"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Accelerator announces new cohort of 40 startups",
+   "topics": [
+    "venture-startups"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Bitcoin miners pivot to AI hosting as hashrate climbs",
+   "topics": [
+    "ai-technology",
+    "crypto"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Exchange hack drains $90m in tokens, Binance freezes funds",
+   "topics": [
+    "ai-technology",
+    "crypto"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Airline to buy rival for $2.1bn in all-stock deal",
+   "topics": [
+    "corporate"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Automaker announces 4,000 job cuts in restructuring",
+   "topics": [
+    "corporate"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Court approves bankruptcy exit plan for telecom firm",
+   "topics": [
+    "corporate",
+    "courts-law"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Pharma group to settle opioid claims for $1.2bn",
+   "topics": [
+    "corporate",
+    "courts-law",
+    "health"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Health ministry reports cholera cases rising in camps",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Study links ultra-processed food to cancer risk",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Flu vaccine uptake falls as clinics report shortages",
+   "topics": [
+    "health"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Judge blocks rule on emissions from power plants",
+   "topics": [
+    "courts-law",
+    "energy"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Former prime minister jailed for corruption",
+   "topics": [
+    "courts-law"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Constitutional court strikes down election law",
+   "topics": [
+    "courts-law"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Parliament passes law restricting foreign funding of NGOs",
+   "topics": [
+    "courts-law"
+   ],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Man charged over stabbing in city centre",
+   "topics": [],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Local council approves new cycle lanes",
+   "topics": [],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Tennis star withdraws from final with injury",
+   "topics": [],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Streaming service raises prices for second time this year",
+   "topics": [],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Mayor says city will plant 10,000 trees",
+   "topics": [],
+   "origin": "synthetic-holdout"
+  },
+  {
+   "title": "Retailers report strong holiday weekend sales",
+   "topics": [],
+   "origin": "synthetic-holdout"
+  }
+ ]
+}

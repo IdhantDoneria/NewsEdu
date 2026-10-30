@@ -1,0 +1,30 @@
+/* Briefing-only additions: exploration label and the "why this?" note. */
+.explore {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 1px 8px;
+  border: 1px solid var(--accent, currentColor);
+  border-radius: 999px;
+  color: var(--accent, inherit);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.why {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent, inherit);
+  font: inherit;
+  text-decoration: underline dotted;
+  cursor: pointer;
+}
+
+.whyText {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-soft, inherit);
+  font-size: 0.82rem;
+  font-style: italic;
+}
