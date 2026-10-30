@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   calculateGeopoliticalScore,
+  calculateGeopoliticalScoreDetailed,
   __test__,
 } from '../lib/scoring/geopolitics.mjs';
 
@@ -88,107 +89,60 @@ test('output is deterministic for the same input (ignoring temporal decay)', () 
 
 /* ------------------- Per-layer internal checks -------------------------- */
 
-test('L1 uses domain database when hostname is known', () => {
-  const reuters = __test__.sourceCredibilityBaseline({
-    link: 'https://www.reuters.com/x',
-    source: { trust: 0, authority: 0 },
-  });
-  const unknown = __test__.sourceCredibilityBaseline({
+test('outlet layer uses the reviewed table: Reuters outranks an unknown blog', () => {
+  const reuters = calculateGeopoliticalScoreDetailed({ ...wireBrief, source: { trust: 0 } }).layers[0].delta;
+  const unknown = calculateGeopoliticalScoreDetailed({
+    ...wireBrief,
     link: 'https://unknown-blog.example/x',
-    source: { trust: 0, authority: 0 },
-  });
-  assert.ok(
-    reuters > unknown,
-    `reuters (${reuters}) should outrank unknown (${unknown})`
+    source: { name: 'Unknown', trust: 0 },
+  }).layers[0].delta;
+  assert.ok(reuters > unknown, `reuters (${reuters}) should outrank unknown (${unknown})`);
+});
+
+test('entities layer counts distinct entities once and saturates at 14', () => {
+  const dense =
+    'Russia China India Ukraine Israel Iran Egypt Turkey Poland Germany France Japan Korea NATO EU UN IMF WHO WTO OPEC Kremlin Pentagon Putin Xi Jinping Trump Modi Zelensky Netanyahu $50bn 12% 2024 1500';
+  assert.equal(__test__.entityPoints(dense), 14);
+  // Repetition adds nothing: "Russia Russian Russians" is one entity.
+  assert.equal(
+    __test__.entityPoints('Russia Russian Russians Russia'),
+    __test__.entityPoints('Russia')
   );
-  assert.ok(reuters >= 70, `reuters baseline should be strong: got ${reuters}`);
 });
 
-test('L1 falls back to source trust/authority when domain unknown', () => {
-  const fallback = __test__.sourceCredibilityBaseline({
-    link: 'https://unknown-site.example/x',
-    source: { trust: 15, authority: 7 },
-  });
-  // trust*3 + authority*4 = 45+28 = 73
-  assert.equal(fallback, 73);
+test('density layer is capped and 0 for empty / too-short text', () => {
+  const dense = 'Russia China Putin Xi Jinping UN NATO $50bn 12% 2024 sanctions';
+  const bonus = __test__.densityPoints(dense);
+  assert.ok(bonus >= 0 && bonus <= 8);
+  assert.equal(__test__.densityPoints(''), 0);
+  assert.equal(__test__.densityPoints('a b c'), 0);
 });
 
-test('L1 returns neutral 45 when neither domain nor source is present', () => {
-  assert.equal(__test__.sourceCredibilityBaseline({}), 45);
-});
-
-test('L2 fact match rate saturates at 100', () => {
-  // Twenty+ entity/stat hits (5 pts each) — should saturate the 100 cap.
-  const highDensity =
-    'Russia China India Ukraine Israel Iran Egypt Turkey Poland Germany France Japan Korea NATO EU UN IMF WHO WTO OPEC Kremlin Pentagon Putin Xi Trump Modi Zelensky Netanyahu $50bn 12% 2024 1500';
-  const rate = __test__.factMatchRate(highDensity);
-  assert.equal(rate, 100);
-});
-
-test('L3 temporal decay is exactly 0.5 per hour', () => {
-  const twoHoursAgo = { publishedAt: Date.now() - 2 * HOUR };
-  const penalty = __test__.temporalDecayPenalty(twoHoursAgo);
-  assert.ok(penalty > 0.99 && penalty < 1.01, `expected ~1, got ${penalty}`);
-});
-
-test('L3 returns 0 for missing / non-numeric publishedAt', () => {
-  assert.equal(__test__.temporalDecayPenalty({}), 0);
-  assert.equal(__test__.temporalDecayPenalty({ publishedAt: null }), 0);
-  assert.equal(__test__.temporalDecayPenalty({ publishedAt: 'not-a-date' }), 0);
-});
-
-test('L4 subjectivity penalty caps at 30', () => {
-  const emotional =
-    'shocking stunning incredible unbelievable staggering devastating alarming terrifying heartbreaking astonishing outrageous horrific catastrophic explosive extraordinary!!!!!!';
-  const p = __test__.subjectivityPenalty(emotional);
-  assert.equal(p, 30);
-});
-
-test('L5 density bonus caps at 15', () => {
-  const dense = 'Russia China Putin Xi UN NATO $50bn 12% 2024 sanctions';
-  const bonus = __test__.informationDensityBonus(dense);
-  assert.ok(bonus >= 0 && bonus <= 15);
-});
-
-test('L5 returns 0 for empty / too-short text', () => {
-  assert.equal(__test__.informationDensityBonus(''), 0);
-  assert.equal(__test__.informationDensityBonus('a b c'), 0);
-});
-
-test('L6 citation bonus caps at 15', () => {
-  const max = __test__.citationBonus({ source: { authority: 10 } });
-  assert.equal(max, 15);
-  assert.equal(__test__.citationBonus({}), 0);
-});
-
-test('L7 geopolitical relevance grows with event vocabulary', () => {
-  const low = __test__.geopoliticsRelevance('the weather was nice');
-  const high = __test__.geopoliticsRelevance(
-    'sanctions ceasefire treaty invasion coup summit'
-  );
+test('events layer counts distinct event terms, not repeats', () => {
+  const low = __test__.eventPoints('the weather was nice');
+  const high = __test__.eventPoints('sanctions ceasefire treaty invasion coup summit');
   assert.ok(high > low);
-  assert.ok(high <= 100);
+  assert.ok(high <= 9);
+  assert.equal(__test__.eventPoints('strike strike strike strike'), __test__.eventPoints('strike'));
 });
 
-test('L8 cross-market adjustment is 0 when no macro terms present', () => {
-  assert.equal(__test__.crossMarketAdjustment('nothing here'), 0);
-  assert.ok(__test__.crossMarketAdjustment('oil dollar tariff supply chain') > 0);
+test('cross-market layer is 0 when no trade/energy terms are present', () => {
+  assert.equal(__test__.crossMarketPoints('nothing here'), 0);
+  assert.ok(__test__.crossMarketPoints('oil dollar tariff supply chain') > 0);
 });
 
-test('L9 clickbait penalty triggers on classic tells', () => {
-  const p = __test__.clickbaitPenalty({
-    title: "You won't believe what happened!!! Here's why?",
-    summary: '',
-  });
-  assert.ok(p > 15, `expected substantial penalty, got ${p}`);
+test('subjectivity penalty caps at 18 and ignores "!" (the clickbait layer owns it)', () => {
+  const emotional =
+    'shocking stunning incredible unbelievable staggering devastating alarming terrifying heartbreaking astonishing outrageous horrific catastrophic explosive extraordinary';
+  assert.equal(__test__.subjectivityPenalty(emotional), 18);
+  assert.equal(__test__.subjectivityPenalty('quiet day!!!!'), 0);
 });
 
-test('L9 clickbait penalty is 0 for a clean headline', () => {
-  const p = __test__.clickbaitPenalty({
-    title: 'Ukraine and Russia sign ceasefire',
-    summary: 'The two governments agreed a 30-day pause in fighting.',
-  });
-  assert.equal(p, 0);
+test('clickbait layer triggers on classic tells and is 0 for a clean headline', () => {
+  const layerOf = (article) =>
+    calculateGeopoliticalScoreDetailed({ ...wireBrief, ...article }).layers.find((l) => l.key === 'clickbait').delta;
+  assert.ok(layerOf({ title: "You won't believe what happened!!! Here's why?", summary: '' }) < -15);
+  assert.equal(layerOf({ title: 'Ukraine and Russia sign ceasefire', summary: 'A 30-day pause in fighting.' }), 0);
 });
 
 /* ---------------- Layer-robustness / error handling --------------------- */

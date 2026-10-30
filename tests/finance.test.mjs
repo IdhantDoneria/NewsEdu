@@ -2,8 +2,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   calculateFinancialScore,
+  calculateFinancialScoreDetailed,
   __test__,
 } from '../lib/scoring/finance.mjs';
+import { OUTLET_BAND } from '../lib/scoring/outlets.mjs';
 
 const HOUR = 3_600_000;
 const now = Date.now();
@@ -68,16 +70,17 @@ test('pump-and-dump post drops far below legitimate copy', () => {
   );
 });
 
-test('finance pipeline is age-invariant by design (no L3 temporal decay)', () => {
-  // The finance spec's Layer 3 is Quantitative Data Density, not temporal
-  // decay — market fundamentals do not lose relevance minute-by-minute the
-  // way conflict news does. Same content at any age must score identically.
+test('finance recency uses an 8 h half-life with a soft tail (no cliff, never negative)', () => {
+  const at = (h) =>
+    calculateFinancialScoreDetailed({ ...regulatoryBrief, publishedAt: now - h * HOUR }, { now }).layers.find(
+      (l) => l.key === 'recency'
+    ).delta;
+  assert.ok(Math.abs(at(8) - at(0) / 2) < 0.05, `8h should halve recency: ${at(0)} -> ${at(8)}`);
+  assert.ok(at(500) >= 0 && at(500) < 0.01);
+  assert.ok(at(0) > at(24) && at(24) > at(48) && at(48) > at(72) && at(72) > 0);
   const fresh = calculateFinancialScore(regulatoryBrief);
-  const stale = calculateFinancialScore({
-    ...regulatoryBrief,
-    publishedAt: now - 500 * HOUR,
-  });
-  assert.equal(fresh, stale);
+  const stale = calculateFinancialScore({ ...regulatoryBrief, publishedAt: now - 500 * HOUR });
+  assert.ok(stale < fresh);
 });
 
 test('returns 0 (never throws) for null / undefined / non-object input', () => {
@@ -106,95 +109,72 @@ test('score is deterministic for the same input', () => {
 
 /* ------------------- Per-layer internal checks -------------------------- */
 
-test('L1 gives regulators (sec.gov) the maximum baseline', () => {
-  const s = __test__.sourceAuthorityBaseline({
-    link: 'https://www.sec.gov/x',
-    source: { trust: 0, authority: 0 },
-  });
-  assert.equal(s, 100);
+test('outlet layer gives primary regulators the top of the (bounded) band', () => {
+  const layer = (article) => calculateFinancialScoreDetailed(article).layers[0].delta;
+  const sec = layer({ link: 'https://www.sec.gov/x', source: { trust: 0 } });
+  const blog = layer({ link: 'https://unknown-desk.example', source: { trust: 15 } });
+  assert.equal(sec, OUTLET_BAND.max);
+  assert.ok(sec > blog);
+  assert.ok(sec - OUTLET_BAND.min <= 15);
 });
 
-test('L1 falls back to source trust*3 + authority*4 for unknown domains', () => {
-  const s = __test__.sourceAuthorityBaseline({
-    link: 'https://unknown-desk.example',
-    source: { trust: 15, authority: 7 },
-  });
-  assert.equal(s, 15 * 3 + 7 * 4);
+test('tickers layer counts distinct instruments (repeats count once) and caps at 6', () => {
+  assert.equal(__test__.instrumentPoints('$AAPL $AAPL'), 1.5);
+  assert.equal(__test__.instrumentPoints('$AAPL $MSFT (NASDAQ:AMZN) $TSLA'), 6);
+  assert.equal(__test__.instrumentPoints('$AAPL $MSFT (NASDAQ:AMZN) $TSLA $NVDA $GOOG $META'), 6);
 });
 
-test('L2 counts unique tickers case-insensitively', () => {
-  const c = __test__.uniqueTickerCount('$AAPL $aapl $MSFT (NASDAQ:AMZN) $TSLA');
-  // AAPL (case-insensitive) + MSFT + (NASDAQ:AMZN) + TSLA = 4 unique
-  assert.equal(c, 4);
+test('tickers layer returns 0 for text with no instruments', () => {
+  assert.equal(__test__.instrumentPoints('just some ordinary prose'), 0);
 });
 
-test('L2 returns 0 for text with no tickers', () => {
-  assert.equal(__test__.uniqueTickerCount('just some ordinary prose'), 0);
+test('density layer is bounded and counts a figure once', () => {
+  const d = __test__.densityPoints('$100 8% 250 bps 2.5 billion 3.14 more words');
+  assert.ok(d >= 0 && d <= 12);
 });
 
-test('L3 quantitative density is a percentage 0-100', () => {
-  const d = __test__.quantitativeDataDensity(
-    '$100 8% 250 bps 2.5 billion 3.14'
+test('volatility penalty triggers on volatile verbs, not on "!"', () => {
+  assert.ok(__test__.volatilityPenalty('stocks plunge as markets crash and prices soar and skyrocket') > 0);
+  assert.ok(__test__.volatilityPenalty('shares plummet, tumble and slump') >= 4.5);
+  assert.equal(__test__.volatilityPenalty('the company reported quarterly earnings of $5 per share!!'), 0);
+});
+
+test('regulatory layer: filing-form phrase or regulator host +8, keyword only +3, none 0', () => {
+  assert.equal(__test__.regulatoryBonus({}, 'filed 10-K last week'), 8);
+  assert.equal(__test__.regulatoryBonus({ link: 'https://www.sec.gov/x' }, 'a general market note'), 8);
+  assert.equal(__test__.regulatoryBonus({}, 'Court filing: Tesla CEO faces pay lawsuit'), 3);
+  assert.equal(__test__.regulatoryBonus({}, 'a general market commentary'), 0);
+});
+
+test('macro layer counts distinct terms and caps at 8', () => {
+  const s = __test__.macroPoints(
+    'Fed FOMC inflation CPI PPI GDP unemployment yield curve treasury bond monetary policy fiscal deficit QE'
   );
-  assert.ok(d >= 0 && d <= 100);
+  assert.equal(s, 8);
+  assert.equal(__test__.macroPoints('inflation inflation inflation'), __test__.macroPoints('inflation'));
 });
 
-test('L4 sentiment penalty triggers on volatile verbs', () => {
-  const p = __test__.sentimentDeviationPenalty(
-    'stocks plunge as markets crash and prices soar and skyrocket'
-  );
-  assert.ok(p > 0);
+test('institutional layer is a flat +3 for flow language', () => {
+  assert.equal(__test__.institutionalPoints('a hedge fund reported 13F holdings'), 3);
+  assert.equal(__test__.institutionalPoints('no such vocabulary here'), 0);
 });
 
-test('L4 no penalty for neutral copy', () => {
-  assert.equal(
-    __test__.sentimentDeviationPenalty(
-      'the company reported quarterly earnings of $5 per share'
-    ),
-    0
-  );
+test('fundamentals layer rewards distinct valuation vocabulary, not repeats', () => {
+  const s = __test__.fundamentalsPoints('DCF WACC EBITDA EPS P/E book value free cash flow');
+  assert.ok(s > 0 && s <= 10);
+  assert.equal(__test__.fundamentalsPoints('EPS EPS EPS EPS'), __test__.fundamentalsPoints('EPS'));
 });
 
-test('L5 flat +15 when a regulatory term is present, 0 otherwise', () => {
-  assert.equal(__test__.regulatoryVerificationBonus('filed 10-K last week'), 15);
-  assert.equal(
-    __test__.regulatoryVerificationBonus('a general market commentary'),
-    0
-  );
-});
-
-test('L6 macro relevance grows with macro vocabulary and caps at 100', () => {
-  const s = __test__.macroRelevance(
-    'Fed FOMC inflation CPI PPI GDP unemployment yield curve treasury bond monetary policy fiscal QE'
-  );
-  assert.equal(s, 100);
-});
-
-test('L7 flat +5 for institutional flow language', () => {
-  assert.equal(
-    __test__.institutionalFlowBonus('a hedge fund reported 13F holdings'),
-    5
-  );
-  assert.equal(__test__.institutionalFlowBonus('no such vocabulary here'), 0);
-});
-
-test('L8 fundamental depth rewards valuation vocabulary', () => {
-  const s = __test__.fundamentalMetricsDepth(
-    'DCF WACC EBITDA EPS P/E book value free cash flow'
-  );
-  assert.ok(s > 0);
-});
-
-test('L9 speculation penalty triggers on pump vocabulary', () => {
-  const p = __test__.speculationClickbaitPenalty({
+test('speculation penalty triggers on pump vocabulary', () => {
+  const p = __test__.speculationPenalty({
     title: 'This penny stock will explode to the moon 100x — guaranteed!!!',
     summary: 'YOLO to the moon rocket pumping',
   });
   assert.ok(p > 20, `expected large penalty, got ${p}`);
 });
 
-test('L9 speculation penalty is 0 for a clean regulatory headline', () => {
-  const p = __test__.speculationClickbaitPenalty({
+test('speculation penalty is 0 for a clean regulatory headline', () => {
+  const p = __test__.speculationPenalty({
     title: 'Apple files annual 10-K with the SEC',
     summary: 'Revenue rose 8% year over year.',
   });
