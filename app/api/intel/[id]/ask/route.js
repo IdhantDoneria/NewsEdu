@@ -42,7 +42,8 @@ export async function POST(request, { params }) {
     model: result.model || null,
     ms: Date.now() - t0,
     answered: Boolean(result.answered),
-    grounding: result.grounding || null,
+    groundingSupported: result.grounding?.supported ?? null,
+    groundingTotal: result.grounding?.total ?? null,
   });
 
   return NextResponse.json(result);

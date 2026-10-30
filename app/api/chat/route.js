@@ -36,7 +36,9 @@ function track(result, { edition, cached, ms, sources }) {
     sources,
     citations: result.citations?.length || 0,
     dropped: result.dropped || 0,
-    grounding: result.grounding || null,
+    // telemetry keeps primitives only, so the {supported,total} pair is flattened
+    groundingSupported: result.grounding?.supported ?? null,
+    groundingTotal: result.grounding?.total ?? null,
     lowRelevance: Boolean(result.lowRelevance),
     notice: result.notice ? String(result.notice).slice(0, 80) : null,
     edition,

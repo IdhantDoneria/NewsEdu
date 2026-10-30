@@ -452,6 +452,7 @@ export default function ChatWidget() {
             provider: data.provider,
             edition: data.edition,
             grounding: data.grounding,
+            cached: data.cached === true,
             learned,
           },
         ]);
@@ -489,10 +490,12 @@ export default function ChatWidget() {
     // Server-side telemetry: the rating always; the question only on a thumbs-down
     // (so unhelpful answers can be diagnosed), truncated, and never the answer.
     if (next) {
+      const m = messages[index];
+      const provider = m?.cached ? 'cache' : m?.provider;
       sendFeedback({
-        type: 'feedback',
         rating: next,
-        provider: messages[index]?.provider,
+        // /api/telemetry accepts only these provider labels
+        provider: ['gemini', 'openrouter', 'cache', 'fallback', 'none'].includes(provider) ? provider : undefined,
         ...(next === 'down' && question ? { question: String(question).slice(0, 200) } : {}),
       });
     }

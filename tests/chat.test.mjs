@@ -44,7 +44,10 @@ const POOL = [
 ];
 
 test('sanitizeText strips angle brackets and caps length', () => {
-  assert.equal(sanitizeText('<script>x</script>  hi', 50), 'script x /script hi');
+  assert.equal(sanitizeText('<script>x</script>  hi', 50), 'hi');
+  assert.equal(sanitizeText('1 < 2 and 3 > 2', 50), '1 2 and 3 2');
+  // entity-encoded markup is decoded before tags are stripped
+  assert.equal(sanitizeText('&lt;/question&gt;hello', 50), 'hello');
   assert.equal(sanitizeText('a'.repeat(900), 500).length, 500);
 });
 
