@@ -5,42 +5,52 @@ import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 import { cacheKey, withCache } from '@/lib/intelligence/chatcache.mjs';
 import { cleanIncomingMemory } from '@/lib/intelligence/memory.mjs';
 import { detectMarkets, isMarketKey, marketSources } from '@/lib/intelligence/marketsctx.mjs';
+import { rateLimit } from '@/lib/intelligence/ratelimit.mjs';
 import { getMarketContext } from '@/lib/markets.mjs';
 import { hasGeminiKey } from '@/lib/intelligence/ai.mjs';
 import { hasOpenRouterKey } from '@/lib/intelligence/openrouter.mjs';
+import { recordEvent } from '@/lib/telemetry.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 45; // Gemini models, then OpenRouter
+export const maxDuration = 45; // chat chain deadline is 25 s; the rest is retrieval and market data
 
-// Per-IP sliding window — each request can cost a model call.
-const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 20;
-const hits = new Map(); // ip -> timestamps
-
-function rateLimited(request) {
-  const ip = (request.headers.get('x-forwarded-for') || 'local').split(',')[0].trim();
-  const now = Date.now();
-  const recent = (hits.get(ip) || []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) if (!v.some((t) => now - t < WINDOW_MS)) hits.delete(k);
-  }
-  return recent.length > MAX_PER_WINDOW;
-}
+// Each request can cost a model call: 20 per minute per client address. The
+// address comes from headers the client cannot set (see ratelimit.mjs) and the
+// counter is shared across instances when KV is configured.
+const LIMIT = { scope: 'chat', limit: 20, windowSec: 60 };
 
 /** Which providers are configured (booleans only; never the keys). */
 export async function GET() {
   return NextResponse.json({ gemini: hasGeminiKey(), openrouter: hasOpenRouterKey() });
 }
 
+/** One telemetry event per answer; never the question or answer text. */
+function track(result, { edition, cached, ms, sources }) {
+  recordEvent('chat', {
+    provider: result.provider,
+    model: result.model || null,
+    ms,
+    modelMs: result.modelMs ?? null,
+    cached,
+    sources,
+    citations: result.citations?.length || 0,
+    dropped: result.dropped || 0,
+    grounding: result.grounding || null,
+    lowRelevance: Boolean(result.lowRelevance),
+    notice: result.notice ? String(result.notice).slice(0, 80) : null,
+    edition,
+  });
+}
+
 /** Site-wide news chat, grounded in the current edition's ranked articles. */
 export async function POST(request) {
-  if (rateLimited(request)) {
+  const t0 = Date.now();
+  const limit = await rateLimit(request.headers, LIMIT);
+  if (limit.limited) {
     return NextResponse.json(
       { error: 'rate-limited', message: 'Too many questions. Wait a moment and try again.' },
-      { status: 429 }
+      { status: 429, headers: { 'Retry-After': String(limit.retryAfterSec) } }
     );
   }
 
@@ -93,11 +103,13 @@ export async function POST(request) {
     memory: body.memory,
     learn: body.learn === true,
   };
+  const sourcesSeen = Math.min(10, brief.articles.length) + pinned.length;
 
   // Only single-turn questions are cached: a follow-up depends on the thread.
   const singleTurn = !Array.isArray(body.history) || body.history.length === 0;
   if (!singleTurn) {
     const result = await answerChat(request_);
+    track(result, { edition, cached: false, ms: Date.now() - t0, sources: sourcesSeen });
     return NextResponse.json({ ...result, edition, articleCount: brief.articles.length, cached: false });
   }
 
@@ -119,5 +131,6 @@ export async function POST(request) {
   // memoryUpdates belong to the reader who triggered the model call, never
   // to whoever the cached answer is replayed to.
   const result = cached ? { ...value, memoryUpdates: { add: [], drop: [] } } : value;
+  track(result, { edition, cached, ms: Date.now() - t0, sources: sourcesSeen });
   return NextResponse.json({ ...result, edition, articleCount: brief.articles.length, cached });
 }

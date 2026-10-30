@@ -77,6 +77,10 @@ export async function GET(request, { params }) {
       version: record.version,
       generatedAt: record.generatedAt,
       mode: record.mode,
+      // A thin extractive record is replaced once a model answers again.
+      fallback: Boolean(record.fallback),
+      retryAfter: record.retryAfter || null,
+      provider: record.provider || null,
       ...record.intel,
     },
     pending,

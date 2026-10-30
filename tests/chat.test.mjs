@@ -153,6 +153,7 @@ test('OpenRouter answers when no Gemini key is set, with validated citations and
     sent = { body, auth: init.headers.Authorization };
     return orReply({
       answer: 'Rates were held [S1][S99].',
+      claims: [{ ref: 'S1', quote: 'kept its benchmark rate unchanged on Thursday' }],
       usedBackgroundKnowledge: false,
       followUps: ['What about inflation?'],
       memory: {
@@ -188,7 +189,7 @@ test('with learning off, no memory instructions are sent and no updates are retu
   let prompt;
   const restore = mockOpenRouter((body) => {
     prompt = body.messages[0].content;
-    return orReply({ answer: 'Fine [S1].', memory: { add: [{ text: 'Follows central banks', importance: 5 }], drop: [] } });
+    return orReply({ answer: 'Fine [S1].', claims: [{ ref: 'S1', quote: 'kept its benchmark rate unchanged on Thursday' }], memory: { add: [{ text: 'Follows central banks', importance: 5 }], drop: [] } });
   });
   try {
     const res = await answerChat({ articles: POOL, edition: 'finance', message: 'interest rates?', learn: false });
@@ -224,7 +225,7 @@ test('a rate-limited model is skipped on the next call (cooldown), not hammered'
   const restore = mockOpenRouter((body) => {
     calls.push(body.model);
     if (body.model === 'test/cooldown-model') return { ok: false, status: 429, text: async () => 'rate limited' };
-    return orReply({ answer: 'Ok [S1].' });
+    return orReply({ answer: 'Ok [S1].', claims: [{ ref: 'S1', quote: 'kept its benchmark rate unchanged on Thursday' }] });
   });
   const realError = console.error;
   console.error = () => {};
