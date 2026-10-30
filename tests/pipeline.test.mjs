@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   scoreArticleAsync,
   scoreArticlesAsync,
+  displayScore,
 } from '../lib/scoring/index.mjs';
 
 const now = Date.now();
@@ -59,20 +60,17 @@ test('scoreArticleAsync degrades gracefully for a bad input', async () => {
   assert.deepEqual(s.scoreBreakdown, []);
 });
 
-test('scoreBreakdown layers sum (pre-clamp) to a value consistent with finalCurationScore', async () => {
+test('scoreBreakdown layers sum exactly to rankScore and finalCurationScore is its display value', async () => {
   const s = await scoreArticleAsync(sampleGeo, 'geopolitics');
-  assert.ok(Array.isArray(s.scoreBreakdown) && s.scoreBreakdown.length === 9);
+  assert.ok(Array.isArray(s.scoreBreakdown) && s.scoreBreakdown.length === 10);
   for (const layer of s.scoreBreakdown) {
     assert.ok(typeof layer.key === 'string' && layer.key.length > 0);
     assert.ok(typeof layer.label === 'string' && layer.label.length > 0);
     assert.ok(typeof layer.delta === 'number');
   }
   const rawSum = s.scoreBreakdown.reduce((acc, l) => acc + l.delta, 0);
-  // finalCurationScore is the clamped/rounded version of rawSum — they must
-  // agree unless clamping kicked in (rawSum outside [0,100]).
-  if (rawSum >= 0 && rawSum <= 100) {
-    assert.ok(Math.abs(Math.round(rawSum) - s.finalCurationScore) <= 1);
-  }
+  assert.equal(rawSum, s.rankScore);
+  assert.equal(s.finalCurationScore, displayScore(s.rankScore, 'geopolitics'));
 });
 
 test('scoreBreakdown reflects the finance pipeline when edition is finance', async () => {
