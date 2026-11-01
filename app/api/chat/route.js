@@ -6,7 +6,8 @@ import { cacheKey, withCache } from '@/lib/intelligence/chatcache.mjs';
 import { cleanIncomingMemory } from '@/lib/intelligence/memory.mjs';
 import { detectMarkets, isMarketKey, marketSources } from '@/lib/intelligence/marketsctx.mjs';
 import { rateLimit } from '@/lib/intelligence/ratelimit.mjs';
-import { getMarketContext } from '@/lib/markets.mjs';
+import { getMarketContext, getAssetQuotes } from '@/lib/markets.mjs';
+import { wantsMarketImpact, asksForDecision, pickAssets, assetSource, marketDataStrip } from '@/lib/intelligence/impact.mjs';
 import { hasGeminiKey } from '@/lib/intelligence/ai.mjs';
 import { hasOpenRouterKey } from '@/lib/intelligence/openrouter.mjs';
 import { recordEvent } from '@/lib/telemetry.mjs';
@@ -40,6 +41,7 @@ function track(result, { edition, cached, ms, sources }) {
     groundingSupported: result.grounding?.supported ?? null,
     groundingTotal: result.grounding?.total ?? null,
     lowRelevance: Boolean(result.lowRelevance),
+    impact: Boolean(result.analysis),
     notice: result.notice ? String(result.notice).slice(0, 80) : null,
     edition,
   });
@@ -79,6 +81,19 @@ export async function POST(request) {
 
   const brief = await getEditionBrief(edition);
 
+  // "What does this mean for markets?" questions get the market-impact mode:
+  // news from both editions (geopolitics moves prices), live cross-asset
+  // prices, and a structured scenario analysis.
+  const impactOn = wantsMarketImpact(body.message, marketsTab ? 'markets' : edition);
+  let pool = brief.articles;
+  if (impactOn) {
+    const other = await getEditionBrief(edition === 'finance' ? 'geopolitics' : 'finance').catch(() => null);
+    if (other?.articles?.length) {
+      const seen = new Set(pool.map((a) => a.id));
+      pool = [...pool, ...other.articles.filter((a) => !seen.has(a.id))];
+    }
+  }
+
   // Pin market data when the question is about a market (any edition), or
   // default to the market selected on the Markets tab.
   const wanted = detectMarkets(body.message, {
@@ -90,14 +105,27 @@ export async function POST(request) {
   );
   // Share the pinned-source budget: with two markets, each gets its index
   // level plus a few headlines instead of the first market using every slot.
-  const maxHeadlines = wanted.length > 1 ? 3 : 8;
-  const pinned = contexts.flatMap((ctx, i) =>
+  const maxHeadlines = impactOn ? 3 : wanted.length > 1 ? 3 : 8;
+  const marketPinned = contexts.flatMap((ctx, i) =>
     ctx ? marketSources(wanted[i], ctx, Date.now(), { maxHeadlines }) : []
   );
 
+  let impact;
+  let assetPinned = [];
+  if (impactOn) {
+    const history_ = Array.isArray(body.history) ? body.history : [];
+    const priorText = history_.filter((t) => t?.role === 'user').slice(-2).map((t) => String(t.text || '').slice(0, 200)).join(' ');
+    const pairs = await getAssetQuotes(pickAssets(body.message, { priorText })).catch(() => []);
+    assetPinned = pairs.map(([asset, quote]) => assetSource(asset, quote)).filter(Boolean);
+    impact = { decision: asksForDecision(body.message), marketData: marketDataStrip(pairs) };
+  }
+  // Live prices lead: they are the baseline the analysis is measured against.
+  const pinned = [...assetPinned, ...marketPinned];
+
   const request_ = {
     pinned,
-    articles: brief.articles,
+    impact,
+    articles: pool,
     edition,
     message: body.message,
     history: body.history,
@@ -105,7 +133,7 @@ export async function POST(request) {
     memory: body.memory,
     learn: body.learn === true,
   };
-  const sourcesSeen = Math.min(10, brief.articles.length) + pinned.length;
+  const sourcesSeen = Math.min(impactOn ? 14 : 10, pool.length) + pinned.length;
 
   // Only single-turn questions are cached: a follow-up depends on the thread.
   const singleTurn = !Array.isArray(body.history) || body.history.length === 0;
@@ -122,7 +150,7 @@ export async function POST(request) {
     memory: cleanIncomingMemory(body.memory),
     learn: request_.learn,
     // Market data moves faster than the brief: bucket it by 2 minutes.
-    briefVersion: `${brief.generatedAt}|${wanted.join(',')}|${wanted.length ? Math.floor(Date.now() / 120000) : 0}`,
+    briefVersion: `${brief.generatedAt}|${wanted.join(',')}|${wanted.length || impactOn ? Math.floor(Date.now() / 120000) : 0}|${impactOn ? 'impact' : ''}`,
   });
   const { value, cached } = await withCache(key, () => answerChat(request_), {
     fresh: body.fresh === true,
