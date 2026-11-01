@@ -2311,3 +2311,28 @@ a.chat-cite:hover { background: var(--accent); color: var(--paper-raised); }
 .trends-spark { flex: none; }
 .trends-spark polyline { stroke: var(--accent); stroke-width: 1.5; }
 @media (max-width: 800px) { .trends-grid-page { grid-template-columns: minmax(0, 1fr); } }
+
+/* Chat: market-impact card */
+.chat-impact { margin: 0.6rem 0 0.4rem; padding: 0.6rem 0.7rem; border: 1px solid var(--rule, #d8d2c4); border-radius: 6px; background: var(--paper-raised, rgba(0,0,0,0.02)); font: 0.8rem/1.45 var(--sans); }
+.chat-impact-head { display: flex; flex-wrap: wrap; gap: 0.4rem 0.6rem; align-items: baseline; justify-content: space-between; margin-bottom: 0.4rem; }
+.chat-stance { font-size: 0.72rem; text-transform: capitalize; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid currentColor; }
+.chat-stance.is-bullish { color: #1f7a3d; }
+.chat-stance.is-bearish { color: #b3261e; }
+.chat-stance.is-mixed, .chat-stance.is-neutral { color: var(--ink-faint, #6b6558); }
+.chat-quotes { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
+.chat-quotes li { display: inline-flex; gap: 0.35rem; align-items: baseline; padding: 0.15rem 0.45rem; border: 1px solid var(--rule, #d8d2c4); border-radius: 4px; font-size: 0.72rem; white-space: nowrap; }
+.chat-quote-name { color: var(--ink-faint, #6b6558); }
+.chat-quote-price { font-variant-numeric: tabular-nums; font-weight: 600; }
+.chat-quotes .is-up { color: #1f7a3d; }
+.chat-quotes .is-down { color: #b3261e; }
+.chat-assets { margin: 0 0 0.5rem; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+.chat-assets li { display: flex; gap: 0.5rem; align-items: flex-start; }
+.chat-dir { flex: none; width: 1.1rem; text-align: center; font-size: 0.8rem; line-height: 1.5; }
+.chat-dir.is-up { color: #1f7a3d; }
+.chat-dir.is-down { color: #b3261e; }
+.chat-dir.is-flat, .chat-dir.is-mixed { color: var(--ink-faint, #6b6558); }
+.chat-asset-body { display: flex; flex-direction: column; }
+.chat-asset-meta { color: var(--ink-faint, #6b6558); font-size: 0.7rem; }
+.chat-impact-line { margin: 0 0 0.4rem; }
+.chat-impact-list { margin: 0 0 0.4rem; }
+.chat-impact-list ul { margin: 0.15rem 0 0; padding-left: 1.1rem; }

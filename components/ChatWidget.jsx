@@ -22,20 +22,20 @@ const SUGGESTIONS = {
   ],
   finance: [
     "What's moving markets today?",
+    "How could today's top story affect markets?",
     'Which stories could affect interest rates?',
-    'Any big regulatory or earnings news?',
     'What are the biggest risks right now?',
   ],
   markets: (market) => [
     `How is the ${market} market doing today?`,
     'What moved the index and why?',
-    'Which headlines matter most right now?',
+    `What could move the ${market} market next?`,
     market === 'US' ? 'How do other major markets compare?' : 'How does it compare with the US market?',
   ],
   story: [
     'What happened here, in plain terms?',
     'Why does this matter?',
-    'Who are the main parties and what do they want?',
+    'How could this affect markets?',
     'What could happen next?',
   ],
 };
@@ -227,6 +227,75 @@ function ThumbIcon({ down }) {
   );
 }
 
+const DIRECTION_MARK = { up: '▲', down: '▼', flat: '■', mixed: '◆' };
+const fmtNum = (n) => Number(n).toLocaleString('en-US', { maximumFractionDigits: n >= 100 ? 2 : 3 });
+const fmtPct = (n) => `${n >= 0 ? '+' : ''}${Number(n).toFixed(2)}%`;
+
+/** Market-impact analysis: live prices, per-asset lean, what to watch. */
+function ImpactCard({ analysis, marketData }) {
+  const hasData = marketData?.length > 0;
+  if (!analysis && !hasData) return null;
+  return (
+    <section className="chat-impact" aria-label="Market impact">
+      <header className="chat-impact-head">
+        <strong>Market impact</strong>
+        {analysis && (
+          <span className={`chat-stance is-${analysis.stance}`}>
+            {analysis.stance} · {analysis.horizon} · {analysis.confidence} confidence
+          </span>
+        )}
+      </header>
+      {hasData && (
+        <ul className="chat-quotes" aria-label="Live prices">
+          {marketData.map((q) => (
+            <li key={q.key}>
+              <span className="chat-quote-name">{q.name}</span>
+              <span className="chat-quote-price">{fmtNum(q.price)}</span>
+              {q.changePercent != null && (
+                <span className={q.changePercent >= 0 ? 'is-up' : 'is-down'}>{fmtPct(q.changePercent)}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+      {analysis?.assets?.length > 0 && (
+        <ul className="chat-assets">
+          {analysis.assets.map((a) => (
+            <li key={a.name}>
+              <span className={`chat-dir is-${a.direction}`} aria-label={a.direction}>{DIRECTION_MARK[a.direction]}</span>
+              <span className="chat-asset-body">
+                <strong>{a.name}</strong>
+                <span className="chat-asset-meta">
+                  {' '}{a.direction} · {a.size} move · {a.confidence} confidence
+                </span>
+                <span className="chat-asset-why">{a.why}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {analysis?.pricedIn && <p className="chat-impact-line"><strong>Priced in?</strong> {analysis.pricedIn}</p>}
+      {analysis?.watch?.length > 0 && (
+        <div className="chat-impact-list">
+          <strong>What would change this</strong>
+          <ul>{analysis.watch.map((w, i) => <li key={i}>{w}</li>)}</ul>
+        </div>
+      )}
+      {analysis?.risks?.length > 0 && (
+        <div className="chat-impact-list">
+          <strong>Risks to this view</strong>
+          <ul>{analysis.risks.map((w, i) => <li key={i}>{w}</li>)}</ul>
+        </div>
+      )}
+      <p className="chat-note">
+        {analysis
+          ? 'Scenario analysis from the cited news and live prices, not financial advice. Size and confidence are rough buckets, not forecasts.'
+          : 'Live prices from Yahoo Finance (unofficial, may be delayed).'}
+      </p>
+    </section>
+  );
+}
+
 function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, speaking, onSpeak }) {
   if (msg.role === 'user') {
     return <div className="chat-msg chat-user">{msg.text}</div>;
@@ -234,6 +303,7 @@ function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, spe
   return (
     <div className={`chat-msg chat-bot${msg.error ? ' chat-error' : ''}`}>
       <AnswerBody text={msg.text} citations={msg.citations || []} />
+      <ImpactCard analysis={msg.analysis} marketData={msg.marketData} />
       {msg.usedBackgroundKnowledge && (
         <p className="chat-note">Includes general background, not only today&apos;s reporting.</p>
       )}
@@ -452,6 +522,8 @@ export default function ChatWidget() {
             provider: data.provider,
             edition: data.edition,
             grounding: data.grounding,
+            analysis: data.analysis || null,
+            marketData: Array.isArray(data.marketData) ? data.marketData : [],
             cached: data.cached === true,
             learned,
           },
