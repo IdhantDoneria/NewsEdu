@@ -6,6 +6,7 @@ const LABELS = {
   ANALYSIS: 'Analysis',
   SCENARIO: 'Scenario',
   UNCERTAINTY: 'Uncertainty',
+  WEB: 'Web',
 };
 
 const TITLES = {
@@ -14,6 +15,7 @@ const TITLES = {
   ANALYSIS: 'Reasoned interpretation, not a verified fact',
   SCENARIO: 'A possibility, not a prediction',
   UNCERTAINTY: 'Unknown or unconfirmed',
+  WEB: 'From a web search, not checked against this story’s sources',
 };
 
 /** Small classification chip used across intelligence surfaces. */

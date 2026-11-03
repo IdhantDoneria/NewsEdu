@@ -5,6 +5,8 @@ import { answerStoryQuestion } from '@/lib/intelligence/qa.mjs';
 import { readJsonBounded } from '@/lib/intelligence/http.mjs';
 import { rateLimit } from '@/lib/intelligence/ratelimit.mjs';
 import { recordEvent } from '@/lib/telemetry.mjs';
+import { classifyRequest, refusalFor, recordStrike, chargeChat, chargeWebSearch, webSearchesLeft } from '@/lib/intelligence/scope.mjs';
+import { searchWeb, webSearchEnabled, webOffer, webStoryReply } from '@/lib/intelligence/websearch.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -35,8 +37,48 @@ export async function POST(request, { params }) {
     );
   }
 
+  const question = typeof body?.question === 'string' ? body.question : '';
+
+  // Same gate as the chat: off-topic and injection never reach a model.
+  const scope = classifyRequest(question, { storyScoped: true });
+  if (scope.verdict === 'out' || scope.verdict === 'canned') {
+    if (scope.verdict === 'out') void recordStrike(request.headers);
+    recordEvent('scope', { verdict: scope.verdict, category: scope.category, edition: 'story' });
+    return NextResponse.json({ answered: false, statements: [], notice: refusalFor(scope.category).answer, outOfScope: scope.verdict === 'out' });
+  }
+
+  // A web search runs only when the reader asked for it with the button.
+  if (body?.webSearch === true) {
+    if (!webSearchEnabled()) return NextResponse.json(webStoryReply({ ok: false, reason: 'disabled' }));
+    const charge = await chargeWebSearch(request.headers);
+    if (!charge.ok) {
+      return NextResponse.json({ answered: false, statements: [], source: 'web', notice: charge.message, webSearchesLeft: 0, webBlocked: charge.reason });
+    }
+    const context = [cluster.title, ...cluster.articles.slice(0, 4).map((a) => a.title)];
+    const found = await searchWeb({ question: `${question} (about: ${cluster.title})`, context });
+    recordEvent('websearch', { ok: found.ok, reason: found.reason || null, provider: found.provider || null, ms: Date.now() - t0, cached: Boolean(found.cached), edition: 'story' });
+    return NextResponse.json(webStoryReply(found, { left: charge.remaining }));
+  }
+
+  const budget = await chargeChat(request.headers);
+  if (!budget.ok) {
+    return NextResponse.json({ error: budget.reason, message: budget.message }, { status: 429 });
+  }
+
   const intelRecord = await getIntelForCluster(cluster, { allowGenerate: false });
-  const result = await answerStoryQuestion(cluster, intelRecord, body?.question);
+  const result = await answerStoryQuestion(cluster, intelRecord, question);
+
+  // The story's sources do not answer it: say so and offer a web search.
+  if (result.insufficientEvidence || result.answered === false) {
+    const enabled = webSearchEnabled();
+    const offer = webOffer({
+      needsWeb: { missing: '' },
+      question,
+      enabled,
+      left: enabled ? await webSearchesLeft(request.headers) : 0,
+    });
+    if (offer) result.offerWebSearch = offer;
+  }
   recordEvent('qa', {
     provider: result.provider || 'fallback',
     model: result.model || null,

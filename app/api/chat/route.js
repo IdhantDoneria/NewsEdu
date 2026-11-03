@@ -11,6 +11,17 @@ import { wantsMarketImpact, asksForDecision, pickAssets, assetSource, marketData
 import { hasGeminiKey } from '@/lib/intelligence/ai.mjs';
 import { hasOpenRouterKey } from '@/lib/intelligence/openrouter.mjs';
 import { recordEvent } from '@/lib/telemetry.mjs';
+import {
+  classifyRequest,
+  isWebSearchConsent,
+  refusalFor,
+  recordStrike,
+  chargeChat,
+  chargeWebSearch,
+  webSearchesLeft,
+} from '@/lib/intelligence/scope.mjs';
+import { searchWeb, webSearchEnabled, webOffer, webChatReply } from '@/lib/intelligence/websearch.mjs';
+import { retrieveSources, cleanHistory } from '@/lib/intelligence/chat.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -69,6 +80,40 @@ export async function POST(request) {
       { error: 'bad-request', message: 'Ask a fuller question.' },
       { status: 400 }
     );
+  }
+
+  const history = cleanHistory(body.history);
+  const lastUser = [...history].reverse().find((t) => t.role === 'user')?.text || '';
+
+  // A web search only ever runs on the reader's say-so: the button sends
+  // `webSearch: true` with the original question, or they type "search the web".
+  const typedConsent = isWebSearchConsent(body.message);
+  const wantsWeb = body.webSearch === true || typedConsent;
+  const question = typedConsent && lastUser ? lastUser : body.message;
+  if (typedConsent && !lastUser) {
+    return NextResponse.json({ answer: 'Ask a question first, then I can search the web for it.', citations: [], followUps: [], provider: 'none' });
+  }
+
+  // Sort the request BEFORE any model is called: off-topic and injection
+  // attempts get a canned reply and a strike, greetings get a canned reply.
+  const scope = classifyRequest(question, { history, storyScoped: Boolean(body.storyId) });
+  if (scope.verdict === 'out' || scope.verdict === 'canned') {
+    if (scope.verdict === 'out') void recordStrike(request.headers);
+    recordEvent('scope', { verdict: scope.verdict, category: scope.category, edition: body.edition || 'geopolitics' });
+    return NextResponse.json({
+      ...refusalFor(scope.category),
+      citations: [],
+      provider: 'none',
+      usedBackgroundKnowledge: false,
+      outOfScope: scope.verdict === 'out',
+    });
+  }
+
+  if (wantsWeb) return webSearchReply(request, body, question, history, t0);
+
+  const budget = await chargeChat(request.headers);
+  if (!budget.ok) {
+    return NextResponse.json({ error: budget.reason, message: budget.message }, { status: 429 });
   }
 
   // The Markets tab has no ranked articles of its own: it answers from the
@@ -140,7 +185,7 @@ export async function POST(request) {
   if (!singleTurn) {
     const result = await answerChat(request_);
     track(result, { edition, cached: false, ms: Date.now() - t0, sources: sourcesSeen });
-    return NextResponse.json({ ...result, edition, articleCount: brief.articles.length, cached: false });
+    return NextResponse.json(await decorate(result, { request, question: body.message, edition, count: brief.articles.length, cached: false }));
   }
 
   const key = cacheKey({
@@ -162,5 +207,34 @@ export async function POST(request) {
   // to whoever the cached answer is replayed to.
   const result = cached ? { ...value, memoryUpdates: { add: [], drop: [] } } : value;
   track(result, { edition, cached, ms: Date.now() - t0, sources: sourcesSeen });
-  return NextResponse.json({ ...result, edition, articleCount: brief.articles.length, cached });
+  return NextResponse.json(await decorate(result, { request, question: body.message, edition, count: brief.articles.length, cached }));
+}
+
+/** Adds the web-search offer (and strikes a model-detected off-topic question). */
+async function decorate(result, { request, question, edition, count, cached }) {
+  if (result.outOfScope) void recordStrike(request.headers);
+  const { needsWeb, ...rest } = result;
+  const enabled = webSearchEnabled();
+  const offer = webOffer({
+    needsWeb,
+    question,
+    enabled,
+    left: enabled && needsWeb ? await webSearchesLeft(request.headers) : 0,
+  });
+  return { ...rest, edition, articleCount: count, cached, ...(offer ? { offerWebSearch: offer } : {}) };
+}
+
+/** The reader asked for a web search: charge the budget, search, shape the reply. */
+async function webSearchReply(request, body, question, history, t0) {
+  if (!webSearchEnabled()) return NextResponse.json(webChatReply({ ok: false, reason: 'disabled' }));
+  const charge = await chargeWebSearch(request.headers);
+  if (!charge.ok) {
+    return NextResponse.json({ ...webChatReply({ ok: false, reason: 'unavailable' }), answer: charge.message, webSearchesLeft: 0, webBlocked: charge.reason });
+  }
+  const edition = body.edition === 'finance' || body.edition === 'markets' ? 'finance' : 'geopolitics';
+  const brief = await getEditionBrief(edition).catch(() => null);
+  const context = retrieveSources(brief?.articles || [], question).slice(0, 5).map((a) => a.title);
+  const result = await searchWeb({ question, context, missing: typeof body.missing === 'string' ? body.missing : '' });
+  recordEvent('websearch', { ok: result.ok, reason: result.reason || null, provider: result.provider || null, ms: Date.now() - t0, cached: Boolean(result.cached), edition });
+  return NextResponse.json({ ...webChatReply(result, { left: charge.remaining }), edition });
 }
