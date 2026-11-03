@@ -80,21 +80,22 @@ function AskStory({ clusterId, edition, articlesById, onAsked }) {
   const boxRef = useRef(null);
 
   const ask = useCallback(
-    async (e) => {
-      e?.preventDefault();
-      const q = question.trim();
+    async (e, { webFor } = {}) => {
+      e?.preventDefault?.();
+      const q = (webFor || question).trim();
       if (!q || busy) return;
       setBusy(true);
       try {
         const res = await fetch(`/api/intel/${clusterId}/ask`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: q, edition }),
+          body: JSON.stringify({ question: q, edition, ...(webFor ? { webSearch: true } : {}) }),
         });
         const json = await res.json();
-        setExchanges((x) => [...x, { q, a: json }]);
-        setQuestion('');
-        onAsked?.(q);
+        // A web search is shown as its own exchange; the typed question stays in the box.
+        setExchanges((x) => [...x, { q: webFor ? `Web search: ${q}` : q, a: json.message && !json.statements ? { answered: false, statements: [], notice: json.message } : json }]);
+        if (!webFor) setQuestion('');
+        if (!webFor) onAsked?.(q);
       } catch {
         setExchanges((x) => [
           ...x,
@@ -140,6 +141,28 @@ function AskStory({ clusterId, edition, articlesById, onAsked }) {
                 </p>
               )}
               {x.a.notice && x.a.statements?.length > 0 && <p className="ask-notice">{x.a.notice}</p>}
+              {x.a.offerWebSearch && (
+                <div className="ask-web-offer">
+                  {x.a.offerWebSearch.blocked ? (
+                    <p>This story’s sources don’t cover that, and today’s web-search limit is used up. It resets at midnight UTC.</p>
+                  ) : (
+                    <>
+                      <p>This story’s sources don’t cover that. Want me to search the web for it?</p>
+                      <button
+                        type="button"
+                        className="ask-web-btn"
+                        disabled={busy}
+                        onClick={() => ask(null, { webFor: x.a.offerWebSearch.query || x.q })}
+                      >
+                        Search the web for this
+                      </button>
+                      <span className="ask-notice">
+                        {x.a.offerWebSearch.left} web search{x.a.offerWebSearch.left === 1 ? '' : 'es'} left today. Results are not checked against this story.
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

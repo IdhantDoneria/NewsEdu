@@ -296,7 +296,7 @@ function ImpactCard({ analysis, marketData }) {
   );
 }
 
-function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, speaking, onSpeak }) {
+function Message({ msg, index, focus, onFocus, onRate, onRegenerate, onSearchWeb, busy, speech, speaking, onSpeak }) {
   if (msg.role === 'user') {
     return <div className="chat-msg chat-user">{msg.text}</div>;
   }
@@ -304,6 +304,33 @@ function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, spe
     <div className={`chat-msg chat-bot${msg.error ? ' chat-error' : ''}`}>
       <AnswerBody text={msg.text} citations={msg.citations || []} />
       <ImpactCard analysis={msg.analysis} marketData={msg.marketData} />
+      {msg.offerWebSearch && (
+        <div className="chat-web-offer">
+          <p>
+            {msg.offerWebSearch.blocked
+              ? 'The brief’s sources don’t cover this, and today’s web-search limit is used up.'
+              : 'The brief’s sources don’t fully cover this. Want me to search the web for it?'}
+          </p>
+          {!msg.offerWebSearch.blocked && (
+            <button
+              type="button"
+              className="chat-web-btn"
+              disabled={busy}
+              onClick={() => onSearchWeb(index, msg.offerWebSearch)}
+            >
+              Search the web for this
+            </button>
+          )}
+          <span className="chat-note">
+            {msg.offerWebSearch.blocked
+              ? 'Resets at midnight UTC.'
+              : `Uses a web search (${msg.offerWebSearch.left} left today). Results are not checked against the brief.`}
+          </span>
+        </div>
+      )}
+      {msg.source === 'web' && msg.citations?.length > 0 && (
+        <p className="chat-note chat-web-flag">Web search results. Open the sources to verify.</p>
+      )}
       {msg.usedBackgroundKnowledge && (
         <p className="chat-note">Includes general background, not only today&apos;s reporting.</p>
       )}
@@ -321,7 +348,7 @@ function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, spe
         </p>
       )}
       {msg.citations?.length > 0 && (
-        <ol className="chat-sources" aria-label="Sources">
+        <ol className="chat-sources" aria-label={msg.source === 'web' ? 'Web sources' : 'Sources'}>
           {msg.citations.map((c) => {
             const href = safeUrl(c.link);
             return (
@@ -333,7 +360,8 @@ function Message({ msg, index, focus, onFocus, onRate, onRegenerate, speech, spe
                     rel="noopener noreferrer"
                     title={c.quote ? `Supported by: “${c.quote}”` : undefined}
                   >
-                    <b>{c.source}</b> — {c.title}
+                    <b>{c.source}</b>
+                    {c.web ? '' : <> — {c.title}</>}
                   </a>
                 ) : (
                   <span>
@@ -474,7 +502,7 @@ export default function ChatWidget() {
         .slice(-6)
         .map((m) => ({ role: m.role, text: m.text }));
 
-      setMessages([...base, { role: 'user', text: q }]);
+      setMessages([...base, { role: 'user', text: opts.display || q }]);
       setInput('');
       setFollowUps([]);
       setBusy(true);
@@ -492,6 +520,7 @@ export default function ChatWidget() {
             market: context.market,
             storyId: focus?.clusterId || context.storyId,
             fresh: opts.fresh === true,
+            ...(opts.webSearch ? { webSearch: true, missing: opts.missing || '' } : {}),
             learn,
             memory: learn ? sentMemory : [],
           }),
@@ -523,6 +552,10 @@ export default function ChatWidget() {
             edition: data.edition,
             grounding: data.grounding,
             analysis: data.analysis || null,
+            source: data.source || null,
+            offerWebSearch: data.offerWebSearch || null,
+            webSearchesLeft: data.webSearchesLeft ?? null,
+            outOfScope: data.outOfScope === true,
             marketData: Array.isArray(data.marketData) ? data.marketData : [],
             cached: data.cached === true,
             learned,
@@ -572,6 +605,13 @@ export default function ChatWidget() {
       });
     }
   };
+  // The reader agreed to a web search for the question behind message `index`.
+  const searchWeb = (index, offer) => {
+    const q = offer?.query || messages[index - 1]?.text;
+    if (!q) return;
+    send(q, { webSearch: true, missing: offer?.missing, display: 'Search the web for this' });
+  };
+
   const regenerate = (index) => {
     const question = messages[index - 1]?.text;
     if (question) send(question, { fresh: true, from: index - 1 });
@@ -787,6 +827,8 @@ export default function ChatWidget() {
                   onFocus={setFocus}
                   onRate={rate}
                   onRegenerate={regenerate}
+                  onSearchWeb={searchWeb}
+                  busy={busy}
                   speech={speech}
                   speaking={speakingIdx === i && speech.state !== 'idle'}
                   onSpeak={toggleSpeak}

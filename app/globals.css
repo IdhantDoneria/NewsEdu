@@ -2336,3 +2336,12 @@ a.chat-cite:hover { background: var(--accent); color: var(--paper-raised); }
 .chat-impact-line { margin: 0 0 0.4rem; }
 .chat-impact-list { margin: 0 0 0.4rem; }
 .chat-impact-list ul { margin: 0.15rem 0 0; padding-left: 1.1rem; }
+
+/* Web-search offer (chat and story Q&A) */
+.chat-web-offer, .ask-web-offer { margin: 0.55rem 0 0.3rem; padding: 0.55rem 0.7rem; border: 1px dashed var(--rule, #d8d2c4); border-radius: 6px; font: 0.8rem/1.45 var(--sans); display: flex; flex-wrap: wrap; gap: 0.35rem 0.6rem; align-items: center; }
+.chat-web-offer p, .ask-web-offer p { margin: 0; flex: 1 1 100%; }
+.chat-web-btn, .ask-web-btn { font: 600 0.78rem var(--sans); padding: 0.3rem 0.7rem; border-radius: 4px; border: 1px solid var(--accent, #8b1e2d); background: transparent; color: var(--accent, #8b1e2d); cursor: pointer; }
+.chat-web-btn:hover:not(:disabled), .ask-web-btn:hover:not(:disabled) { background: var(--accent, #8b1e2d); color: var(--paper-raised, #fff); }
+.chat-web-btn:disabled, .ask-web-btn:disabled { opacity: 0.5; cursor: default; }
+.chat-web-flag { font-style: normal; font-weight: 600; }
+.cb-web { color: #1b5e8a; border-color: #1b5e8a; }
