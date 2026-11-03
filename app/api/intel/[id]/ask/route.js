@@ -68,7 +68,15 @@ export async function POST(request, { params }) {
   const intelRecord = await getIntelForCluster(cluster, { allowGenerate: false });
   const result = await answerStoryQuestion(cluster, intelRecord, question);
 
-  // The story's sources do not answer it: say so and offer a web search.
+  // The story's sources do not answer it: say so outright and offer a web
+  // search. An answer with no verified citation at all (e.g. "outside the scope
+  // of this story") counts as not answered by the story's sources.
+  const ungrounded = result.answered && !(result.grounding?.supported > 0);
+  if (ungrounded) {
+    result.answered = false;
+    result.statements = [];
+    result.notice = 'This story’s sources don’t cover that.';
+  }
   if (result.insufficientEvidence || result.answered === false) {
     const enabled = webSearchEnabled();
     const offer = webOffer({
